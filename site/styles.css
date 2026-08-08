@@ -105,25 +105,27 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
 
 /* ── KPI tiles ─────────────────────────────────────────────────── */
 .kpi-grid {
-  display: grid; gap: 14px;
-  grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
+  display: grid; gap: 14px; align-items: stretch;
+  grid-template-columns: repeat(auto-fill, minmax(198px, 1fr));
 }
 .kpi {
   background: var(--card); border: 1px solid var(--line);
-  border-radius: var(--radius); padding: 18px 18px 16px;
+  border-radius: var(--radius); padding: 17px 18px 15px;
   box-shadow: var(--shadow-sm);
+  display: flex; flex-direction: column;
 }
 .kpi-label {
-  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.07em;
-  text-transform: uppercase; color: var(--ink-3);
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--ink-3); line-height: 1.3;
+  min-height: 2.5em; /* reserve two lines so tiles align whether the label wraps or not */
 }
 .kpi-value {
   font-family: var(--font-display); font-optical-sizing: auto;
-  font-weight: 900; font-size: clamp(1.9rem, 4vw, 2.5rem); line-height: 1;
-  color: var(--terracotta); margin-top: 8px; letter-spacing: -0.01em;
-  font-variant-numeric: tabular-nums;
+  font-weight: 900; font-size: clamp(1.6rem, 2.6vw, 2rem); line-height: 1.02;
+  color: var(--terracotta); margin-top: 4px; letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
 }
-.kpi-sub { font-size: 0.76rem; color: var(--ink-3); margin-top: 7px; }
+.kpi-sub { font-size: 0.76rem; color: var(--ink-3); margin-top: auto; padding-top: 6px; }
 
 /* ── Chart cards ───────────────────────────────────────────────── */
 .chart-grid {
@@ -307,7 +309,10 @@ td.na { color: var(--line-strong); font-style: italic; }
 
 @media (max-width: 560px) {
   body { font-size: 16px; }
-  .kpi-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .kpi-grid { grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); gap: 10px; }
+  .kpi { padding: 14px 14px 13px; }
+  .kpi-value { font-size: 1.55rem; }
+  .kpi-label { min-height: 2.4em; }
   .chart-grid { grid-template-columns: 1fr; }
   main, .explorer-section { padding-left: 16px; padding-right: 16px; }
 }
