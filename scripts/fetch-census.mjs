@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { GEO, MEDIAN_VARS, GROUPS } from './census-variables.mjs';
 import { buildGroups, buildSnapshot } from './build-payload.mjs';
 
-const API_KEY = process.env.CENSUS_API_KEY || '';
+const API_KEY = (process.env.CENSUS_API_KEY || '').trim();
 const CHUNK_SIZE = 44; // Census API caps ~50 variables/request; leaves room for NAME + popVar.
 
 const OUT_PATH = join(dirname(fileURLToPath(import.meta.url)), '..', 'site', 'data.json');
@@ -66,7 +66,16 @@ async function fetchAllValues() {
     if (!res.ok) {
       throw new Error(`Census API error ${res.status} ${res.statusText} for chunk starting ${varChunk[0]}`);
     }
-    const json = await res.json();
+    // The Census API returns HTTP 200 with an HTML page (not JSON) for key problems, so
+    // guard the parse and surface the page's message instead of a cryptic JSON error.
+    const text = await res.text();
+    let json;
+    try {
+      json = JSON.parse(text);
+    } catch {
+      const title = (text.match(/<title>(.*?)<\/title>/i) || [])[1] || text.slice(0, 120).replace(/\s+/g, ' ').trim();
+      throw new Error(`Census API returned non-JSON, likely an API key problem. Response said: "${title}"`);
+    }
     const headers = json[0];
     const rows = json.slice(1); // one row per tract
     const popIdx = headers.indexOf(GEO.popVar);
