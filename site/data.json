@@ -1,0 +1,745 @@
+{
+  "meta": {
+    "source": "SAMPLE / placeholder data - not real census figures. Run fetch-census.mjs with CENSUS_API_KEY for real numbers.",
+    "geography": "Census Tracts 1516.01 + 1516.02, Sonoma County, CA",
+    "year": "2023",
+    "generatedAt": "2026-08-08T21:15:08.208Z",
+    "sample": true
+  },
+  "snapshot": {
+    "totalPopulation": 5839,
+    "medianHouseholdIncome": 95400,
+    "perCapitaIncome": 61800,
+    "totalHousingUnits": 3540,
+    "ownerOccupiedPct": 84.2,
+    "medianHomeValue": 812400,
+    "medianGrossRent": 2180,
+    "unemploymentRate": 4.3,
+    "povertyRate": 5.2,
+    "age85Plus": 669
+  },
+  "groups": {
+    "age": {
+      "label": "Age Distribution",
+      "totalKey": "B01001_001E",
+      "variables": {
+        "B01001_001E": {
+          "label": "Total Population",
+          "value": 5839
+        },
+        "B01001_002E": {
+          "label": "Male - Total",
+          "value": 2690
+        },
+        "B01001_003E": {
+          "label": "Male - Under 5 years",
+          "value": 1
+        },
+        "B01001_004E": {
+          "label": "Male - 5 to 9 years",
+          "value": 4
+        },
+        "B01001_005E": {
+          "label": "Male - 10 to 14 years",
+          "value": 8
+        },
+        "B01001_006E": {
+          "label": "Male - 15 to 17 years",
+          "value": 13
+        },
+        "B01001_007E": {
+          "label": "Male - 18 to 19 years",
+          "value": 20
+        },
+        "B01001_008E": {
+          "label": "Male - 20 years",
+          "value": 27
+        },
+        "B01001_009E": {
+          "label": "Male - 21 years",
+          "value": 36
+        },
+        "B01001_010E": {
+          "label": "Male - 22 to 24 years",
+          "value": 46
+        },
+        "B01001_011E": {
+          "label": "Male - 25 to 29 years",
+          "value": 57
+        },
+        "B01001_012E": {
+          "label": "Male - 30 to 34 years",
+          "value": 69
+        },
+        "B01001_013E": {
+          "label": "Male - 35 to 39 years",
+          "value": 82
+        },
+        "B01001_014E": {
+          "label": "Male - 40 to 44 years",
+          "value": 96
+        },
+        "B01001_015E": {
+          "label": "Male - 45 to 49 years",
+          "value": 110
+        },
+        "B01001_016E": {
+          "label": "Male - 50 to 54 years",
+          "value": 126
+        },
+        "B01001_017E": {
+          "label": "Male - 55 to 59 years",
+          "value": 143
+        },
+        "B01001_018E": {
+          "label": "Male - 60 to 61 years",
+          "value": 161
+        },
+        "B01001_019E": {
+          "label": "Male - 62 to 64 years",
+          "value": 179
+        },
+        "B01001_020E": {
+          "label": "Male - 65 to 66 years",
+          "value": 198
+        },
+        "B01001_021E": {
+          "label": "Male - 67 to 69 years",
+          "value": 219
+        },
+        "B01001_022E": {
+          "label": "Male - 70 to 74 years",
+          "value": 240
+        },
+        "B01001_023E": {
+          "label": "Male - 75 to 79 years",
+          "value": 262
+        },
+        "B01001_024E": {
+          "label": "Male - 80 to 84 years",
+          "value": 285
+        },
+        "B01001_025E": {
+          "label": "Male - 85 years and over",
+          "value": 308
+        },
+        "B01001_026E": {
+          "label": "Female - Total",
+          "value": 3149
+        },
+        "B01001_027E": {
+          "label": "Female - Under 5 years",
+          "value": 1
+        },
+        "B01001_028E": {
+          "label": "Female - 5 to 9 years",
+          "value": 4
+        },
+        "B01001_029E": {
+          "label": "Female - 10 to 14 years",
+          "value": 9
+        },
+        "B01001_030E": {
+          "label": "Female - 15 to 17 years",
+          "value": 15
+        },
+        "B01001_031E": {
+          "label": "Female - 18 to 19 years",
+          "value": 23
+        },
+        "B01001_032E": {
+          "label": "Female - 20 years",
+          "value": 32
+        },
+        "B01001_033E": {
+          "label": "Female - 21 years",
+          "value": 42
+        },
+        "B01001_034E": {
+          "label": "Female - 22 to 24 years",
+          "value": 54
+        },
+        "B01001_035E": {
+          "label": "Female - 25 to 29 years",
+          "value": 67
+        },
+        "B01001_036E": {
+          "label": "Female - 30 to 34 years",
+          "value": 81
+        },
+        "B01001_037E": {
+          "label": "Female - 35 to 39 years",
+          "value": 96
+        },
+        "B01001_038E": {
+          "label": "Female - 40 to 44 years",
+          "value": 112
+        },
+        "B01001_039E": {
+          "label": "Female - 45 to 49 years",
+          "value": 129
+        },
+        "B01001_040E": {
+          "label": "Female - 50 to 54 years",
+          "value": 148
+        },
+        "B01001_041E": {
+          "label": "Female - 55 to 59 years",
+          "value": 167
+        },
+        "B01001_042E": {
+          "label": "Female - 60 to 61 years",
+          "value": 188
+        },
+        "B01001_043E": {
+          "label": "Female - 62 to 64 years",
+          "value": 210
+        },
+        "B01001_044E": {
+          "label": "Female - 65 to 66 years",
+          "value": 232
+        },
+        "B01001_045E": {
+          "label": "Female - 67 to 69 years",
+          "value": 256
+        },
+        "B01001_046E": {
+          "label": "Female - 70 to 74 years",
+          "value": 281
+        },
+        "B01001_047E": {
+          "label": "Female - 75 to 79 years",
+          "value": 307
+        },
+        "B01001_048E": {
+          "label": "Female - 80 to 84 years",
+          "value": 333
+        },
+        "B01001_049E": {
+          "label": "Female - 85 years and over",
+          "value": 361
+        }
+      }
+    },
+    "income": {
+      "label": "Household Income",
+      "totalKey": "B19001_001E",
+      "variables": {
+        "B19001_001E": {
+          "label": "Total Households",
+          "value": 3210
+        },
+        "B19001_002E": {
+          "label": "Less than $10,000",
+          "value": 8
+        },
+        "B19001_003E": {
+          "label": "$10,000 to $14,999",
+          "value": 16
+        },
+        "B19001_004E": {
+          "label": "$15,000 to $19,999",
+          "value": 29
+        },
+        "B19001_005E": {
+          "label": "$20,000 to $24,999",
+          "value": 50
+        },
+        "B19001_006E": {
+          "label": "$25,000 to $29,999",
+          "value": 80
+        },
+        "B19001_007E": {
+          "label": "$30,000 to $34,999",
+          "value": 120
+        },
+        "B19001_008E": {
+          "label": "$35,000 to $39,999",
+          "value": 169
+        },
+        "B19001_009E": {
+          "label": "$40,000 to $44,999",
+          "value": 224
+        },
+        "B19001_010E": {
+          "label": "$45,000 to $49,999",
+          "value": 278
+        },
+        "B19001_011E": {
+          "label": "$50,000 to $59,999",
+          "value": 325
+        },
+        "B19001_012E": {
+          "label": "$60,000 to $74,999",
+          "value": 357
+        },
+        "B19001_013E": {
+          "label": "$75,000 to $99,999",
+          "value": 369
+        },
+        "B19001_014E": {
+          "label": "$100,000 to $124,999",
+          "value": 357
+        },
+        "B19001_015E": {
+          "label": "$125,000 to $149,999",
+          "value": 325
+        },
+        "B19001_016E": {
+          "label": "$150,000 to $199,999",
+          "value": 278
+        },
+        "B19001_017E": {
+          "label": "$200,000 or more",
+          "value": 224
+        },
+        "B19013_001E": {
+          "label": "Median Household Income ($)",
+          "value": 95400
+        },
+        "B19025_001E": {
+          "label": "Aggregate Household Income ($)",
+          "value": 26
+        },
+        "B19301_001E": {
+          "label": "Per Capita Income ($)",
+          "value": 61800
+        }
+      }
+    },
+    "race": {
+      "label": "Race & Ethnicity",
+      "totalKey": "B02001_001E",
+      "variables": {
+        "B02001_001E": {
+          "label": "Total Population",
+          "value": 5839
+        },
+        "B02001_002E": {
+          "label": "White alone",
+          "value": 5210
+        },
+        "B02001_003E": {
+          "label": "Black or African American alone",
+          "value": 60
+        },
+        "B02001_004E": {
+          "label": "American Indian and Alaska Native alone",
+          "value": 147
+        },
+        "B02001_005E": {
+          "label": "Asian alone",
+          "value": 300
+        },
+        "B02001_006E": {
+          "label": "Native Hawaiian and Pacific Islander alone",
+          "value": 209
+        },
+        "B02001_007E": {
+          "label": "Some other race alone",
+          "value": 240
+        },
+        "B02001_008E": {
+          "label": "Two or more races",
+          "value": 210
+        },
+        "B02001_009E": {
+          "label": "Two or more races: two races incl. Some other",
+          "value": 302
+        },
+        "B02001_010E": {
+          "label": "Two or more races: two races excl. Some other, and three or more",
+          "value": 224
+        },
+        "B03003_001E": {
+          "label": "Total Population (Hispanic origin)",
+          "value": 5839
+        },
+        "B03003_002E": {
+          "label": "Not Hispanic or Latino",
+          "value": 5479
+        },
+        "B03003_003E": {
+          "label": "Hispanic or Latino (of any race)",
+          "value": 360
+        }
+      }
+    },
+    "education": {
+      "label": "Educational Attainment (25+)",
+      "totalKey": "B15003_001E",
+      "variables": {
+        "B15003_001E": {
+          "label": "Total Population 25+",
+          "value": 5180
+        },
+        "B15003_002E": {
+          "label": "No schooling completed",
+          "value": 129
+        },
+        "B15003_003E": {
+          "label": "Nursery school",
+          "value": 160
+        },
+        "B15003_004E": {
+          "label": "Kindergarten",
+          "value": 191
+        },
+        "B15003_005E": {
+          "label": "1st grade",
+          "value": 222
+        },
+        "B15003_006E": {
+          "label": "2nd grade",
+          "value": 253
+        },
+        "B15003_007E": {
+          "label": "3rd grade",
+          "value": 284
+        },
+        "B15003_008E": {
+          "label": "4th grade",
+          "value": 315
+        },
+        "B15003_009E": {
+          "label": "5th grade",
+          "value": 346
+        },
+        "B15003_010E": {
+          "label": "6th grade",
+          "value": 268
+        },
+        "B15003_011E": {
+          "label": "7th grade",
+          "value": 299
+        },
+        "B15003_012E": {
+          "label": "8th grade",
+          "value": 330
+        },
+        "B15003_013E": {
+          "label": "9th grade",
+          "value": 361
+        },
+        "B15003_014E": {
+          "label": "10th grade",
+          "value": 392
+        },
+        "B15003_015E": {
+          "label": "11th grade",
+          "value": 43
+        },
+        "B15003_016E": {
+          "label": "12th grade, no diploma",
+          "value": 74
+        },
+        "B15003_017E": {
+          "label": "Regular high school diploma",
+          "value": 720
+        },
+        "B15003_018E": {
+          "label": "GED or alternative credential",
+          "value": 136
+        },
+        "B15003_019E": {
+          "label": "Some college, less than 1 year",
+          "value": 167
+        },
+        "B15003_020E": {
+          "label": "Some college, 1+ years, no degree",
+          "value": 89
+        },
+        "B15003_021E": {
+          "label": "Associate's degree",
+          "value": 120
+        },
+        "B15003_022E": {
+          "label": "Bachelor's degree",
+          "value": 1480
+        },
+        "B15003_023E": {
+          "label": "Master's degree",
+          "value": 980
+        },
+        "B15003_024E": {
+          "label": "Professional school degree",
+          "value": 210
+        },
+        "B15003_025E": {
+          "label": "Doctorate degree",
+          "value": 260
+        }
+      }
+    },
+    "employment": {
+      "label": "Employment Status (16+)",
+      "totalKey": "B23025_001E",
+      "variables": {
+        "B23025_001E": {
+          "label": "Total Population 16+",
+          "value": 4760
+        },
+        "B23025_002E": {
+          "label": "In labor force",
+          "value": 1980
+        },
+        "B23025_003E": {
+          "label": "Civilian labor force",
+          "value": 1955
+        },
+        "B23025_004E": {
+          "label": "Employed",
+          "value": 1870
+        },
+        "B23025_005E": {
+          "label": "Unemployed",
+          "value": 85
+        },
+        "B23025_006E": {
+          "label": "Armed Forces",
+          "value": 122
+        },
+        "B23025_007E": {
+          "label": "Not in labor force",
+          "value": 2780
+        }
+      }
+    },
+    "housing": {
+      "label": "Housing",
+      "totalKey": "B25001_001E",
+      "variables": {
+        "B25001_001E": {
+          "label": "Total Housing Units",
+          "value": 3540
+        },
+        "B25002_002E": {
+          "label": "Occupied units",
+          "value": 3160
+        },
+        "B25002_003E": {
+          "label": "Vacant units",
+          "value": 380
+        },
+        "B25003_002E": {
+          "label": "Owner-occupied",
+          "value": 2660
+        },
+        "B25003_003E": {
+          "label": "Renter-occupied",
+          "value": 500
+        },
+        "B25004_002E": {
+          "label": "Vacant: for rent",
+          "value": 155
+        },
+        "B25004_004E": {
+          "label": "Vacant: for sale only",
+          "value": 217
+        },
+        "B25004_006E": {
+          "label": "Vacant: seasonal/recreational/occasional use",
+          "value": 279
+        },
+        "B25024_002E": {
+          "label": "1-unit, detached",
+          "value": 2360
+        },
+        "B25024_003E": {
+          "label": "1-unit, attached",
+          "value": 620
+        },
+        "B25024_004E": {
+          "label": "2 units",
+          "value": 219
+        },
+        "B25024_005E": {
+          "label": "3 or 4 units",
+          "value": 250
+        },
+        "B25024_006E": {
+          "label": "5 to 9 units",
+          "value": 281
+        },
+        "B25024_007E": {
+          "label": "10 to 19 units",
+          "value": 312
+        },
+        "B25024_008E": {
+          "label": "20 to 49 units",
+          "value": 343
+        },
+        "B25024_009E": {
+          "label": "50 or more units",
+          "value": 374
+        },
+        "B25024_010E": {
+          "label": "Mobile home",
+          "value": 40
+        },
+        "B25034_002E": {
+          "label": "Built 2020 or later",
+          "value": 342
+        },
+        "B25034_003E": {
+          "label": "Built 2010 to 2019",
+          "value": 373
+        },
+        "B25034_004E": {
+          "label": "Built 2000 to 2009",
+          "value": 24
+        },
+        "B25034_005E": {
+          "label": "Built 1990 to 1999",
+          "value": 55
+        },
+        "B25034_006E": {
+          "label": "Built 1980 to 1989",
+          "value": 86
+        },
+        "B25034_007E": {
+          "label": "Built 1970 to 1979",
+          "value": 117
+        },
+        "B25034_008E": {
+          "label": "Built 1960 to 1969",
+          "value": 148
+        },
+        "B25034_009E": {
+          "label": "Built 1950 to 1959",
+          "value": 179
+        },
+        "B25034_010E": {
+          "label": "Built 1940 to 1949",
+          "value": 101
+        },
+        "B25034_011E": {
+          "label": "Built 1939 or earlier",
+          "value": 132
+        },
+        "B25064_001E": {
+          "label": "Median Gross Rent ($)",
+          "value": 2180
+        },
+        "B25077_001E": {
+          "label": "Median Home Value ($)",
+          "value": 812400
+        }
+      }
+    },
+    "poverty": {
+      "label": "Poverty Status",
+      "totalKey": "B17001_001E",
+      "variables": {
+        "B17001_001E": {
+          "label": "Total Population (poverty determination)",
+          "value": 5810
+        },
+        "B17001_002E": {
+          "label": "Below poverty level - Total",
+          "value": 300
+        },
+        "B17001_031E": {
+          "label": "At or above poverty level - Total",
+          "value": 5510
+        },
+        "B17001_003E": {
+          "label": "Below poverty - Male, under 5",
+          "value": 368
+        },
+        "B17001_004E": {
+          "label": "Below poverty - Male, 5",
+          "value": 399
+        },
+        "B17001_005E": {
+          "label": "Below poverty - Male, 6 to 11",
+          "value": 50
+        },
+        "B17001_006E": {
+          "label": "Below poverty - Male, 12 to 14",
+          "value": 81
+        },
+        "B17001_007E": {
+          "label": "Below poverty - Male, 15 to 17",
+          "value": 112
+        },
+        "B17001_008E": {
+          "label": "Below poverty - Male, 18 to 24",
+          "value": 143
+        },
+        "B17001_009E": {
+          "label": "Below poverty - Male, 25 to 34",
+          "value": 174
+        },
+        "B17001_010E": {
+          "label": "Below poverty - Male, 35 to 44",
+          "value": 96
+        },
+        "B17001_011E": {
+          "label": "Below poverty - Male, 45 to 54",
+          "value": 127
+        },
+        "B17001_012E": {
+          "label": "Below poverty - Male, 55 to 64",
+          "value": 158
+        },
+        "B17001_013E": {
+          "label": "Below poverty - Male, 65 to 74",
+          "value": 189
+        },
+        "B17001_014E": {
+          "label": "Below poverty - Male, 75 and over",
+          "value": 220
+        },
+        "B17001_017E": {
+          "label": "Below poverty - Female, under 5",
+          "value": 313
+        },
+        "B17001_018E": {
+          "label": "Below poverty - Female, 5",
+          "value": 344
+        },
+        "B17001_019E": {
+          "label": "Below poverty - Female, 6 to 11",
+          "value": 375
+        },
+        "B17001_020E": {
+          "label": "Below poverty - Female, 12 to 14",
+          "value": 297
+        },
+        "B17001_021E": {
+          "label": "Below poverty - Female, 15 to 17",
+          "value": 328
+        },
+        "B17001_022E": {
+          "label": "Below poverty - Female, 18 to 24",
+          "value": 359
+        },
+        "B17001_023E": {
+          "label": "Below poverty - Female, 25 to 34",
+          "value": 390
+        },
+        "B17001_024E": {
+          "label": "Below poverty - Female, 35 to 44",
+          "value": 41
+        },
+        "B17001_025E": {
+          "label": "Below poverty - Female, 45 to 54",
+          "value": 72
+        },
+        "B17001_026E": {
+          "label": "Below poverty - Female, 55 to 64",
+          "value": 103
+        },
+        "B17001_027E": {
+          "label": "Below poverty - Female, 65 to 74",
+          "value": 134
+        },
+        "B17001_028E": {
+          "label": "Below poverty - Female, 75 and over",
+          "value": 165
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oakmont Village — Community Snapshot</title>
+  <meta name="description" content="A census snapshot of Oakmont Village, Sonoma County, California, from the U.S. Census Bureau's American Community Survey." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍇</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,400&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <div id="sample-banner" class="sample-banner" hidden>
+    <strong>Sample data.</strong> These are placeholder figures for preview. Run the fetch script with a Census API key for the real numbers.
+  </div>
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <p class="kicker">Oakmont Village · Sonoma County, California</p>
+      <h1>Community <em>Snapshot</em></h1>
+      <p class="lead">A portrait of the neighborhood in numbers, drawn from the U.S. Census Bureau's American Community Survey.</p>
+      <div class="masthead-meta">
+        <span class="badge" id="badge-year">2023 ACS 5-Year</span>
+        <span class="meta-dot">·</span>
+        <span id="meta-geo">Census Tracts 1516.01 + 1516.02</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="snapshot" aria-label="Community snapshot">
+      <div class="kpi-grid" id="kpis"></div>
+
+      <div class="chart-grid" id="charts"></div>
+
+      <div class="callouts" id="callouts"></div>
+
+      <p class="method-note" id="method-note"></p>
+    </section>
+
+    <section class="explorer-section" aria-label="Full data explorer">
+      <button class="explorer-toggle" id="explorer-toggle" aria-expanded="false" aria-controls="explorer">
+        <span class="explorer-toggle-label">Full data explorer</span>
+        <span class="explorer-toggle-sub">Every variable, sortable and searchable, with CSV export</span>
+        <span class="chevron" aria-hidden="true"></span>
+      </button>
+      <div class="explorer" id="explorer" hidden></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p id="footer-source">Source: U.S. Census Bureau, American Community Survey.</p>
+    <p class="footer-fine">
+      Oakmont Village is an unincorporated community with no Census place code; figures aggregate
+      Census Tracts 1516.01 and 1516.02 in Sonoma County. Counts are summed across the two tracts;
+      medians are population-weighted approximations.
+    </p>
+    <p class="footer-fine" id="footer-generated"></p>
+  </footer>
+
+  <div id="tooltip" class="tooltip" role="status" aria-live="off" hidden></div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

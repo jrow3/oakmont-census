@@ -28,22 +28,27 @@ GitHub Actions runner (secret: CENSUS_API_KEY)
 Browser: load census.jrow3.com → fetch('./data.json') → render. No key. Instant.
 ```
 
-- The Census API works without a key (rate-limited), so `fetch-census.mjs` runs keyless when
-  `CENSUS_API_KEY` is unset. Local dev needs no key.
+- The Census API now returns a "Missing Key" page for keyless requests, so a key is required for
+  real fetches; the CI secret supplies it. For offline/local dev without a key, `scripts/sample-data.mjs`
+  writes realistic placeholder data (flagged `meta.sample`, which shows a banner on the page).
 - `site/data.json` is committed so the repo/site work standalone; CI refreshes it on each deploy.
 
 ## Repo layout
 
 ```
 oakmont-census/
-  scripts/fetch-census.mjs      # fetch + aggregate → site/data.json
+  scripts/
+    census-variables.mjs        # geo + variable/label definitions (single source of truth)
+    fetch-census.mjs            # fetch ACS + aggregate → site/data.json (needs a key)
+    build-payload.mjs           # shared: shape {code: value} into the data.json payload
+    sample-data.mjs             # write placeholder data.json for keyless local preview
   site/
     index.html                  # single page
     styles.css
-    app.js                      # renders snapshot + explorer from data.json
+    js/{app,snapshot,explorer,charts,format}.js
     data.json                   # baked data (committed, CI-refreshed)
+    CNAME                       # census.jrow3.com (must live in the published folder)
   .github/workflows/deploy.yml  # push + manual → fetch, build, deploy to Pages
-  CNAME                         # census.jrow3.com
   docs/design.md
   README.md
 ```
