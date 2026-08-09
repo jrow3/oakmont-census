@@ -32,3 +32,24 @@ export function buildSnapshot(values) {
     age85Plus: (v('B01001_025E') || 0) + (v('B01001_049E') || 0),
   };
 }
+
+export function buildAcsSection(year, values) {
+  return {
+    year,
+    source: `U.S. Census Bureau, ${year} ACS 5-Year Estimates`,
+    snapshot: buildSnapshot(values),
+    groups: buildGroups(values),
+  };
+}
+
+export function assembleData(sections, { sample = false } = {}) {
+  return {
+    meta: {
+      geography: 'Census Tracts 1516.01 + 1516.02, Sonoma County, CA',
+      generatedAt: new Date().toISOString(),
+      sample,
+    },
+    acs2020: sections['2020'],
+    acs2024: sections['2024'],
+  };
+}
