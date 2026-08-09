@@ -40,7 +40,7 @@ function chartCard(kicker, title, chartSvg, captionHtml, legendHtml = '') {
 
 function deltaBadge(current, prior) {
   const d = formatDelta(current, prior);
-  if (!d || d.dir === 'flat') return '';
+  if (!d || d.dir === 'flat' || d.pctChange === 0) return '';
   const arrow = d.dir === 'up' ? '▲' : '▼';
   const sign = d.pctChange > 0 ? '+' : '';
   return `<div class="kpi-delta kpi-delta-${d.dir}">${arrow} ${sign}${d.pctChange}% vs prior</div>`;
