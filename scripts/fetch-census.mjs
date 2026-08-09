@@ -7,8 +7,8 @@
 import { writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { GEO, MEDIAN_VARS, GROUPS } from './census-variables.mjs';
-import { buildGroups, buildSnapshot } from './build-payload.mjs';
+import { GEO, MEDIAN_VARS, GROUPS, ACS_YEARS } from './census-variables.mjs';
+import { buildAcsSection, assembleData } from './build-payload.mjs';
 
 const API_KEY = (process.env.CENSUS_API_KEY || '').trim();
 const CHUNK_SIZE = 44; // Census API caps ~50 variables/request; leaves room for NAME + popVar.
@@ -49,7 +49,7 @@ function aggregate(varCode, rows, idx, popIdx) {
   return anyValid ? sum : null;
 }
 
-async function fetchAllValues() {
+async function fetchAllValues(year) {
   const allVars = [...new Set(Object.values(GROUPS).flatMap((g) => Object.keys(g.variables)))];
   const keyParam = API_KEY ? `&key=${API_KEY}` : '';
   const tractStr = GEO.tracts.join(',');
@@ -59,7 +59,7 @@ async function fetchAllValues() {
     const getVars = [...new Set([GEO.popVar, ...varChunk])];
     const getStr = ['NAME', ...getVars].join(',');
     const url =
-      `https://api.census.gov/data/${GEO.year}/acs/acs5?get=${getStr}` +
+      `https://api.census.gov/data/${year}/acs/acs5?get=${getStr}` +
       `&for=tract:${tractStr}&in=state:${GEO.state}+county:${GEO.county}${keyParam}`;
 
     const res = await fetch(url);
@@ -90,23 +90,18 @@ async function fetchAllValues() {
 }
 
 async function main() {
-  console.log(`Fetching ACS ${GEO.year} 5-year for tracts ${GEO.tracts.join(', ')} ${API_KEY ? '(with key)' : '(no key)'}`);
-  const values = await fetchAllValues();
-  const data = {
-    meta: {
-      source: 'U.S. Census Bureau, 2023 ACS 5-Year Estimates',
-      geography: 'Census Tracts 1516.01 + 1516.02, Sonoma County, CA',
-      year: GEO.year,
-      generatedAt: new Date().toISOString(),
-    },
-    snapshot: buildSnapshot(values),
-    groups: buildGroups(values),
-  };
+  const sections = {};
+  for (const year of ACS_YEARS) {
+    console.log(`Fetching ACS ${year} 5-year for tracts ${GEO.tracts.join(', ')} ${API_KEY ? '(with key)' : '(no key)'}`);
+    const values = await fetchAllValues(year);
+    sections[year] = buildAcsSection(year, values);
+    console.log(`  ${year}: population ${sections[year].snapshot.totalPopulation}, median HH income $${sections[year].snapshot.medianHouseholdIncome}`);
+  }
 
+  const data = assembleData(sections);
   await mkdir(dirname(OUT_PATH), { recursive: true });
   await writeFile(OUT_PATH, JSON.stringify(data, null, 2) + '\n', 'utf8');
   console.log(`Wrote ${OUT_PATH}`);
-  console.log(`Population ${data.snapshot.totalPopulation}, median HH income $${data.snapshot.medianHouseholdIncome}`);
 }
 
 main().catch((err) => {
