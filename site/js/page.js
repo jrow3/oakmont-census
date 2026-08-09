@@ -22,6 +22,20 @@ export async function initPage({ section: sectionKey, compareTo = null }) {
   const compare = compareTo ? data[compareTo]?.snapshot : null;
   renderSnapshot(section, meta, { compare });
 
+  if (data.oakmont2020 && document.getElementById('block-kpis')) {
+    const { renderBlockSnapshot } = await import('./block-snapshot.js');
+    renderBlockSnapshot(data.oakmont2020);
+    const bToggle = document.getElementById('block-explorer-toggle');
+    const bPanel = document.getElementById('block-explorer');
+    let bBuilt = false;
+    bToggle.addEventListener('click', () => {
+      const open = bToggle.getAttribute('aria-expanded') === 'true';
+      bToggle.setAttribute('aria-expanded', String(!open));
+      bPanel.hidden = open;
+      if (!open && !bBuilt) { renderExplorer(bPanel, data.oakmont2020); bBuilt = true; }
+    });
+  }
+
   const toggle = document.getElementById('explorer-toggle');
   const panel = document.getElementById('explorer');
   let built = false;

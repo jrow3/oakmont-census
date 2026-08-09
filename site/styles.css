@@ -324,3 +324,8 @@ td.na { color: var(--line-strong); font-style: italic; }
 .year-nav { display: flex; gap: 1rem; margin-top: 1rem; }
 .year-link { font: 600 .9rem/1 'Public Sans', sans-serif; color: var(--ink-2); text-decoration: none; padding-bottom: 2px; border-bottom: 2px solid transparent; }
 .year-link.active { color: var(--terracotta); border-bottom-color: var(--terracotta); }
+
+.block-panel { max-width: 1080px; margin: 0 auto; padding: 3rem 1.5rem 1rem; border-top: 1px solid var(--line, #e4dbcf); }
+.block-panel-head { margin-bottom: 1.5rem; }
+.block-panel-head h2 { font-family: 'Fraunces', Georgia, serif; font-size: clamp(1.8rem, 4vw, 2.6rem); margin: .2rem 0; }
+.block-panel-head h2 em { color: var(--terracotta); font-style: italic; }

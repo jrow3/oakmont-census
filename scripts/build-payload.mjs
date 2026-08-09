@@ -63,6 +63,7 @@ export function buildBlockSection(values) {
   return {
     vintage: '2020 Decennial (DHC)',
     geography: '76 selected census blocks, Oakmont, Sonoma County, CA',
+    year: '2020-blocks',
     snapshot: {
       totalPopulation: totalPop,
       age65Plus: sum(AGE_65_PLUS),
