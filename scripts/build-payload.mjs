@@ -2,6 +2,7 @@
 // Shared by fetch-census.mjs (real API values) and sample-data.mjs (placeholder values).
 
 import { GROUPS } from './census-variables.mjs';
+import { DEC_GROUPS, AGE_65_PLUS, AGE_85_PLUS } from './decennial-variables.mjs';
 
 export function buildGroups(values) {
   const groups = {};
@@ -42,8 +43,46 @@ export function buildAcsSection(year, values) {
   };
 }
 
-export function assembleData(sections, { sample = false } = {}) {
+export function buildBlockSection(values) {
+  const v = (k) => (values[k] ?? null);
+  const sum = (codes) => codes.reduce((a, c) => a + (values[c] || 0), 0);
+  const pct = (num, den) => (den && num != null ? Number(((num / den) * 100).toFixed(1)) : null);
+
+  const owner = sum(['H4_002N', 'H4_003N']);
+  const renter = v('H4_004N') || 0;
+  const totalPop = v('P1_001N');
+
+  const groups = {};
+  for (const [gid, g] of Object.entries(DEC_GROUPS)) {
+    groups[gid] = { label: g.label, totalKey: g.totalKey, variables: {} };
+    for (const [code, label] of Object.entries(g.variables)) {
+      groups[gid].variables[code] = { label, value: values[code] ?? null };
+    }
+  }
+
   return {
+    vintage: '2020 Decennial (DHC)',
+    geography: '76 selected census blocks, Oakmont, Sonoma County, CA',
+    snapshot: {
+      totalPopulation: totalPop,
+      age65Plus: sum(AGE_65_PLUS),
+      age85Plus: sum(AGE_85_PLUS),
+      pct65Plus: pct(sum(AGE_65_PLUS), totalPop),
+      totalHousingUnits: v('H1_001N'),
+      occupiedUnits: v('H3_002N'),
+      vacantUnits: v('H3_003N'),
+      ownerOccupied: owner,
+      renterOccupied: renter,
+      ownerOccupiedPct: pct(owner, owner + renter),
+      whiteAlonePct: pct(v('P3_002N'), v('P3_001N')),
+      hispanicPct: pct(v('P4_003N'), v('P4_001N')),
+    },
+    groups,
+  };
+}
+
+export function assembleData(sections, { sample = false, oakmont2020 = null } = {}) {
+  const data = {
     meta: {
       geography: 'Census Tracts 1516.01 + 1516.02, Sonoma County, CA',
       generatedAt: new Date().toISOString(),
@@ -52,4 +91,6 @@ export function assembleData(sections, { sample = false } = {}) {
     acs2020: sections['2020'],
     acs2024: sections['2024'],
   };
+  if (oakmont2020) data.oakmont2020 = oakmont2020;
+  return data;
 }
