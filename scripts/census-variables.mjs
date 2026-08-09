@@ -4,12 +4,15 @@
 // fully data-driven.
 
 export const GEO = {
-  year: '2023',
   state: '06',   // California
   county: '097', // Sonoma County
   tracts: ['151601', '151602'], // Oakmont Village census tracts 1516.01 + 1516.02
   popVar: 'B01001_001E',        // total population, used to weight medians
 };
+
+// ACS 5-year vintages to fetch. 2016–2020 is the baseline; 2020–2024 is the current view.
+// The two windows share 2020, so change between them is directional (see method notes).
+export const ACS_YEARS = ['2020', '2024'];
 
 // Medians cannot be summed across tracts; a population-weighted average approximates them.
 export const MEDIAN_VARS = new Set([
