@@ -1,0 +1,91 @@
+// Single source of truth for the 2020 Decennial (DHC) data used by the exact-Oakmont block view.
+// Geography is the frozen block list in oakmont-blocks.json; all variables are 100% counts.
+
+import { readFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const here = dirname(fileURLToPath(import.meta.url));
+
+export const DEC_GEO = {
+  dataset: '2020/dec/dhc',
+  state: '06',
+  county: '097',
+  tracts: ['151601', '151602'],
+};
+
+export async function loadBlockGeoids() {
+  const raw = JSON.parse(await readFile(join(here, 'oakmont-blocks.json'), 'utf8'));
+  return new Set(raw.geoids);
+}
+
+// Age band code groups (Male + Female), used to derive snapshot figures.
+export const AGE_65_PLUS = ['P12_020N','P12_021N','P12_022N','P12_023N','P12_024N','P12_025N',
+                            'P12_044N','P12_045N','P12_046N','P12_047N','P12_048N','P12_049N'];
+export const AGE_85_PLUS = ['P12_025N','P12_049N'];
+export const AGE_UNDER_18 = ['P12_003N','P12_004N','P12_005N','P12_006N',
+                             'P12_027N','P12_028N','P12_029N','P12_030N'];
+
+export const DEC_GROUPS = {
+  age: {
+    label: 'Age & Sex (2020)',
+    totalKey: 'P12_001N',
+    variables: {
+      'P12_001N': 'Total Population', 'P12_002N': 'Male - Total',
+      'P12_003N': 'Male - Under 5 years', 'P12_004N': 'Male - 5 to 9 years',
+      'P12_005N': 'Male - 10 to 14 years', 'P12_006N': 'Male - 15 to 17 years',
+      'P12_007N': 'Male - 18 and 19 years', 'P12_008N': 'Male - 20 years',
+      'P12_009N': 'Male - 21 years', 'P12_010N': 'Male - 22 to 24 years',
+      'P12_011N': 'Male - 25 to 29 years', 'P12_012N': 'Male - 30 to 34 years',
+      'P12_013N': 'Male - 35 to 39 years', 'P12_014N': 'Male - 40 to 44 years',
+      'P12_015N': 'Male - 45 to 49 years', 'P12_016N': 'Male - 50 to 54 years',
+      'P12_017N': 'Male - 55 to 59 years', 'P12_018N': 'Male - 60 and 61 years',
+      'P12_019N': 'Male - 62 to 64 years', 'P12_020N': 'Male - 65 and 66 years',
+      'P12_021N': 'Male - 67 to 69 years', 'P12_022N': 'Male - 70 to 74 years',
+      'P12_023N': 'Male - 75 to 79 years', 'P12_024N': 'Male - 80 to 84 years',
+      'P12_025N': 'Male - 85 years and over', 'P12_026N': 'Female - Total',
+      'P12_027N': 'Female - Under 5 years', 'P12_028N': 'Female - 5 to 9 years',
+      'P12_029N': 'Female - 10 to 14 years', 'P12_030N': 'Female - 15 to 17 years',
+      'P12_031N': 'Female - 18 and 19 years', 'P12_032N': 'Female - 20 years',
+      'P12_033N': 'Female - 21 years', 'P12_034N': 'Female - 22 to 24 years',
+      'P12_035N': 'Female - 25 to 29 years', 'P12_036N': 'Female - 30 to 34 years',
+      'P12_037N': 'Female - 35 to 39 years', 'P12_038N': 'Female - 40 to 44 years',
+      'P12_039N': 'Female - 45 to 49 years', 'P12_040N': 'Female - 50 to 54 years',
+      'P12_041N': 'Female - 55 to 59 years', 'P12_042N': 'Female - 60 and 61 years',
+      'P12_043N': 'Female - 62 to 64 years', 'P12_044N': 'Female - 65 and 66 years',
+      'P12_045N': 'Female - 67 to 69 years', 'P12_046N': 'Female - 70 to 74 years',
+      'P12_047N': 'Female - 75 to 79 years', 'P12_048N': 'Female - 80 to 84 years',
+      'P12_049N': 'Female - 85 years and over',
+    },
+  },
+  race: {
+    label: 'Race (2020)',
+    totalKey: 'P3_001N',
+    variables: {
+      'P3_001N': 'Total Population', 'P3_002N': 'White alone',
+      'P3_003N': 'Black or African American alone', 'P3_004N': 'American Indian and Alaska Native alone',
+      'P3_005N': 'Asian alone', 'P3_006N': 'Native Hawaiian and Other Pacific Islander alone',
+      'P3_007N': 'Some Other Race alone', 'P3_008N': 'Two or More Races',
+    },
+  },
+  hispanic: {
+    label: 'Hispanic or Latino Origin (2020)',
+    totalKey: 'P4_001N',
+    variables: {
+      'P4_001N': 'Total Population', 'P4_002N': 'Not Hispanic or Latino',
+      'P4_003N': 'Hispanic or Latino',
+    },
+  },
+  housing: {
+    label: 'Housing (2020)',
+    totalKey: 'H1_001N',
+    variables: {
+      'H1_001N': 'Total Housing Units', 'H3_002N': 'Occupied', 'H3_003N': 'Vacant',
+      'H4_002N': 'Owner-occupied, with a mortgage or loan', 'H4_003N': 'Owner-occupied, free and clear',
+      'H4_004N': 'Renter-occupied',
+    },
+  },
+};
+
+// Every variable code the fetch needs (deduped).
+export const DEC_VARS = [...new Set(Object.values(DEC_GROUPS).flatMap((g) => Object.keys(g.variables)))];
