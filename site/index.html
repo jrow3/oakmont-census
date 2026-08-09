@@ -23,10 +23,14 @@
       <h1>Community <em>Snapshot</em></h1>
       <p class="lead">A portrait of the neighborhood in numbers, drawn from the U.S. Census Bureau's American Community Survey.</p>
       <div class="masthead-meta">
-        <span class="badge" id="badge-year">2023 ACS 5-Year</span>
+        <span class="badge" id="badge-year">ACS 5-Year</span>
         <span class="meta-dot">·</span>
         <span id="meta-geo">Census Tracts 1516.01 + 1516.02</span>
       </div>
+      <nav class="year-nav" aria-label="Data year">
+        <a href="./index.html" class="year-link active" aria-current="page">2020 Portrait</a>
+        <a href="./changes.html" class="year-link">2024 Update →</a>
+      </nav>
     </div>
   </header>
 
@@ -63,6 +67,9 @@
 
   <div id="tooltip" class="tooltip" role="status" aria-live="off" hidden></div>
 
-  <script type="module" src="./js/app.js"></script>
+  <script type="module">
+    import { initPage, showError } from './js/page.js';
+    initPage({ section: 'acs2020' }).catch(showError);
+  </script>
 </body>
 </html>
