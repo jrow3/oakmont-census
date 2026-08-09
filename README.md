@@ -1,12 +1,15 @@
 # Oakmont Village Community Snapshot
 
-An interactive census snapshot of **Oakmont Village**, an unincorporated 55+ community in Sonoma
-County, California, built from the U.S. Census Bureau's American Community Survey (2023 ACS 5-Year).
+An interactive census portrait of **Oakmont Village**, an unincorporated 55+ community in Sonoma
+County, California, built from the U.S. Census Bureau's American Community Survey and the 2020
+Decennial Census. A 2020 portrait leads; a companion page shows what changed by the 2024 ACS.
 
 **Live:** https://census.jrow3.com
 
-A readable snapshot (headline stats + charts) sits on top; a full data explorer (every variable,
-sortable and searchable, with CSV export) sits behind an expander below.
+Each page pairs a readable snapshot (headline stats + charts) with a full data explorer (every
+variable, sortable and searchable, with CSV export) behind an expander. The 2020 page also carries
+an **Oakmont proper** panel: the same community drawn to its exact block boundary from the 2020
+Decennial Census (100% counts), tighter than the two-tract approximation.
 
 ## How the API key stays secret
 
@@ -16,7 +19,7 @@ Actions fetches the data at build time using a `CENSUS_API_KEY` repository secre
 
 ```
 GitHub Actions (secret: CENSUS_API_KEY)
-  -> node scripts/fetch-census.mjs   (fetch ACS, aggregate the two tracts, write site/data.json)
+  -> node scripts/fetch-census.mjs   (fetch ACS 2020 + 2024 tracts and 2020 DHC Oakmont blocks -> site/data.json)
   -> deploy site/ to GitHub Pages -> census.jrow3.com
 Browser: load page -> fetch('./data.json') -> render. No key, instant.
 ```
@@ -60,23 +63,31 @@ One-time setup:
 
 ```
 scripts/
-  census-variables.mjs   geography + variable/label definitions (single source of truth)
-  fetch-census.mjs       fetch ACS + aggregate the two tracts -> site/data.json (needs a key)
-  build-payload.mjs      shared: shape a {code: value} map into the data.json payload
+  census-variables.mjs   ACS geography + variable/label definitions
+  decennial-variables.mjs 2020 DHC variable/label definitions for the block view
+  fetch-census.mjs       fetch ACS (2020 + 2024) + trigger the block fetch -> site/data.json
+  fetch-blocks.mjs       fetch 2020 DHC data summed over the Oakmont blocks (needs a key)
+  build-payload.mjs      shared: shape {code: value} maps into the data.json sections
   sample-data.mjs        placeholder data for keyless local preview
+  oakmont-blocks.json    the 76 census blocks that make up Oakmont proper
 site/
-  index.html             single page
+  index.html             2020 portrait + Oakmont-proper block panel
+  changes.html           2024 update (year-over-year deltas)
   styles.css             "Sonoma Warm" design system
-  js/                    app, snapshot, explorer, charts, format modules
+  js/                    page, snapshot, block-snapshot, explorer, charts, format modules
   data.json              baked data (committed, refreshed by CI)
   CNAME                  census.jrow3.com
 ```
 
 ## Geography and method
 
-Oakmont Village has no Census place code. Figures aggregate **Census Tracts 1516.01 and 1516.02**
-(Sonoma County), whose combined population (~5,800) closely tracks Oakmont's footprint, far tighter
-than the surrounding ZIP code. Count variables are summed across the two tracts; medians (income,
-rent, home value) are population-weighted approximations.
+Oakmont Village has no Census place code. The ACS pages aggregate **Census Tracts 1516.01 and
+1516.02** (Sonoma County), whose combined population closely tracks Oakmont's footprint; counts are
+summed across the two tracts and medians are population-weighted approximations. The **Oakmont
+proper** panel instead sums the 2020 Decennial Census over 76 hand-selected blocks matching the
+community's actual boundary — geographically exact, but counts only (no income, education, or home
+values). The 2016–2020 and 2020–2024 ACS 5-year periods overlap in 2020, so year-over-year change is
+directional, not precise.
 
-Source: U.S. Census Bureau, 2023 American Community Survey 5-Year Estimates.
+Sources: U.S. Census Bureau, American Community Survey 5-Year Estimates (2016–2020 and 2020–2024);
+2020 Census Demographic and Housing Characteristics (DHC).
