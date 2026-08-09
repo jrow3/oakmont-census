@@ -3,8 +3,8 @@
 
 import { fmt, escapeHtml } from './format.js';
 
-export function renderExplorer(root, data) {
-  const groups = data.groups;
+export function renderExplorer(root, section) {
+  const groups = section.groups;
   const gids = Object.keys(groups);
   const state = { tab: gids[0], filter: '', sort: '' };
 
@@ -146,12 +146,12 @@ export function renderExplorer(root, data) {
     });
   });
   root.querySelector('#dl-current').addEventListener('click', () => {
-    triggerCsv([['Group', 'Variable', 'Label', 'Count', '% of Total'], ...toCsvRows(state.tab)], `oakmont_${state.tab}.csv`);
+    triggerCsv([['Group', 'Variable', 'Label', 'Count', '% of Total'], ...toCsvRows(state.tab)], `oakmont_${section.year}_${state.tab}.csv`);
   });
   root.querySelector('#dl-all').addEventListener('click', () => {
     const csv = [['Group', 'Variable', 'Label', 'Count', '% of Total']];
     for (const gid of gids) csv.push(...toCsvRows(gid));
-    triggerCsv(csv, 'oakmont_census_all_data.csv');
+    triggerCsv(csv, `oakmont_${section.year}_all_data.csv`);
   });
 
   setActiveTab();

@@ -316,3 +316,7 @@ td.na { color: var(--line-strong); font-style: italic; }
   .chart-grid { grid-template-columns: 1fr; }
   main, .explorer-section { padding-left: 16px; padding-right: 16px; }
 }
+
+.kpi-delta { margin-top: .35rem; font-size: .8rem; font-weight: 600; }
+.kpi-delta-up { color: var(--teal); }
+.kpi-delta-down { color: var(--terracotta); }

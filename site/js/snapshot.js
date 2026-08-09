@@ -1,7 +1,7 @@
 // Renders the public-facing snapshot: KPI tiles, four charts with plain-English captions,
 // and a row of callouts. Reads the baked data.json payload.
 
-import { fmt, currency, pct, escapeHtml } from './format.js';
+import { fmt, currency, pct, escapeHtml, formatDelta } from './format.js';
 import { horizontalBars, stackedBar, wireTooltips } from './charts.js';
 
 const val = (group, code) => (group?.variables?.[code]?.value ?? null);
@@ -24,8 +24,8 @@ const INCOME_LABELS = ['< $10k', '$10-15k', '$15-20k', '$20-25k', '$25-30k', '$3
 
 const YEAR_BUILT_CODES = ['002', '003', '004', '005', '006', '007', '008', '009', '010', '011'].map((n) => `B25034_${n}E`);
 
-function kpiTile(label, value, sub) {
-  return `<div class="kpi reveal"><div class="kpi-label">${label}</div><div class="kpi-value">${value}</div><div class="kpi-sub">${sub}</div></div>`;
+function kpiTile(label, value, sub, delta = '') {
+  return `<div class="kpi reveal"><div class="kpi-label">${label}</div><div class="kpi-value">${value}</div><div class="kpi-sub">${sub}</div>${delta}</div>`;
 }
 
 function chartCard(kicker, title, chartSvg, captionHtml, legendHtml = '') {
@@ -38,22 +38,33 @@ function chartCard(kicker, title, chartSvg, captionHtml, legendHtml = '') {
   </div>`;
 }
 
-export function renderSnapshot(data) {
-  const s = data.snapshot;
-  const g = data.groups;
+function deltaBadge(current, prior) {
+  const d = formatDelta(current, prior);
+  if (!d || d.dir === 'flat') return '';
+  const arrow = d.dir === 'up' ? '▲' : '▼';
+  const sign = d.pctChange > 0 ? '+' : '';
+  return `<div class="kpi-delta kpi-delta-${d.dir}">${arrow} ${sign}${d.pctChange}% vs prior</div>`;
+}
+
+export function renderSnapshot(section, meta, opts = {}) {
+  const s = section.snapshot;
+  const g = section.groups;
+  const compare = opts.compare || null; // prior-year snapshot, or null
 
   // ── KPI tiles ──
+  const yr = `${section.year} ACS 5-Year`;
+  const cd = (key) => (compare ? deltaBadge(s[key], compare[key]) : '');
   document.getElementById('kpis').innerHTML = [
-    kpiTile('Population', fmt(s.totalPopulation), '2023 ACS 5-Year'),
-    kpiTile('Median household income', currency(s.medianHouseholdIncome), 'Per year'),
-    kpiTile('Per-capita income', currency(s.perCapitaIncome), 'Per year'),
-    kpiTile('Median home value', currency(s.medianHomeValue), 'Owner-occupied'),
-    kpiTile('Median gross rent', currency(s.medianGrossRent), 'Per month'),
-    kpiTile('Owner-occupied', pct(s.ownerOccupiedPct), 'Of occupied homes'),
-    kpiTile('Total housing units', fmt(s.totalHousingUnits), 'All units'),
-    kpiTile('Unemployment', pct(s.unemploymentRate), 'Civilian labor force'),
-    kpiTile('Poverty rate', pct(s.povertyRate), 'Below poverty line'),
-    kpiTile('Age 85+', fmt(s.age85Plus), 'Residents'),
+    kpiTile('Population', fmt(s.totalPopulation), yr, cd('totalPopulation')),
+    kpiTile('Median household income', currency(s.medianHouseholdIncome), 'Per year', cd('medianHouseholdIncome')),
+    kpiTile('Per-capita income', currency(s.perCapitaIncome), 'Per year', cd('perCapitaIncome')),
+    kpiTile('Median home value', currency(s.medianHomeValue), 'Owner-occupied', cd('medianHomeValue')),
+    kpiTile('Median gross rent', currency(s.medianGrossRent), 'Per month', cd('medianGrossRent')),
+    kpiTile('Owner-occupied', pct(s.ownerOccupiedPct), 'Of occupied homes', cd('ownerOccupiedPct')),
+    kpiTile('Total housing units', fmt(s.totalHousingUnits), 'All units', cd('totalHousingUnits')),
+    kpiTile('Unemployment', pct(s.unemploymentRate), 'Civilian labor force', cd('unemploymentRate')),
+    kpiTile('Poverty rate', pct(s.povertyRate), 'Below poverty line', cd('povertyRate')),
+    kpiTile('Age 85+', fmt(s.age85Plus), 'Residents', cd('age85Plus')),
   ].join('');
 
   // ── Charts ──
@@ -136,5 +147,5 @@ export function renderSnapshot(data) {
     `These figures aggregate Census Tracts 1516.01 and 1516.02 in Sonoma County, whose combined population ` +
     `(~${fmt(s.totalPopulation)}) closely tracks Oakmont's footprint. Counts are summed across the two tracts; ` +
     `medians (income, rent, home value) are population-weighted approximations. ` +
-    `Source: ${escapeHtml(data.meta.source)}.`;
+    `Source: ${escapeHtml(section.source)}.`;
 }
