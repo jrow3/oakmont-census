@@ -50,7 +50,7 @@ export function buildBlockSection(values) {
 
   const owner = sum(['H4_002N', 'H4_003N']);
   const renter = v('H4_004N') || 0;
-  const totalPop = v('P1_001N');
+  const totalPop = v('P12_001N');
 
   const groups = {};
   for (const [gid, g] of Object.entries(DEC_GROUPS)) {

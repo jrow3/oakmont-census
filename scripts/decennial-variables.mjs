@@ -23,8 +23,6 @@ export async function loadBlockGeoids() {
 export const AGE_65_PLUS = ['P12_020N','P12_021N','P12_022N','P12_023N','P12_024N','P12_025N',
                             'P12_044N','P12_045N','P12_046N','P12_047N','P12_048N','P12_049N'];
 export const AGE_85_PLUS = ['P12_025N','P12_049N'];
-export const AGE_UNDER_18 = ['P12_003N','P12_004N','P12_005N','P12_006N',
-                             'P12_027N','P12_028N','P12_029N','P12_030N'];
 
 export const DEC_GROUPS = {
   age: {

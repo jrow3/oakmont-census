@@ -29,7 +29,9 @@ import { buildBlockSection } from './build-payload.mjs';
 
 test('buildBlockSection derives 65+/85+/tenure from summed DHC values', () => {
   const v = {
-    P1_001N: 5000, P12_001N: 5000,
+    // fixture mirrors the codes fetch-blocks actually returns — no P1_001N, so a total-pop
+    // read that isn't in DEC_VARS would surface here as a null instead of passing silently
+    P12_001N: 5000,
     P12_024N: 100, P12_025N: 50, P12_048N: 120, P12_049N: 70, // some 80-84 and 85+
     P12_020N: 0, P12_021N: 0, P12_022N: 0, P12_023N: 0, P12_044N: 0, P12_045N: 0, P12_046N: 0, P12_047N: 0,
     P3_001N: 5000, P3_002N: 4800,

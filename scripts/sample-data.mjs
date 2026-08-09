@@ -75,7 +75,7 @@ const values2020 = Object.fromEntries(
   Object.entries(values).map(([k, v]) => [k, typeof v === 'number' ? Math.round(v * 0.94) : v])
 );
 
-const decValues = { P1_001N: 4994, P12_001N: 4994, P3_001N: 4994, P3_002N: 4790,
+const decValues = { P12_001N: 4994, P3_001N: 4994, P3_002N: 4790,
   P4_001N: 4994, P4_002N: 4810, P4_003N: 184, H1_001N: 3451, H3_002N: 3130, H3_003N: 321,
   H4_002N: 1540, H4_003N: 1390, H4_004N: 200 };
 for (const c of AGE_65_PLUS) decValues[c] = 300;             // heavy 65+ presence
