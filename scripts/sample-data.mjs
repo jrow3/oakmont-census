@@ -6,7 +6,6 @@ import { writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { MEDIAN_VARS, GROUPS } from './census-variables.mjs';
-import { buildGroups, buildSnapshot } from './build-payload.mjs';
 
 const OUT_PATH = join(dirname(fileURLToPath(import.meta.url)), '..', 'site', 'data.json');
 
@@ -66,18 +65,20 @@ for (const g of Object.values(GROUPS)) {
   }
 }
 
-const data = {
-  meta: {
-    source: 'SAMPLE / placeholder data - not real census figures. Run fetch-census.mjs with CENSUS_API_KEY for real numbers.',
-    geography: 'Census Tracts 1516.01 + 1516.02, Sonoma County, CA',
-    year: '2023',
-    generatedAt: new Date().toISOString(),
-    sample: true,
-  },
-  snapshot: buildSnapshot(values),
-  groups: buildGroups(values),
-};
+import { buildAcsSection, assembleData } from './build-payload.mjs';
+
+// `values` (built above) is the 2024 sample. Make a 2020 sample ~6% smaller on counts and
+// medians so the 2024 page shows non-zero deltas in offline preview.
+const values2024 = values;
+const values2020 = Object.fromEntries(
+  Object.entries(values).map(([k, v]) => [k, typeof v === 'number' ? Math.round(v * 0.94) : v])
+);
+
+const data = assembleData(
+  { '2020': buildAcsSection('2020', values2020), '2024': buildAcsSection('2024', values2024) },
+  { sample: true }
+);
 
 await mkdir(dirname(OUT_PATH), { recursive: true });
 await writeFile(OUT_PATH, JSON.stringify(data, null, 2) + '\n', 'utf8');
-console.log(`Wrote sample ${OUT_PATH} (placeholder data, population ${data.snapshot.totalPopulation})`);
+console.log(`Wrote sample ${OUT_PATH} (population 2020 ${data.acs2020.snapshot.totalPopulation}, 2024 ${data.acs2024.snapshot.totalPopulation})`);
