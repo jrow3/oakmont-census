@@ -1,7 +1,7 @@
 {
   "meta": {
     "geography": "Census Tracts 1516.01 + 1516.02, Sonoma County, CA",
-    "generatedAt": "2026-08-09T21:40:48.426Z",
+    "generatedAt": "2026-08-09T22:37:11.405Z",
     "sample": true
   },
   "acs2020": {
@@ -1479,6 +1479,314 @@
           "B17001_028E": {
             "label": "Below poverty - Female, 75 and over",
             "value": 165
+          }
+        }
+      }
+    }
+  },
+  "oakmont2020": {
+    "vintage": "2020 Decennial (DHC)",
+    "geography": "76 selected census blocks, Oakmont, Sonoma County, CA",
+    "snapshot": {
+      "totalPopulation": 4994,
+      "age65Plus": 3600,
+      "age85Plus": 600,
+      "pct65Plus": 72.1,
+      "totalHousingUnits": 3451,
+      "occupiedUnits": 3130,
+      "vacantUnits": 321,
+      "ownerOccupied": 2930,
+      "renterOccupied": 200,
+      "ownerOccupiedPct": 93.6,
+      "whiteAlonePct": 95.9,
+      "hispanicPct": 3.7
+    },
+    "groups": {
+      "age": {
+        "label": "Age & Sex (2020)",
+        "totalKey": "P12_001N",
+        "variables": {
+          "P12_001N": {
+            "label": "Total Population",
+            "value": 4994
+          },
+          "P12_002N": {
+            "label": "Male - Total",
+            "value": 40
+          },
+          "P12_003N": {
+            "label": "Male - Under 5 years",
+            "value": 40
+          },
+          "P12_004N": {
+            "label": "Male - 5 to 9 years",
+            "value": 40
+          },
+          "P12_005N": {
+            "label": "Male - 10 to 14 years",
+            "value": 40
+          },
+          "P12_006N": {
+            "label": "Male - 15 to 17 years",
+            "value": 40
+          },
+          "P12_007N": {
+            "label": "Male - 18 and 19 years",
+            "value": 40
+          },
+          "P12_008N": {
+            "label": "Male - 20 years",
+            "value": 40
+          },
+          "P12_009N": {
+            "label": "Male - 21 years",
+            "value": 40
+          },
+          "P12_010N": {
+            "label": "Male - 22 to 24 years",
+            "value": 40
+          },
+          "P12_011N": {
+            "label": "Male - 25 to 29 years",
+            "value": 40
+          },
+          "P12_012N": {
+            "label": "Male - 30 to 34 years",
+            "value": 40
+          },
+          "P12_013N": {
+            "label": "Male - 35 to 39 years",
+            "value": 40
+          },
+          "P12_014N": {
+            "label": "Male - 40 to 44 years",
+            "value": 40
+          },
+          "P12_015N": {
+            "label": "Male - 45 to 49 years",
+            "value": 40
+          },
+          "P12_016N": {
+            "label": "Male - 50 to 54 years",
+            "value": 40
+          },
+          "P12_017N": {
+            "label": "Male - 55 to 59 years",
+            "value": 40
+          },
+          "P12_018N": {
+            "label": "Male - 60 and 61 years",
+            "value": 40
+          },
+          "P12_019N": {
+            "label": "Male - 62 to 64 years",
+            "value": 40
+          },
+          "P12_020N": {
+            "label": "Male - 65 and 66 years",
+            "value": 300
+          },
+          "P12_021N": {
+            "label": "Male - 67 to 69 years",
+            "value": 300
+          },
+          "P12_022N": {
+            "label": "Male - 70 to 74 years",
+            "value": 300
+          },
+          "P12_023N": {
+            "label": "Male - 75 to 79 years",
+            "value": 300
+          },
+          "P12_024N": {
+            "label": "Male - 80 to 84 years",
+            "value": 300
+          },
+          "P12_025N": {
+            "label": "Male - 85 years and over",
+            "value": 300
+          },
+          "P12_026N": {
+            "label": "Female - Total",
+            "value": 40
+          },
+          "P12_027N": {
+            "label": "Female - Under 5 years",
+            "value": 40
+          },
+          "P12_028N": {
+            "label": "Female - 5 to 9 years",
+            "value": 40
+          },
+          "P12_029N": {
+            "label": "Female - 10 to 14 years",
+            "value": 40
+          },
+          "P12_030N": {
+            "label": "Female - 15 to 17 years",
+            "value": 40
+          },
+          "P12_031N": {
+            "label": "Female - 18 and 19 years",
+            "value": 40
+          },
+          "P12_032N": {
+            "label": "Female - 20 years",
+            "value": 40
+          },
+          "P12_033N": {
+            "label": "Female - 21 years",
+            "value": 40
+          },
+          "P12_034N": {
+            "label": "Female - 22 to 24 years",
+            "value": 40
+          },
+          "P12_035N": {
+            "label": "Female - 25 to 29 years",
+            "value": 40
+          },
+          "P12_036N": {
+            "label": "Female - 30 to 34 years",
+            "value": 40
+          },
+          "P12_037N": {
+            "label": "Female - 35 to 39 years",
+            "value": 40
+          },
+          "P12_038N": {
+            "label": "Female - 40 to 44 years",
+            "value": 40
+          },
+          "P12_039N": {
+            "label": "Female - 45 to 49 years",
+            "value": 40
+          },
+          "P12_040N": {
+            "label": "Female - 50 to 54 years",
+            "value": 40
+          },
+          "P12_041N": {
+            "label": "Female - 55 to 59 years",
+            "value": 40
+          },
+          "P12_042N": {
+            "label": "Female - 60 and 61 years",
+            "value": 40
+          },
+          "P12_043N": {
+            "label": "Female - 62 to 64 years",
+            "value": 40
+          },
+          "P12_044N": {
+            "label": "Female - 65 and 66 years",
+            "value": 300
+          },
+          "P12_045N": {
+            "label": "Female - 67 to 69 years",
+            "value": 300
+          },
+          "P12_046N": {
+            "label": "Female - 70 to 74 years",
+            "value": 300
+          },
+          "P12_047N": {
+            "label": "Female - 75 to 79 years",
+            "value": 300
+          },
+          "P12_048N": {
+            "label": "Female - 80 to 84 years",
+            "value": 300
+          },
+          "P12_049N": {
+            "label": "Female - 85 years and over",
+            "value": 300
+          }
+        }
+      },
+      "race": {
+        "label": "Race (2020)",
+        "totalKey": "P3_001N",
+        "variables": {
+          "P3_001N": {
+            "label": "Total Population",
+            "value": 4994
+          },
+          "P3_002N": {
+            "label": "White alone",
+            "value": 4790
+          },
+          "P3_003N": {
+            "label": "Black or African American alone",
+            "value": 40
+          },
+          "P3_004N": {
+            "label": "American Indian and Alaska Native alone",
+            "value": 40
+          },
+          "P3_005N": {
+            "label": "Asian alone",
+            "value": 40
+          },
+          "P3_006N": {
+            "label": "Native Hawaiian and Other Pacific Islander alone",
+            "value": 40
+          },
+          "P3_007N": {
+            "label": "Some Other Race alone",
+            "value": 40
+          },
+          "P3_008N": {
+            "label": "Two or More Races",
+            "value": 40
+          }
+        }
+      },
+      "hispanic": {
+        "label": "Hispanic or Latino Origin (2020)",
+        "totalKey": "P4_001N",
+        "variables": {
+          "P4_001N": {
+            "label": "Total Population",
+            "value": 4994
+          },
+          "P4_002N": {
+            "label": "Not Hispanic or Latino",
+            "value": 4810
+          },
+          "P4_003N": {
+            "label": "Hispanic or Latino",
+            "value": 184
+          }
+        }
+      },
+      "housing": {
+        "label": "Housing (2020)",
+        "totalKey": "H1_001N",
+        "variables": {
+          "H1_001N": {
+            "label": "Total Housing Units",
+            "value": 3451
+          },
+          "H3_002N": {
+            "label": "Occupied",
+            "value": 3130
+          },
+          "H3_003N": {
+            "label": "Vacant",
+            "value": 321
+          },
+          "H4_002N": {
+            "label": "Owner-occupied, with a mortgage or loan",
+            "value": 1540
+          },
+          "H4_003N": {
+            "label": "Owner-occupied, free and clear",
+            "value": 1390
+          },
+          "H4_004N": {
+            "label": "Renter-occupied",
+            "value": 200
           }
         }
       }

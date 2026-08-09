@@ -65,7 +65,8 @@ for (const g of Object.values(GROUPS)) {
   }
 }
 
-import { buildAcsSection, assembleData } from './build-payload.mjs';
+import { buildAcsSection, assembleData, buildBlockSection } from './build-payload.mjs';
+import { DEC_GROUPS, AGE_65_PLUS } from './decennial-variables.mjs';
 
 // `values` (built above) is the 2024 sample. Make a 2020 sample ~6% smaller on counts and
 // medians so the 2024 page shows non-zero deltas in offline preview.
@@ -74,9 +75,18 @@ const values2020 = Object.fromEntries(
   Object.entries(values).map(([k, v]) => [k, typeof v === 'number' ? Math.round(v * 0.94) : v])
 );
 
+const decValues = { P1_001N: 4994, P12_001N: 4994, P3_001N: 4994, P3_002N: 4790,
+  P4_001N: 4994, P4_002N: 4810, P4_003N: 184, H1_001N: 3451, H3_002N: 3130, H3_003N: 321,
+  H4_002N: 1540, H4_003N: 1390, H4_004N: 200 };
+for (const c of AGE_65_PLUS) decValues[c] = 300;             // heavy 65+ presence
+for (const g of Object.values(DEC_GROUPS)) for (const c of Object.keys(g.variables)) {
+  if (decValues[c] == null) decValues[c] = 40;               // fill remaining bands
+}
+const oakmont2020 = buildBlockSection(decValues);
+
 const data = assembleData(
   { '2020': buildAcsSection('2020', values2020), '2024': buildAcsSection('2024', values2024) },
-  { sample: true }
+  { sample: true, oakmont2020 }
 );
 
 await mkdir(dirname(OUT_PATH), { recursive: true });
