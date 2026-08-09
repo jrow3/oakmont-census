@@ -8,7 +8,8 @@ import { writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { GEO, MEDIAN_VARS, GROUPS, ACS_YEARS } from './census-variables.mjs';
-import { buildAcsSection, assembleData } from './build-payload.mjs';
+import { buildAcsSection, assembleData, buildBlockSection } from './build-payload.mjs';
+import { fetchBlockValues } from './fetch-blocks.mjs';
 
 const API_KEY = (process.env.CENSUS_API_KEY || '').trim();
 const CHUNK_SIZE = 44; // Census API caps ~50 variables/request; leaves room for NAME + popVar.
@@ -98,7 +99,12 @@ async function main() {
     console.log(`  ${year}: population ${sections[year].snapshot.totalPopulation}, median HH income $${sections[year].snapshot.medianHouseholdIncome}`);
   }
 
-  const data = assembleData(sections);
+  console.log('Fetching 2020 DHC for the Oakmont blocks');
+  const blockValues = await fetchBlockValues();
+  const oakmont2020 = buildBlockSection(blockValues);
+  console.log(`  Oakmont blocks: population ${oakmont2020.snapshot.totalPopulation}, ${oakmont2020.snapshot.pct65Plus}% age 65+`);
+
+  const data = assembleData(sections, { oakmont2020 });
   await mkdir(dirname(OUT_PATH), { recursive: true });
   await writeFile(OUT_PATH, JSON.stringify(data, null, 2) + '\n', 'utf8');
   console.log(`Wrote ${OUT_PATH}`);
