@@ -1,4 +1,4 @@
-// Fetch ACS 2023 5-year data for Oakmont Village (Sonoma County tracts 1516.01 + 1516.02),
+// Fetch ACS 2020 and 2024 5-year data for Oakmont Village (Sonoma County tracts 1516.01 + 1516.02),
 // aggregate across the two tracts, and write site/data.json.
 //
 // Runs in GitHub Actions with CENSUS_API_KEY as a secret. The key is optional: the Census API

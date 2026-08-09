@@ -142,10 +142,12 @@ export function renderSnapshot(section, meta, opts = {}) {
   ].join('');
 
   // ── Method note ──
+  const overlapNote = compare
+    ? ` The 2016–2020 and 2020–2024 ACS 5-year periods overlap in 2020, so year-over-year change shown here is directional, not a precise measurement.`
+    : '';
   document.getElementById('method-note').innerHTML =
     `<strong>About this data.</strong> Oakmont Village is an unincorporated community with no Census place code. ` +
-    `These figures aggregate Census Tracts 1516.01 and 1516.02 in Sonoma County, whose combined population ` +
-    `(~${fmt(s.totalPopulation)}) closely tracks Oakmont's footprint. Counts are summed across the two tracts; ` +
-    `medians (income, rent, home value) are population-weighted approximations. ` +
-    `Source: ${escapeHtml(section.source)}.`;
+    `These figures aggregate Census Tracts 1516.01 and 1516.02 in Sonoma County (${section.year} ACS 5-Year), ` +
+    `whose combined population (~${fmt(s.totalPopulation)}) closely tracks Oakmont's footprint. Counts are summed ` +
+    `across the two tracts; medians are population-weighted approximations.${overlapNote} Source: ${escapeHtml(section.source)}.`;
 }
