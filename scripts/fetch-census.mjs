@@ -10,11 +10,14 @@ import { fileURLToPath } from 'node:url';
 import { GEO, MEDIAN_VARS, GROUPS, ACS_YEARS } from './census-variables.mjs';
 import { buildAcsSection, assembleData, buildBlockSection } from './build-payload.mjs';
 import { fetchBlockValues } from './fetch-blocks.mjs';
+import { fetchAcsMirror } from './fetch-acs-mirror.mjs';
+import { fetchBlockMirror } from './fetch-blocks.mjs';
 
 const API_KEY = (process.env.CENSUS_API_KEY || '').trim();
 const CHUNK_SIZE = 44; // Census API caps ~50 variables/request; leaves room for NAME + popVar.
 
 const OUT_PATH = join(dirname(fileURLToPath(import.meta.url)), '..', 'site', 'data.json');
+const EXPLORER_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'site', 'explorer');
 
 function chunk(arr, size) {
   const out = [];
@@ -108,6 +111,17 @@ async function main() {
   await mkdir(dirname(OUT_PATH), { recursive: true });
   await writeFile(OUT_PATH, JSON.stringify(data, null, 2) + '\n', 'utf8');
   console.log(`Wrote ${OUT_PATH}`);
+
+  await mkdir(EXPLORER_DIR, { recursive: true });
+  for (const year of ACS_YEARS) {
+    console.log(`Building ACS ${year} full mirror`);
+    const mirror = await fetchAcsMirror(year);
+    await writeFile(join(EXPLORER_DIR, `acs${year}.json`), JSON.stringify(mirror) + '\n', 'utf8');
+  }
+  console.log('Building block DHC full mirror');
+  const blockMirror = await fetchBlockMirror();
+  await writeFile(join(EXPLORER_DIR, 'blocks2020.json'), JSON.stringify(blockMirror) + '\n', 'utf8');
+  console.log(`Wrote mirror files to ${EXPLORER_DIR}`);
 }
 
 main().catch((err) => {
