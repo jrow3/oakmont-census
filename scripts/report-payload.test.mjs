@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { deriveIncomeSources, deriveHouseholdSize, deriveAgeSex } from './report-payload.mjs';
-import { buildReportSection, deriveEducation, deriveIncomeByTenure, deriveMarital, deriveHomeValue, derivePlaceOfBirth } from './report-payload.mjs';
+import { buildReportSection, deriveEducation, deriveIncomeByTenure, deriveMarital, deriveHomeValue, derivePlaceOfBirth, deriveRace } from './report-payload.mjs';
 
 // minimal mirror-style table map
 const T = (obj) => {
@@ -112,6 +112,21 @@ test('deriveHomeValue groups B25075 by the verified bracket boundaries', () => {
   assert.equal(band('$500-750k'), 60);   // _023 ($500k-749,999)
   assert.equal(band('$750k-1M'), 15);    // _024
   assert.equal(band('$1M +'), 10);       // _027 ($2M+)
+});
+
+test('deriveRace maps P3 race codes and P4 Hispanic origin from the block section', () => {
+  const block = { groups: {
+    race: { variables: { P3_001N: { value: 1000 }, P3_002N: { value: 950 }, P3_003N: { value: 12 }, P3_005N: { value: 20 } } },
+    hispanic: { variables: { P4_001N: { value: 1000 }, P4_003N: { value: 37 } } },
+  } };
+  const r = deriveRace(block);
+  assert.equal(r.total, 1000);
+  const white = r.groups.find((g) => g.label === 'White');
+  assert.equal(white.count, 950);
+  assert.equal(white.pct, 95);
+  assert.equal(r.groups.find((g) => g.label === 'Black').count, 12);
+  assert.equal(r.groups.find((g) => g.label === 'Asian').count, 20);
+  assert.equal(r.hispanicPct, 3.7);
 });
 
 test('derivePlaceOfBirth breaks out Census regions of origin', () => {

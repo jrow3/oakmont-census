@@ -1,6 +1,6 @@
 // Renders the Community Report from data.report2020. Sourced, honest, modeled on Jim's 2010 report.
 import { fmt, currency, pct, escapeHtml } from './format.js';
-import { horizontalBars, stackedBar, pairedBars, groupedBars, wireTooltips } from './charts.js';
+import { horizontalBars, pairedBars, groupedBars, wireTooltips } from './charts.js';
 
 const num = (n) => (n == null ? '—' : fmt(n));
 const money = (n) => (n == null ? '—' : currency(n));
