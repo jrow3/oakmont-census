@@ -4,6 +4,9 @@
 import { renderSnapshot } from './snapshot.js';
 import { renderExplorer } from './explorer.js';
 
+const FEATURED_ACS = ['B01001', 'B01002', 'B19001', 'B19019', 'B25003', 'B25034', 'B15003', 'B02001'];
+const FEATURED_BLOCK = ['P12', 'P3', 'P4', 'H4'];
+
 export async function initPage({ section: sectionKey, compareTo = null }) {
   const res = await fetch('./data.json', { cache: 'no-cache' });
   if (!res.ok) throw new Error(`Could not load data.json (${res.status})`);
@@ -32,7 +35,10 @@ export async function initPage({ section: sectionKey, compareTo = null }) {
       const open = bToggle.getAttribute('aria-expanded') === 'true';
       bToggle.setAttribute('aria-expanded', String(!open));
       bPanel.hidden = open;
-      if (!open && !bBuilt) { renderExplorer(bPanel, data.oakmont2020); bBuilt = true; }
+      if (!open && !bBuilt) {
+        bBuilt = true;
+        renderExplorer(bPanel, { explorerFile: data.oakmont2020.explorerFile, featured: FEATURED_BLOCK, year: '2020-blocks' });
+      }
     });
   }
 
@@ -43,7 +49,10 @@ export async function initPage({ section: sectionKey, compareTo = null }) {
     const open = toggle.getAttribute('aria-expanded') === 'true';
     toggle.setAttribute('aria-expanded', String(!open));
     panel.hidden = open;
-    if (!open && !built) { renderExplorer(panel, section); built = true; }
+    if (!open && !built) {
+      built = true;
+      renderExplorer(panel, { explorerFile: section.explorerFile, featured: FEATURED_ACS, year: section.year });
+    }
   });
 }
 
