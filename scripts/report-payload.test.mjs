@@ -66,12 +66,14 @@ test('deriveMarital uses the parent now-married totals (no double count of _005/
   assert.equal(m.pctMarried, 70); // (300 + 400) / 1000, NOT adding the _005/_006 sub-rows
 });
 
-test('deriveEducation bounds totals to the 25+ population and computes shares', () => {
-  const tables = T({ B15003_001E: 1000, B15003_022E: 300, B15003_023E: 150, B15003_024E: 30, B15003_025E: 20 });
+test('deriveEducation covers the 45+ population (B15001, 45-64 + 65+) and computes shares', () => {
+  // Male 45-64 block (start _027): total 100, bachelor's +6 = _033, graduate +7 = _034; other blocks empty.
+  const tables = T({ B15001_027E: 100, B15001_035E: 0, B15001_068E: 0, B15001_076E: 0,
+    B15001_030E: 30, B15001_033E: 40, B15001_034E: 20 });
   const e = deriveEducation(tables);
-  assert.equal(e.total25plus, 1000);
-  assert.equal(e.pctBachelorsPlus, 50); // (300+150+30+20)/1000
-  assert.equal(e.pctGraduatePlus, 20);  // (150+30+20)/1000
+  assert.equal(e.total45plus, 100);
+  assert.equal(e.pctBachelorsPlus, 60); // (40 bachelor's + 20 graduate) / 100
+  assert.equal(e.pctGraduatePlus, 20);  // 20 graduate / 100
 });
 
 test('deriveIncomeByTenure exposes owner/renter medians', () => {
@@ -88,7 +90,7 @@ test('buildReportSection assembles a labeled, sourced payload', () => {
     B19013_001E: 78534, B19301_001E: 66078, B25077_001E: 707911,
     B19055_001E: 3370, B19055_002E: 2706, B19065_001E: 2706 * 23479,
     B25009_003E: 900, B25009_011E: 300, B25009_004E: 1200, B25009_012E: 150,
-    B15003_001E: 5673, B15003_022E: 2000, B15003_023E: 900, B15003_024E: 300, B15003_025E: 163,
+    B15001_027E: 900, B15001_035E: 2100, B15001_068E: 800, B15001_076E: 1200,
     B25119_002E: 85057, B25119_003E: 66691, B25118_002E: 2490, B25118_014E: 880,
   });
   const block = { snapshot: { totalPopulation: 4994, medianAge: 74.3, ownerOccupiedPct: 93.6 },
@@ -99,7 +101,7 @@ test('buildReportSection assembles a labeled, sourced payload', () => {
   assert.equal(r.summary.pct55Plus, 80); // 40 of 50 in the age bands are 55+ (P12_003N is under-55)
   assert.equal(r.summary.medianHouseholdIncome, 78534);
   assert.ok(Array.isArray(r.incomeSources) && r.incomeSources.length === 7);
-  assert.equal(r.education.total25plus, 5673);
+  assert.equal(r.education.total45plus, 5000); // 900 + 2100 + 800 + 1200
   assert.match(r.vintage, /2020/);
 });
 

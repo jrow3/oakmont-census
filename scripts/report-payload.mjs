@@ -68,24 +68,28 @@ export function deriveAgeSex(blockSection) {
   });
 }
 
-const BACHELORS_PLUS = ['B15003_022E', 'B15003_023E', 'B15003_024E', 'B15003_025E'];
-const GRADUATE_PLUS = ['B15003_023E', 'B15003_024E', 'B15003_025E'];
+// Education for the population 45+ (B15001), summed over the 45-64 and 65+ blocks of each sex.
+// The ACS has no 55 boundary; 45+ is the closest cut that drops the younger non-Oakmont fringe.
+// Attainment offsets within each age block: +1 <9th, +2 9-12th, +3 HS, +4 some college, +5
+// associate, +6 bachelor's, +7 graduate/professional (B15001 doesn't split master's/doctorate).
+const EDU45_STARTS = ['B15001_027E', 'B15001_035E', 'B15001_068E', 'B15001_076E'];
+const eduCode = (start, off) => `B15001_${String(Number(start.slice(7, 10)) + off).padStart(3, '0')}E`;
+const eduOff = (off) => EDU45_STARTS.map((s) => eduCode(s, off));
+const codesForOffsets = (offsets) => offsets.flatMap((o) => eduOff(o));
 const EDU_BANDS = [
-  { label: 'High school diploma or less', codes: ['B15003_002E','B15003_003E','B15003_004E','B15003_005E','B15003_006E','B15003_007E','B15003_008E','B15003_009E','B15003_010E','B15003_011E','B15003_012E','B15003_013E','B15003_014E','B15003_015E','B15003_016E','B15003_017E','B15003_018E'] },
-  { label: 'Some college / associate', codes: ['B15003_019E','B15003_020E','B15003_021E'] },
-  { label: "Bachelor's degree", codes: ['B15003_022E'] },
-  { label: "Master's degree", codes: ['B15003_023E'] },
-  { label: 'Professional degree', codes: ['B15003_024E'] },
-  { label: 'Doctorate', codes: ['B15003_025E'] },
+  { label: 'High school diploma or less', offsets: [1, 2, 3] },
+  { label: 'Some college / associate', offsets: [4, 5] },
+  { label: "Bachelor's degree", offsets: [6] },
+  { label: 'Graduate or professional degree', offsets: [7] },
 ];
 
 export function deriveEducation(tables) {
-  const total = av(tables, 'B15003_001E');
+  const total = sum(tables, EDU45_STARTS);
   return {
-    total25plus: total,
-    pctBachelorsPlus: pctOf(sum(tables, BACHELORS_PLUS), total),
-    pctGraduatePlus: pctOf(sum(tables, GRADUATE_PLUS), total),
-    bands: EDU_BANDS.map((b) => ({ label: b.label, count: sum(tables, b.codes), pct: pctOf(sum(tables, b.codes), total) })),
+    total45plus: total,
+    pctBachelorsPlus: pctOf(sum(tables, codesForOffsets([6, 7])), total),
+    pctGraduatePlus: pctOf(sum(tables, eduOff(7)), total),
+    bands: EDU_BANDS.map((b) => ({ label: b.label, count: sum(tables, codesForOffsets(b.offsets)), pct: pctOf(sum(tables, codesForOffsets(b.offsets)), total) })),
   };
 }
 

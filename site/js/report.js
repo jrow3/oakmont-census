@@ -66,14 +66,21 @@ function ageSexSection(r) {
   const items = rows.map((b) => ({ label: b.band, left: b.male, right: b.female }));
   const totalM = rows.reduce((a, b) => a + b.male, 0), totalF = rows.reduce((a, b) => a + b.female, 0);
   const ratio = totalM ? (totalF / totalM).toFixed(1) : '—';
-  const tableRows = rows.map((b) => `<tr><td>${b.band}</td><td class="num">${num(b.male)}</td><td class="num">${num(b.female)}</td><td class="num">${num(b.total)}</td></tr>`).join('');
+  const u = under55 || { male: 0, female: 0, total: 0 };
+  const cells = (m, f, t) => `<td class="num">${num(m)}</td><td class="num">${num(f)}</td><td class="num">${num(t)}</td>`;
+  const bandRows = rows.map((b) => `<tr><td>${b.band}</td>${cells(b.male, b.female, b.total)}</tr>`).join('');
   return section('age', 'Age & gender', 'Older, and mostly women',
     'U.S. Census Bureau, 2020 Decennial Census (exact Oakmont blocks).',
     `<div class="legend-row"><span class="legend-item"><span class="legend-swatch" style="background:var(--teal)"></span>Male</span><span class="legend-item"><span class="legend-swatch" style="background:var(--terracotta)"></span>Female</span></div>
      ${pairedBars({ items, ariaLabel: 'Population by age band and sex' })}
      <div class="table-wrap"><table class="report-table"><thead><tr><th>Age</th><th>Male</th><th>Female</th><th>Total</th></tr></thead>
-       <tbody>${tableRows}<tr class="total-row"><td>55+ total</td><td class="num">${num(totalM)}</td><td class="num">${num(totalF)}</td><td class="num">${num(totalM + totalF)}</td></tr></tbody></table></div>
-     <p class="chart-caption">Among residents 55 and over, women outnumber men about <strong>${ratio}:1</strong>, and the gap widens with age. The blocks also count about ${num(under55 ? under55.total : 0)} residents under 55 (younger spouses, family, and caregivers), not included in the bands above.</p>`);
+       <tbody>
+         <tr><td>Under 55</td>${cells(u.male, u.female, u.total)}</tr>
+         ${bandRows}
+         <tr class="total-row"><td>55 and over</td>${cells(totalM, totalF, totalM + totalF)}</tr>
+         <tr class="total-row"><td>All residents</td>${cells(u.male + totalM, u.female + totalF, u.total + totalM + totalF)}</tr>
+       </tbody></table></div>
+     <p class="chart-caption">Among residents 55 and over, women outnumber men about <strong>${ratio}:1</strong>, and the gap widens with age. The ${num(u.total)} residents under 55 (younger spouses, family, and caregivers) are listed in the top row; the chart above shows the 55+ community.</p>`);
 }
 
 function householdSection(r) {
@@ -96,7 +103,8 @@ function incomeSection(r) {
        <div class="stat"><div class="stat-value">${money(i.nonfamilyMedian)}</div><div class="stat-label">Median non-family income</div></div>
      </div>
      ${horizontalBars({ items, ariaLabel: 'Households by income bracket', format: fmt })}
-     <p class="chart-caption">Family households (typically couples) earn well above people living alone — the same split the 2010 report found.</p>`);
+     <p class="chart-caption">Family households (typically couples) earn well above people living alone — the same split the 2010 report found.</p>
+     <p class="report-note"><strong>Household vs. family:</strong> a <em>household</em> is everyone in a home, including a person living alone; a <em>family</em> is a householder plus relatives. The family median runs highest, and the household median sits below it because it also counts the many one-person homes.</p>`);
 }
 
 function incomeSourcesSection(r) {
@@ -135,20 +143,21 @@ function homeValueSection(r) {
   return section('home-value', 'Home value', 'Where owner-estimated values land',
     'U.S. Census Bureau, 2020 ACS 5-Year (tracts). Owner-reported values (table B25075/B25077).',
     `<p class="report-note">Median owner-estimated home value: <strong>${money(r.homeValue.median)}</strong>.</p>
-     ${horizontalBars({ items, ariaLabel: 'Owner-occupied homes by value', format: fmt })}`);
+     ${horizontalBars({ items, ariaLabel: 'Owner-occupied homes by value', format: fmt })}
+     <p class="chart-caption">A home value exists only for the ${num(r.incomeByTenure.ownerHouseholds)} <strong>owner-occupied</strong> homes shown here — renters report no value and vacant units aren't counted. Oakmont's full housing stock (roughly 3,000+ units, including the ${num(r.incomeByTenure.renterHouseholds)} rentals) is reflected in the tenure figures above.</p>`);
 }
 
 function educationSection(r) {
   const e = r.education;
   const items = e.bands.map((b) => ({ label: b.label, value: b.count }));
   return section('education', 'Education', 'A highly educated community',
-    'U.S. Census Bureau, 2020 ACS 5-Year (tracts). Population 25 and over (table B15003).',
+    'U.S. Census Bureau, 2020 ACS 5-Year (tracts). Population 45 and over (table B15001).',
     `<div class="stat-row">
        <div class="stat"><div class="stat-value">${percent(e.pctBachelorsPlus)}</div><div class="stat-label">Bachelor's degree or higher</div></div>
        <div class="stat"><div class="stat-value">${percent(e.pctGraduatePlus)}</div><div class="stat-label">Graduate or professional degree</div></div>
      </div>
      ${horizontalBars({ items, ariaLabel: 'Educational attainment', format: fmt })}
-     <p class="chart-caption">Totals are bounded by the ${num(e.total25plus)} residents aged 25+ — unlike the 2020 draft, which reported more degrees than people.</p>`);
+     <p class="chart-caption">Figures cover the ${num(e.total45plus)} residents aged 45 and over — the closest Census age cut to Oakmont's 55+ population (attainment isn't published with a 55 line), which drops the younger non-Oakmont fringe.</p>`);
 }
 
 function raceSection(r) {
