@@ -388,3 +388,5 @@ table.income-grid .ig-total { font-weight: 600; background: var(--wash, #faf6f0)
   .src-head, .src-row { grid-template-columns: 1fr 3.2rem 5rem; }
   .src-head .src-label, .src-row .src-bar { display: none; }
 }
+/* Report age table: center every column so headers sit over their numbers. */
+.report-table th, .report-table td, .report-table td.num { text-align: center; }

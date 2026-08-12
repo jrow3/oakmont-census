@@ -80,8 +80,10 @@ export function pairedBars({ items, leftColor = 'var(--teal)', rightColor = 'var
   const ROWH = 26, PADY = 8, LABELW = 64, CENTERGAP = 8;
   const half = (W - LABELW - CENTERGAP) / 2;
   const H = PADY * 2 + items.length * ROWH;
-  const lw = barWidths(items.map((d) => d.left), half);
-  const rw = barWidths(items.map((d) => d.right), half);
+  // Both sexes share ONE scale so a larger count always draws a longer bar.
+  const maxV = Math.max(1, ...items.flatMap((d) => [d.left || 0, d.right || 0]));
+  const lw = items.map((d) => Math.round(((d.left || 0) / maxV) * half));
+  const rw = items.map((d) => Math.round(((d.right || 0) / maxV) * half));
   const centerX = LABELW + half;
   const rows = items.map((d, i) => {
     const y = PADY + i * ROWH, by = y + 4, bh = ROWH - 12, mid = y + ROWH / 2 + 4;

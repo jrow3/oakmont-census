@@ -1,4 +1,4 @@
-// Renders the Community Report from data.report2020. Sourced, honest, modeled on Jim's 2010 report.
+// Renders the Community Report from data.report2020. Sourced, honest, modeled on the 2010 report.
 import { fmt, currency, pct, escapeHtml } from './format.js';
 import { horizontalBars, pairedBars, groupedBars, wireTooltips } from './charts.js';
 
@@ -57,7 +57,7 @@ function summarySection(r) {
   return section('summary', 'Who are we?', 'A 55+ community, in numbers',
     'Counts from the 2020 Decennial Census (exact Oakmont blocks); dollar figures from the 2020 ACS (tracts).',
     `<div class="kpi-grid">${tiles}</div>
-     <p class="report-note">Oakmont is an active-adult 55+ community. Fewer than a handful of residents are under 55; the age bands below begin at 55.</p>`);
+     <p class="report-note">Oakmont is an active-adult 55+ community: ${percent(s.pct55Plus)} of residents counted here are 55 or older. (The census counts everyone living in the blocks, including younger spouses, family, and caregivers.) The age bands in this report begin at 55.</p>`);
 }
 
 function ageSexSection(r) {
@@ -65,14 +65,15 @@ function ageSexSection(r) {
   const under55 = r.ageSex.find((b) => b.band === 'Under 55');
   const items = rows.map((b) => ({ label: b.band, left: b.male, right: b.female }));
   const totalM = rows.reduce((a, b) => a + b.male, 0), totalF = rows.reduce((a, b) => a + b.female, 0);
+  const ratio = totalM ? (totalF / totalM).toFixed(1) : '—';
   const tableRows = rows.map((b) => `<tr><td>${b.band}</td><td class="num">${num(b.male)}</td><td class="num">${num(b.female)}</td><td class="num">${num(b.total)}</td></tr>`).join('');
   return section('age', 'Age & gender', 'Older, and mostly women',
     'U.S. Census Bureau, 2020 Decennial Census (exact Oakmont blocks).',
     `<div class="legend-row"><span class="legend-item"><span class="legend-swatch" style="background:var(--teal)"></span>Male</span><span class="legend-item"><span class="legend-swatch" style="background:var(--terracotta)"></span>Female</span></div>
      ${pairedBars({ items, ariaLabel: 'Population by age band and sex' })}
-     <div class="table-wrap"><table><thead><tr><th>Age</th><th class="num">Male</th><th class="num">Female</th><th class="num">Total</th></tr></thead>
+     <div class="table-wrap"><table class="report-table"><thead><tr><th>Age</th><th>Male</th><th>Female</th><th>Total</th></tr></thead>
        <tbody>${tableRows}<tr class="total-row"><td>55+ total</td><td class="num">${num(totalM)}</td><td class="num">${num(totalF)}</td><td class="num">${num(totalM + totalF)}</td></tr></tbody></table></div>
-     <p class="chart-caption">Women outnumber men roughly <strong>2:1</strong>, and the gap widens with age. Under-55 residents (about ${num(under55 ? under55.total : 0)}) are shown for completeness only.</p>`);
+     <p class="chart-caption">Among residents 55 and over, women outnumber men about <strong>${ratio}:1</strong>, and the gap widens with age. The blocks also count about ${num(under55 ? under55.total : 0)} residents under 55 (younger spouses, family, and caregivers), not included in the bands above.</p>`);
 }
 
 function householdSection(r) {
@@ -95,7 +96,7 @@ function incomeSection(r) {
        <div class="stat"><div class="stat-value">${money(i.nonfamilyMedian)}</div><div class="stat-label">Median non-family income</div></div>
      </div>
      ${horizontalBars({ items, ariaLabel: 'Households by income bracket', format: fmt })}
-     <p class="chart-caption">Family households (typically couples) earn well above people living alone — the same split Jim's 2010 report found.</p>`);
+     <p class="chart-caption">Family households (typically couples) earn well above people living alone — the same split the 2010 report found.</p>`);
 }
 
 function incomeSourcesSection(r) {
