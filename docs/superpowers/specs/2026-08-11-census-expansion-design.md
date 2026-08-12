@@ -59,13 +59,21 @@ calls `renderBlockMap()` when `#block-map` is present. Leaflet CSS/JS tags are a
 
 ## Feature 3 — Income × household-size grid
 
-The mirror (Feature 4) already pulls B19019, so this is a **featured rendering** on top of mirrored data.
 New module `site/js/income-grid.js` renders a 2-axis grid in the explorer's Featured section:
 
 - **y-axis:** income brackets (the B19001 bracket ranges already used on the site).
 - **x-axis:** household size (1, 2, 3, 4, 5, 6, 7+).
-- **cell:** for each size column, the bracket-row its median income (B19019) falls into is heat-shaded on a
-  sequential scale, with the exact median $ labeled.
+- **cell:** the estimated **number of households** in that income×size group.
+
+**Revision (2026-08-11):** the first cut showed each size's *median income* (B19019) heat-shaded at the
+bracket it lands in. John wanted per-cell **counts** ("how many fall into that group") instead. A real
+household-count crosstab of income × size is not published at the tract level (only PUMS at the wider
+PUMA has it), so the interior is **estimated**: the row totals (income counts, B19001) and column totals
+(household-size counts, B25009) are the real Census marginals, and the interior cells are modeled by
+**iterative proportional fitting** to fit those marginals *and* each size's median income (B19019), so
+larger households correctly concentrate at higher incomes. The interior is clearly labeled an estimate;
+the pure `estimateJointCounts` IPF function is unit-tested (marginals preserved, correlation direction).
+This adds table **B25009** to the curated vars and sample data.
 
 Appears on both ACS pages; absent from the decennial block explorer (no income at block level).
 

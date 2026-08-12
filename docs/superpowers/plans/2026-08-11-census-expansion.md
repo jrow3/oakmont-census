@@ -1175,7 +1175,8 @@ main().catch((err) => { console.error(err.message); process.exitCode = 1; });
 
 - [ ] **Step 2: Run it and verify 76 features**
 
-Run: `node scripts/fetch-block-geometry.mjs && node -e "const g=require('./site/blocks.geojson'); console.log('features:', g.features.length)"`
+Run: `node scripts/fetch-block-geometry.mjs && node -e "const fs=require('fs'); const g=JSON.parse(fs.readFileSync('site/blocks.geojson','utf8')); console.log('features:', g.features.length)"`
+(Note: use `JSON.parse(fs.readFileSync(...))`, not `require('./…geojson')` — Node has no `.geojson` require handler.) In this repo TIGERweb's `tigerWMS_Census2020` names the layer `Census Blocks` (id 10), not `2020 Census Blocks`, so `findBlockLayer` uses `/^Census Blocks$/i`.
 Expected: `Wrote 76 block polygons ...` then `features: 76`. If the count is not 76 or TIGERweb layer/field discovery fails, inspect `node -e "import('./scripts/census-http.mjs').then(m=>m.getJson('https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Census2020/MapServer/layers?f=json')).then(j=>console.log(j.layers.map(l=>l.id+':'+l.name).join('\n')))"` to confirm the layer name, and adjust the regex in `findBlockLayer`.
 
 - [ ] **Step 3: Commit (including the generated geojson)**
@@ -1186,6 +1187,12 @@ git commit -m "Fetch and commit TIGERweb geometry for the 76 Oakmont blocks"
 ```
 
 ## Task 14: Income × household-size grid
+
+> **Superseded by Task 21 (2026-08-11).** This task built a grid of each size's *median income* (B19019).
+> John then asked for per-cell **household counts** instead. The shipped grid (`site/js/income-grid.js`)
+> shows an estimated count crosstab via iterative proportional fitting over real marginals (income B19001,
+> household size B25009) anchored by per-size medians (B19019). See the spec's Feature 3 revision note. The
+> steps below are kept for history; the live module differs.
 
 **Files:**
 - Create: `site/js/income-grid.js`
