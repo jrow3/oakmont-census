@@ -152,7 +152,13 @@ in well under a second; only the selected table renders to the DOM, and global s
 ## Risks / caveats
 
 - **Aggregation heuristic** mis-handles a few exotic variables (weighting where a different universe would
-  be more correct). Only two tracts, so the error is small; disclosed in the method note.
+  be more correct). Only two tracts, so the error is small; disclosed in the method note. Known cases in the
+  full mirror: derived-statistic tables whose labels lack a median/mean/ratio keyword — e.g. **B19080**
+  (income quintile upper limits) and **B19082** (aggregate income shares) — are summed rather than left
+  per-tract, so their values read high. Obscure tables; the whole mirror is disclaimed as tract-aggregated.
+- **Income-by-size grid margins** come from two real tables with slightly different universes (households
+  B19001 vs occupied units B25009), so the right-hand income totals and the bottom-right grand total can
+  differ by ~1–2% (ACS estimation noise). Both are shown as-is; the caption states they are real counts.
 - **Block DHC coverage** is limited to block-published tables — the finer DHC cross-tabs don't exist at
   block resolution. The explorer notes what was skipped.
 - **Race-iterated tables** are mostly zero/suppressed for Oakmont; the "hide empty" default keeps the

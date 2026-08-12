@@ -42,7 +42,7 @@ export async function renderExplorer(root, { explorerFile, featured = [], year =
   if (tables.B19019) {
     import('./income-grid.js')
       .then(({ renderIncomeGrid }) => renderIncomeGrid(root.querySelector('#income-grid'), tables))
-      .catch(() => {}); // grid module lands in a later task; degrade gracefully until then
+      .catch(() => {}); // the grid is optional; a load/render failure must not break the explorer
   }
 
   const catList = root.querySelector('#cat-list');
