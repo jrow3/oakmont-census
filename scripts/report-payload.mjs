@@ -89,9 +89,9 @@ export function deriveEducation(tables) {
   };
 }
 
-// B25118: owner brackets _003.._013, renter _015.._025 (same 11 income bands each).
+// B25118: owner brackets _003.._013, renter _015.._025 (same 11 income bands each; verified labels).
 const TENURE_INCOME_BANDS = [
-  '< $10k','$10-15k','$15-20k','$20-25k','$25-35k','$35-50k','$50-75k','$75-100k','$100-150k','$150-200k','$200k +',
+  '< $5k','$5-10k','$10-15k','$15-20k','$20-25k','$25-35k','$35-50k','$50-75k','$75-100k','$100-150k','$150k +',
 ];
 const ownerCode = (i) => `B25118_${String(3 + i).padStart(3, '0')}E`;
 const renterCode = (i) => `B25118_${String(15 + i).padStart(3, '0')}E`;
@@ -127,12 +127,13 @@ export function deriveIncome(tables) {
   };
 }
 
+// B25075 has 26 value brackets (_002.._027); grouped here against the verified boundaries.
 const VALUE_BANDS = [
-  { label: '< $300k', codes: ['B25075_002E','B25075_003E','B25075_004E','B25075_005E','B25075_006E','B25075_007E','B25075_008E','B25075_009E','B25075_010E','B25075_011E','B25075_012E','B25075_013E','B25075_014E'] },
-  { label: '$300-500k', codes: ['B25075_015E','B25075_016E','B25075_017E','B25075_018E'] },
-  { label: '$500-750k', codes: ['B25075_019E','B25075_020E'] },
-  { label: '$750k-1M', codes: ['B25075_021E'] },
-  { label: '$1M +', codes: ['B25075_022E','B25075_023E','B25075_024E','B25075_025E'] },
+  { label: '< $300k', codes: ['B25075_002E','B25075_003E','B25075_004E','B25075_005E','B25075_006E','B25075_007E','B25075_008E','B25075_009E','B25075_010E','B25075_011E','B25075_012E','B25075_013E','B25075_014E','B25075_015E','B25075_016E','B25075_017E','B25075_018E','B25075_019E','B25075_020E'] },
+  { label: '$300-500k', codes: ['B25075_021E','B25075_022E'] },
+  { label: '$500-750k', codes: ['B25075_023E'] },
+  { label: '$750k-1M', codes: ['B25075_024E'] },
+  { label: '$1M +', codes: ['B25075_025E','B25075_026E','B25075_027E'] },
 ];
 
 export function deriveHomeValue(tables) {
@@ -170,12 +171,23 @@ export function deriveMarital(tables) {
   return { total, pctMarried: pctOf(nowMarried, total), pctWidowed: pctOf(widowed, total), pctDivorced: pctOf(divorced, total), pctNever: pctOf(never, total) };
 }
 
+// B05002 breaks "born in another state" into Census regions (_005-_008) — the surrogate for
+// "where did you move from" both prior reports used.
+const BIRTH_REGIONS = [
+  { label: 'California', code: 'B05002_003E' },
+  { label: 'Northeast', code: 'B05002_005E' },
+  { label: 'Midwest', code: 'B05002_006E' },
+  { label: 'South', code: 'B05002_007E' },
+  { label: 'West (other states)', code: 'B05002_008E' },
+  { label: 'Foreign-born', code: 'B05002_013E' },
+];
+
 export function derivePlaceOfBirth(tables) {
   const total = av(tables, 'B05002_001E');
-  const bornInState = av(tables, 'B05002_003E');
-  const bornOtherState = av(tables, 'B05002_004E');
-  const foreign = av(tables, 'B05002_013E');
-  return { total, pctBornInCalifornia: pctOf(bornInState, total), pctBornOtherState: pctOf(bornOtherState, total), pctForeignBorn: pctOf(foreign, total) };
+  return {
+    total,
+    regions: BIRTH_REGIONS.map((r) => ({ label: r.label, count: av(tables, r.code), pct: pctOf(av(tables, r.code), total) })),
+  };
 }
 
 function deriveSummary(tables, block, householdSize) {

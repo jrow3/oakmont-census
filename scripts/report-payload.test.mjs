@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { deriveIncomeSources, deriveHouseholdSize, deriveAgeSex } from './report-payload.mjs';
-import { buildReportSection, deriveEducation, deriveIncomeByTenure, deriveMarital } from './report-payload.mjs';
+import { buildReportSection, deriveEducation, deriveIncomeByTenure, deriveMarital, deriveHomeValue, derivePlaceOfBirth } from './report-payload.mjs';
 
 // minimal mirror-style table map
 const T = (obj) => {
@@ -100,4 +100,24 @@ test('buildReportSection assembles a labeled, sourced payload', () => {
   assert.ok(Array.isArray(r.incomeSources) && r.incomeSources.length === 7);
   assert.equal(r.education.total25plus, 5673);
   assert.match(r.vintage, /2020/);
+});
+
+test('deriveHomeValue groups B25075 by the verified bracket boundaries', () => {
+  const tables = T({ B25075_001E: 100, B25075_002E: 5, B25075_021E: 10, B25075_023E: 60, B25075_024E: 15, B25075_027E: 10 });
+  const hv = deriveHomeValue(tables);
+  const band = (label) => hv.distribution.find((d) => d.label === label).count;
+  assert.equal(band('< $300k'), 5);      // _002 only
+  assert.equal(band('$300-500k'), 10);   // _021 ($300k-399,999)
+  assert.equal(band('$500-750k'), 60);   // _023 ($500k-749,999)
+  assert.equal(band('$750k-1M'), 15);    // _024
+  assert.equal(band('$1M +'), 10);       // _027 ($2M+)
+});
+
+test('derivePlaceOfBirth breaks out Census regions of origin', () => {
+  const tables = T({ B05002_001E: 100, B05002_003E: 45, B05002_005E: 13, B05002_006E: 15, B05002_007E: 6, B05002_008E: 8, B05002_013E: 12 });
+  const p = derivePlaceOfBirth(tables);
+  assert.equal(p.regions.length, 6);
+  assert.equal(p.regions.find((r) => r.label === 'California').pct, 45);
+  assert.equal(p.regions.find((r) => r.label === 'Midwest').pct, 15);
+  assert.equal(p.regions.find((r) => r.label === 'Foreign-born').pct, 12);
 });
