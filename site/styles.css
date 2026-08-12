@@ -362,3 +362,29 @@ table.income-grid .ig-total { font-weight: 600; background: var(--wash, #faf6f0)
 .block-map { height: 420px; width: 100%; border-radius: 14px; border: 1px solid var(--line, #e5ddd3); }
 .block-map-card figcaption { margin-top: .6rem; font: 400 .85rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); text-align: center; }
 .leaflet-container { background: var(--wash, #faf6f0); font: inherit; }
+
+/* ── Community Report ── */
+.report { max-width: 920px; margin: 0 auto; padding: 2rem 1.25rem 4rem; display: flex; flex-direction: column; gap: 2.5rem; }
+.report-section { display: flex; flex-direction: column; gap: 1rem; }
+.report-head h2 { margin: .15rem 0 0; font: 600 1.6rem/1.1 'Fraunces', serif; }
+.report-source { margin: 0; font: 400 .8rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); }
+.report-note { font: 400 .95rem/1.5 'Public Sans', sans-serif; color: var(--ink, #2b2621); }
+.kpi-src { margin-top: .35rem; font: 500 .68rem 'Public Sans', sans-serif; letter-spacing: .04em; text-transform: uppercase; color: var(--teal); }
+.stat-row { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+.stat-value { font: 600 1.5rem 'Fraunces', serif; color: var(--terracotta); }
+.stat-label { font: 400 .85rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); }
+.total-row td { font-weight: 700; border-top: 2px solid var(--line, #e5ddd3); }
+.src-head, .src-row { display: grid; grid-template-columns: 12rem 1fr 4rem 6rem; align-items: center; gap: .75rem; }
+.src-head { font: 600 .72rem 'Public Sans', sans-serif; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-soft, #6b625a); }
+.src-list { display: flex; flex-direction: column; gap: .5rem; }
+.src-label { font: 500 .9rem 'Public Sans', sans-serif; }
+.src-bar { background: var(--wash, #faf6f0); border-radius: 999px; height: .7rem; overflow: hidden; }
+.src-bar i { display: block; height: 100%; background: var(--terracotta); border-radius: 999px; }
+.src-pct { font: 600 .9rem 'Public Sans', sans-serif; text-align: right; font-variant-numeric: tabular-nums; }
+.src-mean { font: 400 .85rem 'Public Sans', sans-serif; text-align: right; color: var(--ink-soft, #6b625a); font-variant-numeric: tabular-nums; }
+.method-body { display: flex; flex-direction: column; gap: .75rem; font: 400 .95rem/1.55 'Public Sans', sans-serif; }
+.method-body ul { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: .4rem; }
+@media (max-width: 620px) {
+  .src-head, .src-row { grid-template-columns: 1fr 3.2rem 5rem; }
+  .src-head .src-label, .src-row .src-bar { display: none; }
+}

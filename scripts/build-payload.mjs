@@ -90,7 +90,7 @@ export function buildBlockSection(values) {
   };
 }
 
-export function assembleData(sections, { sample = false, oakmont2020 = null } = {}) {
+export function assembleData(sections, { sample = false, oakmont2020 = null, report2020 = null } = {}) {
   const data = {
     meta: {
       geography: 'Census Tracts 1516.01 + 1516.02, Sonoma County, CA',
@@ -101,5 +101,6 @@ export function assembleData(sections, { sample = false, oakmont2020 = null } = 
     acs2024: sections['2024'],
   };
   if (oakmont2020) data.oakmont2020 = oakmont2020;
+  if (report2020) data.report2020 = report2020;
   return data;
 }

@@ -68,6 +68,52 @@ export function stackedBar({ segments, format = fmt, ariaLabel = 'Proportion' })
   return `<svg class="chart-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escapeHtml(ariaLabel)}">${parts}</svg>`;
 }
 
+// Scale a series of values to [0, maxW] against the series maximum. Exported for tests.
+export function barWidths(values, maxW) {
+  const max = Math.max(1, ...values.map((v) => v || 0));
+  return values.map((v) => Math.round(((v || 0) / max) * maxW));
+}
+
+// Paired horizontal bars: left (male) grows leftward from center, right (female) rightward.
+// items: [{ label, left, right }].
+export function pairedBars({ items, leftColor = 'var(--teal)', rightColor = 'var(--terracotta)', format = fmt, ariaLabel = 'Paired bars' }) {
+  const ROWH = 26, PADY = 8, LABELW = 64, CENTERGAP = 8;
+  const half = (W - LABELW - CENTERGAP) / 2;
+  const H = PADY * 2 + items.length * ROWH;
+  const lw = barWidths(items.map((d) => d.left), half);
+  const rw = barWidths(items.map((d) => d.right), half);
+  const centerX = LABELW + half;
+  const rows = items.map((d, i) => {
+    const y = PADY + i * ROWH, by = y + 4, bh = ROWH - 12, mid = y + ROWH / 2 + 4;
+    return `<g class="bar-group" data-tip="${escapeHtml(`<b>${escapeHtml(d.label)}</b><br>Male ${format(d.left)} · Female ${format(d.right)}`)}">
+      <rect x="0" y="${y}" width="${W}" height="${ROWH}" fill="transparent" />
+      <rect class="bar-fill" x="${centerX - lw[i]}" y="${by}" width="${lw[i]}" height="${bh}" rx="3" fill="${leftColor}" />
+      <rect class="bar-fill" x="${centerX + CENTERGAP}" y="${by}" width="${rw[i]}" height="${bh}" rx="3" fill="${rightColor}" />
+      <text class="bar-label" x="${LABELW - 8}" y="${mid}" text-anchor="end" font-size="12">${escapeHtml(d.label)}</text>
+    </g>`;
+  }).join('');
+  return `<svg class="chart-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escapeHtml(ariaLabel)}">${rows}</svg>`;
+}
+
+// Grouped horizontal bars: two series (a, b) per row. items: [{ label, a, b }].
+export function groupedBars({ items, aColor = 'var(--terracotta)', bColor = 'var(--teal)', format = fmt, ariaLabel = 'Grouped bars' }) {
+  const ROWH = 34, PADY = 8, LABELW = 150, VALUEW = 8;
+  const areaW = W - LABELW - VALUEW;
+  const H = PADY * 2 + items.length * ROWH;
+  const aw = barWidths(items.map((d) => d.a), areaW);
+  const bw = barWidths(items.map((d) => d.b), areaW);
+  const rows = items.map((d, i) => {
+    const y = PADY + i * ROWH, bh = 9;
+    return `<g class="bar-group" data-tip="${escapeHtml(`<b>${escapeHtml(d.label)}</b><br>${format(d.a)} · ${format(d.b)}`)}">
+      <rect x="0" y="${y}" width="${W}" height="${ROWH}" fill="transparent" />
+      <text class="bar-label" x="${LABELW - 10}" y="${y + 13}" text-anchor="end" font-size="12">${escapeHtml(d.label)}</text>
+      <rect class="bar-fill" x="${LABELW}" y="${y + 4}" width="${aw[i]}" height="${bh}" rx="3" fill="${aColor}" />
+      <rect class="bar-fill" x="${LABELW}" y="${y + 4 + bh + 2}" width="${bw[i]}" height="${bh}" rx="3" fill="${bColor}" />
+    </g>`;
+  }).join('');
+  return `<svg class="chart-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escapeHtml(ariaLabel)}">${rows}</svg>`;
+}
+
 // Attach one delegated tooltip for every [data-tip] mark inside root.
 let tipEl;
 export function wireTooltips(root) {

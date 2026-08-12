@@ -126,3 +126,12 @@ directional, not precise.
 
 Sources: U.S. Census Bureau, American Community Survey 5-Year Estimates (2016–2020 and 2020–2024);
 2020 Census Demographic and Housing Characteristics (DHC).
+
+## Community Report (2020)
+
+`site/report.html` is a reliable recreation of the LRPC demographic report, modeled on Jim Ouimette's
+trusted 2010 report and built from **Census Bureau data only** (no AARP survey, no commercial data). It
+uses a hybrid geography: exact-block **2020 Decennial** counts (age, sex, race, owner/renter, population)
+and tract **2020 ACS 5-Year** estimates (income, income sources, education, home value, tenure, marital
+status, place of birth). `scripts/report-payload.mjs` derives the compact `report2020` block baked into
+`site/data.json` from the 2020 ACS mirror and the Decennial block section; `site/js/report.js` renders it.
