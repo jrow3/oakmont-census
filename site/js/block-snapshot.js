@@ -28,7 +28,7 @@ export function renderBlockSnapshot(section) {
   document.getElementById('block-kpis').innerHTML = [
     kpiTile('Population', fmt(s.totalPopulation), 'Exact boundary'),
     kpiTile('Age 65+', pct(s.pct65Plus), 'Of residents'),
-    kpiTile('Age 85+', fmt(s.age85Plus), 'Residents'),
+    kpiTile('Median age', s.medianAge != null ? String(s.medianAge) : '—', 'Years'),
     kpiTile('Housing units', fmt(s.totalHousingUnits), 'All units'),
     kpiTile('Owner-occupied', pct(s.ownerOccupiedPct), 'Of occupied homes'),
     kpiTile('Hispanic or Latino', pct(s.hispanicPct), 'Of residents'),

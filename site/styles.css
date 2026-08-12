@@ -329,3 +329,36 @@ td.na { color: var(--line-strong); font-style: italic; }
 .block-panel-head { margin-bottom: 1.5rem; }
 .block-panel-head h2 { font-family: 'Fraunces', Georgia, serif; font-size: clamp(1.8rem, 4vw, 2.6rem); margin: .2rem 0; }
 .block-panel-head h2 em { color: var(--terracotta); font-style: italic; }
+
+/* ── Explorer catalog ── */
+.explorer-loading { padding: 1.5rem; color: var(--ink-soft, #6b625a); }
+.explorer-featured { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin: 1rem 0; }
+.featured-label { font: 600 .75rem/1 'Public Sans', sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft, #6b625a); margin-right: .25rem; }
+.chip { border: 1px solid var(--line, #e5ddd3); background: var(--paper, #fff); border-radius: 999px; padding: .35rem .8rem; font: 500 .85rem 'Public Sans', sans-serif; cursor: pointer; }
+.chip:hover { border-color: var(--terracotta); color: var(--terracotta); }
+.catalog-controls { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin: 1rem 0 .5rem; }
+.catalog-controls #cat-search { flex: 1 1 260px; padding: .5rem .75rem; border: 1px solid var(--line, #e5ddd3); border-radius: 8px; font: 400 .9rem 'Public Sans', sans-serif; }
+.hide-empty { font: 400 .85rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); display: inline-flex; gap: .4rem; align-items: center; }
+.catalog-list { max-height: 320px; overflow-y: auto; border: 1px solid var(--line, #e5ddd3); border-radius: 10px; margin-bottom: 1rem; }
+.catalog-count { padding: .5rem .75rem; font: 600 .75rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); border-bottom: 1px solid var(--line, #e5ddd3); }
+.catalog-item { display: flex; gap: .75rem; width: 100%; text-align: left; padding: .5rem .75rem; background: none; border: 0; border-bottom: 1px solid var(--line, #f0eae2); cursor: pointer; font: 400 .85rem 'Public Sans', sans-serif; }
+.catalog-item:hover, .catalog-item.active { background: var(--wash, #faf6f0); }
+.catalog-id { font-family: ui-monospace, monospace; color: var(--terracotta); font-weight: 600; flex: 0 0 5.5rem; }
+.catalog-concept { color: var(--ink, #2b2621); }
+.table-view-head { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin: 1rem 0 .5rem; }
+.table-view-head h4 { margin: 0; flex: 1 1 auto; font: 600 1rem 'Public Sans', sans-serif; }
+
+/* ── Income × size grid ── */
+.income-grid-card { border: 1px solid var(--line, #e5ddd3); border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; background: var(--paper, #fff); }
+table.income-grid { border-collapse: collapse; width: 100%; font: 400 .8rem 'Public Sans', sans-serif; }
+table.income-grid th, table.income-grid td { border: 1px solid var(--line, #eee3d6); padding: .35rem .4rem; text-align: center; }
+table.income-grid .ig-corner, table.income-grid .ig-bracket { text-align: right; white-space: nowrap; color: var(--ink-soft, #6b625a); font-weight: 500; }
+table.income-grid .ig-size { color: var(--ink-soft, #6b625a); font-weight: 600; }
+table.income-grid .ig-cell { height: 1.6rem; font-variant-numeric: tabular-nums; color: var(--ink, #2b2621); background: color-mix(in srgb, var(--terracotta) calc(var(--a, 0) * 100%), transparent); }
+table.income-grid .ig-total { font-weight: 600; background: var(--wash, #faf6f0); color: var(--ink-soft, #6b625a); font-variant-numeric: tabular-nums; }
+
+/* ── Block map ── */
+.block-map-card { margin: 1.5rem 0; }
+.block-map { height: 420px; width: 100%; border-radius: 14px; border: 1px solid var(--line, #e5ddd3); }
+.block-map-card figcaption { margin-top: .6rem; font: 400 .85rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); text-align: center; }
+.leaflet-container { background: var(--wash, #faf6f0); font: inherit; }

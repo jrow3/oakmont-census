@@ -64,7 +64,7 @@ export function renderSnapshot(section, meta, opts = {}) {
     kpiTile('Total housing units', fmt(s.totalHousingUnits), 'All units', cd('totalHousingUnits')),
     kpiTile('Unemployment', pct(s.unemploymentRate), 'Civilian labor force', cd('unemploymentRate')),
     kpiTile('Poverty rate', pct(s.povertyRate), 'Below poverty line', cd('povertyRate')),
-    kpiTile('Age 85+', fmt(s.age85Plus), 'Residents', cd('age85Plus')),
+    kpiTile('Median age', s.medianAge != null ? String(s.medianAge) : '—', 'Years', cd('medianAge')),
   ].join('');
 
   // ── Charts ──

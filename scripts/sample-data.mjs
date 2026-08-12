@@ -16,6 +16,9 @@ const GROUP_TOTALS = {
 
 const MEDIAN_SAMPLES = {
   'B19013_001E': 95400, 'B25064_001E': 2180, 'B25077_001E': 812400, 'B19301_001E': 61800,
+  'B01002_001E': 68, 'B01002_002E': 66, 'B01002_003E': 70,
+  'B19019_001E': 95400, 'B19019_002E': 52000, 'B19019_003E': 98000, 'B19019_004E': 112000,
+  'B19019_005E': 120000, 'B19019_006E': 108000, 'B19019_007E': 99000, 'B19019_008E': 90000,
 };
 
 // Marquee splits, set directly so the snapshot and key charts read like a 55+ community.
@@ -28,6 +31,12 @@ const FIXED = {
   'B23025_002E': 1980, 'B23025_003E': 1955, 'B23025_004E': 1870, 'B23025_005E': 85, 'B23025_007E': 2780,
   'B17001_002E': 300, 'B17001_031E': 5510,
   'B15003_017E': 720, 'B15003_022E': 1480, 'B15003_023E': 980, 'B15003_024E': 210, 'B15003_025E': 260,
+  // Household size by tenure (B25009): a 55+ community skews to 1-2 person owner households.
+  'B25009_001E': 3160,
+  'B25009_002E': 2660, 'B25009_003E': 980, 'B25009_004E': 1420, 'B25009_005E': 150,
+  'B25009_006E': 70, 'B25009_007E': 25, 'B25009_008E': 10, 'B25009_009E': 5,
+  'B25009_010E': 500, 'B25009_011E': 300, 'B25009_012E': 150, 'B25009_013E': 30,
+  'B25009_014E': 12, 'B25009_015E': 5, 'B25009_016E': 2, 'B25009_017E': 1,
 };
 
 function distribute(codes, total, weightFn) {
@@ -84,10 +93,37 @@ for (const g of Object.values(DEC_GROUPS)) for (const c of Object.keys(g.variabl
 }
 const oakmont2020 = buildBlockSection(decValues);
 
+import { GROUPS as _G } from './census-variables.mjs';
+import { DEC_GROUPS as _DG } from './decennial-variables.mjs';
+
+const tableIdOf = (code) => code.split('_')[0];
+
+function sampleMirror(vals, groups, meta) {
+  const tables = {};
+  for (const g of Object.values(groups)) {
+    for (const [code, label] of Object.entries(g.variables)) {
+      const id = tableIdOf(code);
+      (tables[id] ||= { concept: g.label, variables: {} }).variables[code] = {
+        label, value: vals[code] ?? null,
+      };
+    }
+  }
+  return { meta, tables };
+}
+
 const data = assembleData(
   { '2020': buildAcsSection('2020', values2020), '2024': buildAcsSection('2024', values2024) },
   { sample: true, oakmont2020 }
 );
+
+const explorerDir = join(dirname(OUT_PATH), 'explorer');
+await mkdir(explorerDir, { recursive: true });
+await writeFile(join(explorerDir, 'acs2020.json'),
+  JSON.stringify(sampleMirror(values2020, _G, { dataset: 'acs/acs5', year: '2020', sample: true })) + '\n', 'utf8');
+await writeFile(join(explorerDir, 'acs2024.json'),
+  JSON.stringify(sampleMirror(values2024, _G, { dataset: 'acs/acs5', year: '2024', sample: true })) + '\n', 'utf8');
+await writeFile(join(explorerDir, 'blocks2020.json'),
+  JSON.stringify(sampleMirror(decValues, _DG, { dataset: '2020/dec/dhc', sample: true })) + '\n', 'utf8');
 
 await mkdir(dirname(OUT_PATH), { recursive: true });
 await writeFile(OUT_PATH, JSON.stringify(data, null, 2) + '\n', 'utf8');
