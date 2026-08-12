@@ -87,3 +87,32 @@ export const DEC_GROUPS = {
 
 // Every variable code the fetch needs (deduped).
 export const DEC_VARS = [...new Set(Object.values(DEC_GROUPS).flatMap((g) => Object.keys(g.variables)))];
+
+// Numeric age-band bounds for the P12 (sex-by-age) table, male+female codes combined.
+// Used to compute a grouped median age across the summed blocks. The open-ended 85+ band
+// is capped at 95 so the interpolation has a finite width.
+export const P12_AGE_BANDS = [
+  { lower: 0,  upper: 5,  codes: ['P12_003N', 'P12_027N'] },
+  { lower: 5,  upper: 10, codes: ['P12_004N', 'P12_028N'] },
+  { lower: 10, upper: 15, codes: ['P12_005N', 'P12_029N'] },
+  { lower: 15, upper: 18, codes: ['P12_006N', 'P12_030N'] },
+  { lower: 18, upper: 20, codes: ['P12_007N', 'P12_031N'] },
+  { lower: 20, upper: 21, codes: ['P12_008N', 'P12_032N'] },
+  { lower: 21, upper: 22, codes: ['P12_009N', 'P12_033N'] },
+  { lower: 22, upper: 25, codes: ['P12_010N', 'P12_034N'] },
+  { lower: 25, upper: 30, codes: ['P12_011N', 'P12_035N'] },
+  { lower: 30, upper: 35, codes: ['P12_012N', 'P12_036N'] },
+  { lower: 35, upper: 40, codes: ['P12_013N', 'P12_037N'] },
+  { lower: 40, upper: 45, codes: ['P12_014N', 'P12_038N'] },
+  { lower: 45, upper: 50, codes: ['P12_015N', 'P12_039N'] },
+  { lower: 50, upper: 55, codes: ['P12_016N', 'P12_040N'] },
+  { lower: 55, upper: 60, codes: ['P12_017N', 'P12_041N'] },
+  { lower: 60, upper: 62, codes: ['P12_018N', 'P12_042N'] },
+  { lower: 62, upper: 65, codes: ['P12_019N', 'P12_043N'] },
+  { lower: 65, upper: 67, codes: ['P12_020N', 'P12_044N'] },
+  { lower: 67, upper: 70, codes: ['P12_021N', 'P12_045N'] },
+  { lower: 70, upper: 75, codes: ['P12_022N', 'P12_046N'] },
+  { lower: 75, upper: 80, codes: ['P12_023N', 'P12_047N'] },
+  { lower: 80, upper: 85, codes: ['P12_024N', 'P12_048N'] },
+  { lower: 85, upper: 95, codes: ['P12_025N', 'P12_049N'] },
+];
