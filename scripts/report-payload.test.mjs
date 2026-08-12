@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { deriveIncomeSources, deriveHouseholdSize, deriveAgeSex } from './report-payload.mjs';
+import { buildReportSection, deriveEducation, deriveIncomeByTenure, deriveMarital } from './report-payload.mjs';
 
 // minimal mirror-style table map
 const T = (obj) => {
@@ -56,4 +57,47 @@ test('deriveAgeSex sums 55+ bands from the block P12 groups', () => {
   assert.equal(b5559.total, 40);
   const b85 = rows.find((r) => r.band === '85+');
   assert.equal(b85.female, 40);
+});
+
+test('deriveMarital uses the parent now-married totals (no double count of _005/_006 children)', () => {
+  const tables = T({ B12001_001E: 1000, B12001_004E: 300, B12001_005E: 250, B12001_006E: 50,
+    B12001_013E: 400, B12001_009E: 50, B12001_018E: 100, B12001_010E: 40, B12001_019E: 60, B12001_003E: 30, B12001_012E: 20 });
+  const m = deriveMarital(tables);
+  assert.equal(m.pctMarried, 70); // (300 + 400) / 1000, NOT adding the _005/_006 sub-rows
+});
+
+test('deriveEducation bounds totals to the 25+ population and computes shares', () => {
+  const tables = T({ B15003_001E: 1000, B15003_022E: 300, B15003_023E: 150, B15003_024E: 30, B15003_025E: 20 });
+  const e = deriveEducation(tables);
+  assert.equal(e.total25plus, 1000);
+  assert.equal(e.pctBachelorsPlus, 50); // (300+150+30+20)/1000
+  assert.equal(e.pctGraduatePlus, 20);  // (150+30+20)/1000
+});
+
+test('deriveIncomeByTenure exposes owner/renter medians', () => {
+  const tables = T({ B25119_002E: 85057, B25119_003E: 66691, B25118_002E: 2490, B25118_014E: 880 });
+  const t = deriveIncomeByTenure(tables);
+  assert.equal(t.ownerMedian, 85057);
+  assert.equal(t.renterMedian, 66691);
+  assert.equal(t.ownerHouseholds, 2490);
+  assert.equal(t.renterHouseholds, 880);
+});
+
+test('buildReportSection assembles a labeled, sourced payload', () => {
+  const tables = T({
+    B19013_001E: 78534, B19301_001E: 66078, B25077_001E: 707911,
+    B19055_001E: 3370, B19055_002E: 2706, B19065_001E: 2706 * 23479,
+    B25009_003E: 900, B25009_011E: 300, B25009_004E: 1200, B25009_012E: 150,
+    B15003_001E: 5673, B15003_022E: 2000, B15003_023E: 900, B15003_024E: 300, B15003_025E: 163,
+    B25119_002E: 85057, B25119_003E: 66691, B25118_002E: 2490, B25118_014E: 880,
+  });
+  const block = { snapshot: { totalPopulation: 4994, medianAge: 74.3, pct65Plus: 81.2, ownerOccupiedPct: 93.6 },
+    groups: { age: { variables: { P12_017N: { value: 10 }, P12_041N: { value: 30 } } },
+      hispanic: { variables: {} }, race: { variables: {} } } };
+  const r = buildReportSection(tables, block);
+  assert.equal(r.summary.population, 4994);
+  assert.equal(r.summary.medianHouseholdIncome, 78534);
+  assert.ok(Array.isArray(r.incomeSources) && r.incomeSources.length === 7);
+  assert.equal(r.education.total25plus, 5673);
+  assert.match(r.vintage, /2020/);
 });
