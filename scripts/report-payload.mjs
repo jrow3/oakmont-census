@@ -190,11 +190,14 @@ export function derivePlaceOfBirth(tables) {
   };
 }
 
-function deriveSummary(tables, block, householdSize) {
+function deriveSummary(tables, block, householdSize, ageSex) {
+  // Oakmont is a 55+ community, so the headline age stat is the 55+ share, from the block age bands.
+  const totalAge = ageSex.reduce((a, b) => a + b.total, 0);
+  const under55 = ageSex.find((b) => b.band === 'Under 55')?.total || 0;
   return {
     population: block?.snapshot?.totalPopulation ?? null,
     medianAge: block?.snapshot?.medianAge ?? null,
-    pct65Plus: block?.snapshot?.pct65Plus ?? null,
+    pct55Plus: totalAge ? Number((((totalAge - under55) / totalAge) * 100).toFixed(1)) : null,
     ownerOccupiedPct: block?.snapshot?.ownerOccupiedPct ?? null,
     averageHouseholdSize: householdSize.average,
     medianHouseholdIncome: av(tables, 'B19013_001E'),
@@ -204,6 +207,7 @@ function deriveSummary(tables, block, householdSize) {
 
 export function buildReportSection(acsTables, blockSection) {
   const householdSize = deriveHouseholdSize(acsTables);
+  const ageSex = deriveAgeSex(blockSection);
   return {
     vintage: '2020 ACS 5-Year (2016–2020) + 2020 Decennial Census',
     geography: {
@@ -211,8 +215,8 @@ export function buildReportSection(acsTables, blockSection) {
       estimates: 'Census Tracts 1516.01 + 1516.02 (2020 ACS 5-Year)',
       note: 'Counts are exact to Oakmont; ACS estimates are tract-level and include the non-Oakmont fringe within the two tracts.',
     },
-    summary: deriveSummary(acsTables, blockSection, householdSize),
-    ageSex: deriveAgeSex(blockSection),
+    summary: deriveSummary(acsTables, blockSection, householdSize, ageSex),
+    ageSex,
     householdSize,
     income: deriveIncome(acsTables),
     incomeSources: deriveIncomeSources(acsTables),

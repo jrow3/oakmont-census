@@ -91,11 +91,12 @@ test('buildReportSection assembles a labeled, sourced payload', () => {
     B15003_001E: 5673, B15003_022E: 2000, B15003_023E: 900, B15003_024E: 300, B15003_025E: 163,
     B25119_002E: 85057, B25119_003E: 66691, B25118_002E: 2490, B25118_014E: 880,
   });
-  const block = { snapshot: { totalPopulation: 4994, medianAge: 74.3, pct65Plus: 81.2, ownerOccupiedPct: 93.6 },
-    groups: { age: { variables: { P12_017N: { value: 10 }, P12_041N: { value: 30 } } },
+  const block = { snapshot: { totalPopulation: 4994, medianAge: 74.3, ownerOccupiedPct: 93.6 },
+    groups: { age: { variables: { P12_003N: { value: 10 }, P12_017N: { value: 10 }, P12_041N: { value: 30 } } },
       hispanic: { variables: {} }, race: { variables: {} } } };
   const r = buildReportSection(tables, block);
   assert.equal(r.summary.population, 4994);
+  assert.equal(r.summary.pct55Plus, 80); // 40 of 50 in the age bands are 55+ (P12_003N is under-55)
   assert.equal(r.summary.medianHouseholdIncome, 78534);
   assert.ok(Array.isArray(r.incomeSources) && r.incomeSources.length === 7);
   assert.equal(r.education.total25plus, 5673);

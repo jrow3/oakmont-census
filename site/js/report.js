@@ -48,7 +48,7 @@ function summarySection(r) {
   const tiles = [
     kpi('Population', num(s.population), 'Residents', 'Decennial · exact blocks'),
     kpi('Median age', s.medianAge != null ? String(s.medianAge) : '—', 'Years', 'Decennial · exact blocks'),
-    kpi('Age 65+', percent(s.pct65Plus), 'Of residents', 'Decennial · exact blocks'),
+    kpi('Age 55+', percent(s.pct55Plus), 'Of residents', 'Decennial · exact blocks'),
     kpi('Avg. household size', s.averageHouseholdSize != null ? String(s.averageHouseholdSize) : '—', 'People per home', 'ACS · tracts'),
     kpi('Owner-occupied', percent(s.ownerOccupiedPct), 'Of occupied homes', 'Decennial · exact blocks'),
     kpi('Median household income', money(s.medianHouseholdIncome), 'Per year', 'ACS · tracts'),
