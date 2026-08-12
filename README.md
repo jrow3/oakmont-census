@@ -19,9 +19,11 @@ Actions fetches the data at build time using a `CENSUS_API_KEY` repository secre
 
 ```
 GitHub Actions (secret: CENSUS_API_KEY)
-  -> node scripts/fetch-census.mjs   (fetch ACS 2020 + 2024 tracts and 2020 DHC Oakmont blocks -> site/data.json)
+  -> node scripts/fetch-census.mjs   (fetch ACS 2020 + 2024 tracts and 2020 DHC Oakmont blocks)
+       -> site/data.json             (small, curated -> the snapshot; committed)
+       -> site/explorer/*.json       (full table mirror -> the explorer; gitignored, CI-built)
   -> deploy site/ to GitHub Pages -> census.jrow3.com
-Browser: load page -> fetch('./data.json') -> render. No key, instant.
+Browser: load page -> fetch('./data.json') -> render snapshot. Explorer lazily fetches its mirror. No key.
 ```
 
 Census figures are public, so the baked `site/data.json` is safe to serve and commit.
@@ -63,21 +65,54 @@ One-time setup:
 
 ```
 scripts/
-  census-variables.mjs   ACS geography + variable/label definitions
-  decennial-variables.mjs 2020 DHC variable/label definitions for the block view
-  fetch-census.mjs       fetch ACS (2020 + 2024) + trigger the block fetch -> site/data.json
-  fetch-blocks.mjs       fetch 2020 DHC data summed over the Oakmont blocks (needs a key)
+  census-variables.mjs   ACS geography + curated variable/label definitions
+  decennial-variables.mjs 2020 DHC variable/label definitions + P12 age bands
+  census-http.mjs        shared getJson (retry) + mapLimit (bounded concurrency)
+  aggregate.mjs          sum counts / population-weight medians across geographies
+  mirror.mjs             shape a get=group(ID) response into a table object
+  median-age.mjs         grouped median age from the P12 bands
+  fetch-census.mjs       fetch curated ACS -> data.json + write the full mirrors
+  fetch-acs-mirror.mjs   discover + pull every ACS detailed table for the tracts
+  fetch-blocks.mjs       curated DHC block fetch + full block-level DHC mirror
+  fetch-block-geometry.mjs one-time: TIGERweb block polygons -> site/blocks.geojson
   build-payload.mjs      shared: shape {code: value} maps into the data.json sections
-  sample-data.mjs        placeholder data for keyless local preview
+  sample-data.mjs        placeholder data + placeholder mirrors for keyless preview
   oakmont-blocks.json    the 76 census blocks that make up Oakmont proper
 site/
-  index.html             2020 portrait + Oakmont-proper block panel
+  index.html             2020 portrait + Oakmont-proper block panel (+ block map)
   changes.html           2024 update (year-over-year deltas)
   styles.css             "Sonoma Warm" design system
-  js/                    page, snapshot, block-snapshot, explorer, charts, format modules
-  data.json              baked data (committed, refreshed by CI)
+  js/                    page, snapshot, block-snapshot, explorer, charts, format,
+                         block-map, income-grid modules
+  data.json              baked snapshot data (committed, refreshed by CI)
+  explorer/*.json        full table mirrors (gitignored, CI-built; sample writes placeholders)
+  blocks.geojson         geometry for the 76 Oakmont blocks (committed)
   CNAME                  census.jrow3.com
 ```
+
+## Data explorer & full mirror
+
+The public snapshot reads the small committed `site/data.json`. The **Full data explorer** lazy-loads a
+per-section mirror under `site/explorer/` (`acs2020.json`, `acs2024.json`, `blocks2020.json`) — generated
+in CI, gitignored, never committed. `scripts/fetch-acs-mirror.mjs` and `fetchBlockMirror()` discover every
+table from the Census API's own `groups.json`, pull each whole with `get=group(ID)`, keep estimates only,
+sum counts, and population-weight anything whose label marks it a median / mean / per-capita / ratio.
+Race-iterated tables are included; the explorer hides all-empty tables by default. DHC block coverage is
+limited to the tables the Census publishes at block geography (finer cross-tabs don't exist that small and
+are skipped).
+
+## Median age, block map, income-by-size grid
+
+- **Median age** replaces the old "Age 85+" tile on both the ACS snapshot and the block panel. The ACS
+  value is `B01002_001E` (population-weighted across tracts); the block value is a grouped median
+  interpolated from the summed P12 age bands (`scripts/median-age.mjs`).
+- **Block map:** `node scripts/fetch-block-geometry.mjs` writes `site/blocks.geojson` (committed) from
+  Census TIGERweb; the 2020 page renders it with Leaflet over a CARTO light basemap.
+- **Income × household size:** a featured grid in the explorer. A real household-count crosstab of income
+  by size isn't published at the tract level, so the interior is **estimated** — the row totals (income,
+  B19001) and column totals (household size, B25009) are real Census counts, and the interior cells are
+  modeled by iterative proportional fitting to fit those totals plus each size's median income (B19019).
+  The interior is labeled an estimate, not a measurement.
 
 ## Geography and method
 
