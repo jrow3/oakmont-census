@@ -124,6 +124,23 @@ export const GROUPS = {
       'B19019_008E': 'Median household income — 7-or-more-person households',
     },
   },
+  householdSize: {
+    label: 'Household Size (by tenure)',
+    totalKey: 'B25009_001E',
+    variables: {
+      'B25009_001E': 'Total occupied units',
+      'B25009_002E': 'Owner-occupied',
+      'B25009_003E': 'Owner: 1-person', 'B25009_004E': 'Owner: 2-person',
+      'B25009_005E': 'Owner: 3-person', 'B25009_006E': 'Owner: 4-person',
+      'B25009_007E': 'Owner: 5-person', 'B25009_008E': 'Owner: 6-person',
+      'B25009_009E': 'Owner: 7-or-more-person',
+      'B25009_010E': 'Renter-occupied',
+      'B25009_011E': 'Renter: 1-person', 'B25009_012E': 'Renter: 2-person',
+      'B25009_013E': 'Renter: 3-person', 'B25009_014E': 'Renter: 4-person',
+      'B25009_015E': 'Renter: 5-person', 'B25009_016E': 'Renter: 6-person',
+      'B25009_017E': 'Renter: 7-or-more-person',
+    },
+  },
   race: {
     label: 'Race & Ethnicity',
     totalKey: 'B02001_001E',

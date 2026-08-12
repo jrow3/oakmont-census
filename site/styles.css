@@ -354,9 +354,8 @@ table.income-grid { border-collapse: collapse; width: 100%; font: 400 .8rem 'Pub
 table.income-grid th, table.income-grid td { border: 1px solid var(--line, #eee3d6); padding: .35rem .4rem; text-align: center; }
 table.income-grid .ig-corner, table.income-grid .ig-bracket { text-align: right; white-space: nowrap; color: var(--ink-soft, #6b625a); font-weight: 500; }
 table.income-grid .ig-size { color: var(--ink-soft, #6b625a); font-weight: 600; }
-table.income-grid .ig-cell { height: 1.6rem; }
-table.income-grid .ig-hit { background: color-mix(in srgb, var(--terracotta) calc(var(--a) * 100%), transparent); }
-table.income-grid .ig-hit span { font-weight: 600; color: var(--ink, #2b2621); white-space: nowrap; }
+table.income-grid .ig-cell { height: 1.6rem; font-variant-numeric: tabular-nums; color: var(--ink, #2b2621); background: color-mix(in srgb, var(--terracotta) calc(var(--a, 0) * 100%), transparent); }
+table.income-grid .ig-total { font-weight: 600; background: var(--wash, #faf6f0); color: var(--ink-soft, #6b625a); font-variant-numeric: tabular-nums; }
 
 /* ── Block map ── */
 .block-map-card { margin: 1.5rem 0; }
