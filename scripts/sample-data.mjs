@@ -76,6 +76,7 @@ for (const g of Object.values(GROUPS)) {
 
 import { buildAcsSection, assembleData, buildBlockSection } from './build-payload.mjs';
 import { DEC_GROUPS, AGE_65_PLUS } from './decennial-variables.mjs';
+import { buildReportSection } from './report-payload.mjs';
 
 // `values` (built above) is the 2024 sample. Make a 2020 sample ~6% smaller on counts and
 // medians so the 2024 page shows non-zero deltas in offline preview.
@@ -92,6 +93,37 @@ for (const g of Object.values(DEC_GROUPS)) for (const c of Object.keys(g.variabl
   if (decValues[c] == null) decValues[c] = 40;               // fill remaining bands
 }
 const oakmont2020 = buildBlockSection(decValues);
+
+function tbl(obj) {
+  const tables = {};
+  for (const [code, value] of Object.entries(obj)) {
+    const id = code.split('_')[0];
+    (tables[id] ||= { concept: id, variables: {} }).variables[code] = { label: code, value };
+  }
+  return tables;
+}
+
+const sampleReportTables = tbl({
+  B19013_001E: 78534, B19301_001E: 66078, B19126_001E: 114385, B19215_001E: 58853,
+  B19001_001E: 3370, B19001_013E: 470, B19001_014E: 360, B19001_015E: 300, B19001_016E: 300, B19001_017E: 260,
+  B25077_001E: 707911, B25075_001E: 2490, B25075_019E: 700, B25075_020E: 600, B25075_021E: 500, B25075_022E: 400,
+  B15003_001E: 5673, B15003_017E: 900, B15003_021E: 400, B15003_022E: 2000, B15003_023E: 900, B15003_024E: 300, B15003_025E: 163,
+  B25119_002E: 85057, B25119_003E: 66691,
+  B25118_002E: 2490, B25118_014E: 880, B25118_009E: 700, B25118_010E: 500, B25118_021E: 300, B25118_022E: 120,
+  B25009_003E: 900, B25009_011E: 300, B25009_004E: 1200, B25009_012E: 150, B25009_005E: 150, B25009_013E: 30,
+  B25009_006E: 70, B25009_014E: 12, B25009_007E: 25, B25009_015E: 5, B25009_008E: 10, B25009_016E: 2, B25009_009E: 5, B25009_017E: 1,
+  B19055_001E: 3370, B19055_002E: 2706, B19065_001E: 2706 * 23479,
+  B19059_001E: 3370, B19059_002E: 1918, B19069_001E: 1918 * 43466,
+  B19051_001E: 3370, B19051_002E: 1240, B19061_001E: 1240 * 106287,
+  B19053_001E: 3370, B19053_002E: 300,
+  B19056_001E: 3370, B19056_002E: 74, B19066_001E: 74 * 8073,
+  B19057_001E: 3370, B19057_002E: 20, B19067_001E: null,
+  B22001_001E: 3370, B22001_002E: 30,
+  B12001_001E: 5829, B12001_003E: 200, B12001_004E: 1650, B12001_009E: 120, B12001_010E: 300,
+  B12001_012E: 260, B12001_013E: 1500, B12001_018E: 620, B12001_019E: 350,
+  B05002_001E: 5949, B05002_003E: 2692, B05002_005E: 791, B05002_006E: 911, B05002_007E: 357, B05002_008E: 456, B05002_013E: 713,
+});
+const report2020 = buildReportSection(sampleReportTables, oakmont2020);
 
 import { GROUPS as _G } from './census-variables.mjs';
 import { DEC_GROUPS as _DG } from './decennial-variables.mjs';
@@ -113,7 +145,7 @@ function sampleMirror(vals, groups, meta) {
 
 const data = assembleData(
   { '2020': buildAcsSection('2020', values2020), '2024': buildAcsSection('2024', values2024) },
-  { sample: true, oakmont2020 }
+  { sample: true, oakmont2020, report2020 }
 );
 
 const explorerDir = join(dirname(OUT_PATH), 'explorer');
