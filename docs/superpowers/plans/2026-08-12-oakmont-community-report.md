@@ -531,7 +531,7 @@ const sampleReportTables = tbl({
   B22001_001E: 3370, B22001_002E: 30,
   B12001_001E: 5829, B12001_003E: 200, B12001_004E: 1650, B12001_009E: 120, B12001_010E: 300,
   B12001_012E: 260, B12001_013E: 1500, B12001_018E: 620, B12001_019E: 350,
-  B05002_001E: 5949, B05002_003E: 2200, B05002_004E: 3100, B05002_013E: 649,
+  B05002_001E: 5949, B05002_003E: 2692, B05002_005E: 791, B05002_006E: 911, B05002_007E: 357, B05002_008E: 456, B05002_013E: 713,
 });
 const report2020 = buildReportSection(sampleReportTables, oakmont2020);
 ```
@@ -920,12 +920,7 @@ function maritalSection(r) {
 }
 
 function placeOfBirthSection(r) {
-  const p = r.placeOfBirth;
-  const items = [
-    { label: 'Born in California', value: p.pctBornInCalifornia },
-    { label: 'Born in another state', value: p.pctBornOtherState },
-    { label: 'Foreign-born', value: p.pctForeignBorn },
-  ];
+  const items = r.placeOfBirth.regions.map((g) => ({ label: g.label, value: g.pct }));
   return section('origin', 'Where residents come from', 'Mostly California and elsewhere in the U.S.',
     'U.S. Census Bureau, 2020 ACS 5-Year (tracts). Place of birth (table B05002).',
     `${horizontalBars({ items, ariaLabel: 'Place of birth', format: (n) => percent(n) })}
