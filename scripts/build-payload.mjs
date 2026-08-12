@@ -3,6 +3,7 @@
 
 import { GROUPS } from './census-variables.mjs';
 import { DEC_GROUPS, AGE_65_PLUS, AGE_85_PLUS } from './decennial-variables.mjs';
+import { medianAgeFromP12 } from './median-age.mjs';
 
 export function buildGroups(values) {
   const groups = {};
@@ -31,6 +32,7 @@ export function buildSnapshot(values) {
     unemploymentRate: pct(v('B23025_005E'), v('B23025_003E')),
     povertyRate: pct(v('B17001_002E'), v('B17001_001E')),
     age85Plus: (v('B01001_025E') || 0) + (v('B01001_049E') || 0),
+    medianAge: v('B01002_001E'),
   };
 }
 
@@ -38,6 +40,7 @@ export function buildAcsSection(year, values) {
   return {
     year,
     source: `U.S. Census Bureau, ${year} ACS 5-Year Estimates`,
+    explorerFile: `explorer/acs${year}.json`,
     snapshot: buildSnapshot(values),
     groups: buildGroups(values),
   };
@@ -64,11 +67,13 @@ export function buildBlockSection(values) {
     vintage: '2020 Decennial (DHC)',
     geography: '76 selected census blocks, Oakmont, Sonoma County, CA',
     year: '2020-blocks',
+    explorerFile: 'explorer/blocks2020.json',
     snapshot: {
       totalPopulation: totalPop,
       age65Plus: sum(AGE_65_PLUS),
       age85Plus: sum(AGE_85_PLUS),
       pct65Plus: pct(sum(AGE_65_PLUS), totalPop),
+      medianAge: medianAgeFromP12(values),
       totalHousingUnits: v('H1_001N'),
       occupiedUnits: v('H3_002N'),
       vacantUnits: v('H3_003N'),

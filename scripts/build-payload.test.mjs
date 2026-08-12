@@ -49,3 +49,21 @@ test('buildBlockSection derives 65+/85+/tenure from summed DHC values', () => {
   assert.equal(s.snapshot.hispanicPct, 4);          // 200/5000
   assert.ok(s.groups.age.variables.P12_025N.value === 50);
 });
+
+import { buildSnapshot as _bs } from './build-payload.mjs';
+
+test('buildSnapshot exposes medianAge from B01002_001E', () => {
+  const s = _bs({ B01002_001E: 68 });
+  assert.equal(s.medianAge, 68);
+});
+
+test('buildBlockSection computes medianAge from P12 bands', () => {
+  const v = { P12_001N: 100, P12_022N: 50, P12_046N: 50 }; // all 70-74
+  const section = buildBlockSection(v);
+  assert.equal(section.snapshot.medianAge, 72.5);
+});
+
+test('buildAcsSection tags its explorer file', () => {
+  const section = buildAcsSection('2024', { B01001_001E: 5000 });
+  assert.equal(section.explorerFile, 'explorer/acs2024.json');
+});
