@@ -12,6 +12,7 @@ import { buildAcsSection, assembleData, buildBlockSection } from './build-payloa
 import { fetchBlockValues } from './fetch-blocks.mjs';
 import { fetchAcsMirror } from './fetch-acs-mirror.mjs';
 import { fetchBlockMirror } from './fetch-blocks.mjs';
+import { buildReportSection } from './report-payload.mjs';
 
 const API_KEY = (process.env.CENSUS_API_KEY || '').trim();
 const CHUNK_SIZE = 44; // Census API caps ~50 variables/request; leaves room for NAME + popVar.
@@ -107,19 +108,26 @@ async function main() {
   const oakmont2020 = buildBlockSection(blockValues);
   console.log(`  Oakmont blocks: population ${oakmont2020.snapshot.totalPopulation}, ${oakmont2020.snapshot.pct65Plus}% age 65+`);
 
-  const data = assembleData(sections, { oakmont2020 });
+  await mkdir(EXPLORER_DIR, { recursive: true });
+  const mirrors = {};
+  for (const year of ACS_YEARS) {
+    console.log(`Building ACS ${year} full mirror`);
+    mirrors[year] = await fetchAcsMirror(year);
+  }
+  console.log('Building block DHC full mirror');
+  const blockMirror = await fetchBlockMirror();
+
+  const report2020 = buildReportSection(mirrors['2020'].tables, oakmont2020);
+  console.log(`  Report: median HH income $${report2020.summary.medianHouseholdIncome}, avg household size ${report2020.summary.averageHouseholdSize}`);
+
+  const data = assembleData(sections, { oakmont2020, report2020 });
   await mkdir(dirname(OUT_PATH), { recursive: true });
   await writeFile(OUT_PATH, JSON.stringify(data, null, 2) + '\n', 'utf8');
   console.log(`Wrote ${OUT_PATH}`);
 
-  await mkdir(EXPLORER_DIR, { recursive: true });
   for (const year of ACS_YEARS) {
-    console.log(`Building ACS ${year} full mirror`);
-    const mirror = await fetchAcsMirror(year);
-    await writeFile(join(EXPLORER_DIR, `acs${year}.json`), JSON.stringify(mirror) + '\n', 'utf8');
+    await writeFile(join(EXPLORER_DIR, `acs${year}.json`), JSON.stringify(mirrors[year]) + '\n', 'utf8');
   }
-  console.log('Building block DHC full mirror');
-  const blockMirror = await fetchBlockMirror();
   await writeFile(join(EXPLORER_DIR, 'blocks2020.json'), JSON.stringify(blockMirror) + '\n', 'utf8');
   console.log(`Wrote mirror files to ${EXPLORER_DIR}`);
 }
