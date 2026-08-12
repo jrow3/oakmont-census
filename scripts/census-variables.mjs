@@ -20,6 +20,9 @@ export const MEDIAN_VARS = new Set([
   'B25064_001E', // Median Gross Rent
   'B25077_001E', // Median Home Value
   'B19301_001E', // Per Capita Income
+  'B01002_001E', 'B01002_002E', 'B01002_003E', // Median Age (total / male / female)
+  'B19019_001E', 'B19019_002E', 'B19019_003E', 'B19019_004E',
+  'B19019_005E', 'B19019_006E', 'B19019_007E', 'B19019_008E', // Median income by household size
 ]);
 
 export const GROUPS = {
@@ -76,6 +79,9 @@ export const GROUPS = {
       'B01001_047E': 'Female - 75 to 79 years',
       'B01001_048E': 'Female - 80 to 84 years',
       'B01001_049E': 'Female - 85 years and over',
+      'B01002_001E': 'Median Age (total)',
+      'B01002_002E': 'Median Age (male)',
+      'B01002_003E': 'Median Age (female)',
     },
   },
   income: {
@@ -102,6 +108,20 @@ export const GROUPS = {
       'B19013_001E': 'Median Household Income ($)',
       'B19025_001E': 'Aggregate Household Income ($)',
       'B19301_001E': 'Per Capita Income ($)',
+    },
+  },
+  incomeBySize: {
+    label: 'Income by Household Size',
+    totalKey: 'B19019_001E',
+    variables: {
+      'B19019_001E': 'Median household income — All households',
+      'B19019_002E': 'Median household income — 1-person households',
+      'B19019_003E': 'Median household income — 2-person households',
+      'B19019_004E': 'Median household income — 3-person households',
+      'B19019_005E': 'Median household income — 4-person households',
+      'B19019_006E': 'Median household income — 5-person households',
+      'B19019_007E': 'Median household income — 6-person households',
+      'B19019_008E': 'Median household income — 7-or-more-person households',
     },
   },
   race: {
