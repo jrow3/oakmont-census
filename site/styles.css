@@ -357,3 +357,9 @@ table.income-grid .ig-size { color: var(--ink-soft, #6b625a); font-weight: 600; 
 table.income-grid .ig-cell { height: 1.6rem; }
 table.income-grid .ig-hit { background: color-mix(in srgb, var(--terracotta) calc(var(--a) * 100%), transparent); }
 table.income-grid .ig-hit span { font-weight: 600; color: var(--ink, #2b2621); white-space: nowrap; }
+
+/* ── Block map ── */
+.block-map-card { margin: 1.5rem 0; }
+.block-map { height: 420px; width: 100%; border-radius: 14px; border: 1px solid var(--line, #e5ddd3); }
+.block-map-card figcaption { margin-top: .6rem; font: 400 .85rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); text-align: center; }
+.leaflet-container { background: var(--wash, #faf6f0); font: inherit; }

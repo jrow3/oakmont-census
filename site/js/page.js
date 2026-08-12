@@ -28,6 +28,8 @@ export async function initPage({ section: sectionKey, compareTo = null }) {
   if (data.oakmont2020 && document.getElementById('block-kpis')) {
     const { renderBlockSnapshot } = await import('./block-snapshot.js');
     renderBlockSnapshot(data.oakmont2020);
+    const { renderBlockMap } = await import('./block-map.js');
+    renderBlockMap();
     const bToggle = document.getElementById('block-explorer-toggle');
     const bPanel = document.getElementById('block-explorer');
     let bBuilt = false;
