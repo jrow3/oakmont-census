@@ -54,6 +54,9 @@ export function buildBlockSection(values) {
   const owner = sum(['H4_002N', 'H4_003N']);
   const renter = v('H4_004N') || 0;
   const totalPop = v('P12_001N');
+  // The interpolated median is a long float; show it to one decimal like Census median age.
+  const rawMedianAge = medianAgeFromP12(values);
+  const medianAge = rawMedianAge == null ? null : Math.round(rawMedianAge * 10) / 10;
 
   const groups = {};
   for (const [gid, g] of Object.entries(DEC_GROUPS)) {
@@ -73,7 +76,7 @@ export function buildBlockSection(values) {
       age65Plus: sum(AGE_65_PLUS),
       age85Plus: sum(AGE_85_PLUS),
       pct65Plus: pct(sum(AGE_65_PLUS), totalPop),
-      medianAge: medianAgeFromP12(values),
+      medianAge,
       totalHousingUnits: v('H1_001N'),
       occupiedUnits: v('H3_002N'),
       vacantUnits: v('H3_003N'),
