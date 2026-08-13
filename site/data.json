@@ -1,12 +1,13 @@
 {
   "meta": {
     "geography": "Census Tracts 1516.01 + 1516.02, Sonoma County, CA",
-    "generatedAt": "2026-08-09T22:59:47.484Z",
+    "generatedAt": "2026-08-13T21:07:03.205Z",
     "sample": true
   },
   "acs2020": {
     "year": "2020",
     "source": "U.S. Census Bureau, 2020 ACS 5-Year Estimates",
+    "explorerFile": "explorer/acs2020.json",
     "snapshot": {
       "totalPopulation": 5489,
       "medianHouseholdIncome": 89676,
@@ -17,7 +18,8 @@
       "medianGrossRent": 2049,
       "unemploymentRate": 4.4,
       "povertyRate": 5.2,
-      "age85Plus": 629
+      "age85Plus": 629,
+      "medianAge": 64
     },
     "groups": {
       "age": {
@@ -219,6 +221,18 @@
           "B01001_049E": {
             "label": "Female - 85 years and over",
             "value": 339
+          },
+          "B01002_001E": {
+            "label": "Median Age (total)",
+            "value": 64
+          },
+          "B01002_002E": {
+            "label": "Median Age (male)",
+            "value": 62
+          },
+          "B01002_003E": {
+            "label": "Median Age (female)",
+            "value": 66
           }
         }
       },
@@ -305,6 +319,118 @@
           "B19301_001E": {
             "label": "Per Capita Income ($)",
             "value": 58092
+          }
+        }
+      },
+      "incomeBySize": {
+        "label": "Income by Household Size",
+        "totalKey": "B19019_001E",
+        "variables": {
+          "B19019_001E": {
+            "label": "Median household income — All households",
+            "value": 89676
+          },
+          "B19019_002E": {
+            "label": "Median household income — 1-person households",
+            "value": 48880
+          },
+          "B19019_003E": {
+            "label": "Median household income — 2-person households",
+            "value": 92120
+          },
+          "B19019_004E": {
+            "label": "Median household income — 3-person households",
+            "value": 105280
+          },
+          "B19019_005E": {
+            "label": "Median household income — 4-person households",
+            "value": 112800
+          },
+          "B19019_006E": {
+            "label": "Median household income — 5-person households",
+            "value": 101520
+          },
+          "B19019_007E": {
+            "label": "Median household income — 6-person households",
+            "value": 93060
+          },
+          "B19019_008E": {
+            "label": "Median household income — 7-or-more-person households",
+            "value": 84600
+          }
+        }
+      },
+      "householdSize": {
+        "label": "Household Size (by tenure)",
+        "totalKey": "B25009_001E",
+        "variables": {
+          "B25009_001E": {
+            "label": "Total occupied units",
+            "value": 2970
+          },
+          "B25009_002E": {
+            "label": "Owner-occupied",
+            "value": 2500
+          },
+          "B25009_003E": {
+            "label": "Owner: 1-person",
+            "value": 921
+          },
+          "B25009_004E": {
+            "label": "Owner: 2-person",
+            "value": 1335
+          },
+          "B25009_005E": {
+            "label": "Owner: 3-person",
+            "value": 141
+          },
+          "B25009_006E": {
+            "label": "Owner: 4-person",
+            "value": 66
+          },
+          "B25009_007E": {
+            "label": "Owner: 5-person",
+            "value": 24
+          },
+          "B25009_008E": {
+            "label": "Owner: 6-person",
+            "value": 9
+          },
+          "B25009_009E": {
+            "label": "Owner: 7-or-more-person",
+            "value": 5
+          },
+          "B25009_010E": {
+            "label": "Renter-occupied",
+            "value": 470
+          },
+          "B25009_011E": {
+            "label": "Renter: 1-person",
+            "value": 282
+          },
+          "B25009_012E": {
+            "label": "Renter: 2-person",
+            "value": 141
+          },
+          "B25009_013E": {
+            "label": "Renter: 3-person",
+            "value": 28
+          },
+          "B25009_014E": {
+            "label": "Renter: 4-person",
+            "value": 11
+          },
+          "B25009_015E": {
+            "label": "Renter: 5-person",
+            "value": 5
+          },
+          "B25009_016E": {
+            "label": "Renter: 6-person",
+            "value": 2
+          },
+          "B25009_017E": {
+            "label": "Renter: 7-or-more-person",
+            "value": 1
           }
         }
       },
@@ -747,6 +873,7 @@
   "acs2024": {
     "year": "2024",
     "source": "U.S. Census Bureau, 2024 ACS 5-Year Estimates",
+    "explorerFile": "explorer/acs2024.json",
     "snapshot": {
       "totalPopulation": 5839,
       "medianHouseholdIncome": 95400,
@@ -757,7 +884,8 @@
       "medianGrossRent": 2180,
       "unemploymentRate": 4.3,
       "povertyRate": 5.2,
-      "age85Plus": 669
+      "age85Plus": 669,
+      "medianAge": 68
     },
     "groups": {
       "age": {
@@ -959,6 +1087,18 @@
           "B01001_049E": {
             "label": "Female - 85 years and over",
             "value": 361
+          },
+          "B01002_001E": {
+            "label": "Median Age (total)",
+            "value": 68
+          },
+          "B01002_002E": {
+            "label": "Median Age (male)",
+            "value": 66
+          },
+          "B01002_003E": {
+            "label": "Median Age (female)",
+            "value": 70
           }
         }
       },
@@ -1045,6 +1185,118 @@
           "B19301_001E": {
             "label": "Per Capita Income ($)",
             "value": 61800
+          }
+        }
+      },
+      "incomeBySize": {
+        "label": "Income by Household Size",
+        "totalKey": "B19019_001E",
+        "variables": {
+          "B19019_001E": {
+            "label": "Median household income — All households",
+            "value": 95400
+          },
+          "B19019_002E": {
+            "label": "Median household income — 1-person households",
+            "value": 52000
+          },
+          "B19019_003E": {
+            "label": "Median household income — 2-person households",
+            "value": 98000
+          },
+          "B19019_004E": {
+            "label": "Median household income — 3-person households",
+            "value": 112000
+          },
+          "B19019_005E": {
+            "label": "Median household income — 4-person households",
+            "value": 120000
+          },
+          "B19019_006E": {
+            "label": "Median household income — 5-person households",
+            "value": 108000
+          },
+          "B19019_007E": {
+            "label": "Median household income — 6-person households",
+            "value": 99000
+          },
+          "B19019_008E": {
+            "label": "Median household income — 7-or-more-person households",
+            "value": 90000
+          }
+        }
+      },
+      "householdSize": {
+        "label": "Household Size (by tenure)",
+        "totalKey": "B25009_001E",
+        "variables": {
+          "B25009_001E": {
+            "label": "Total occupied units",
+            "value": 3160
+          },
+          "B25009_002E": {
+            "label": "Owner-occupied",
+            "value": 2660
+          },
+          "B25009_003E": {
+            "label": "Owner: 1-person",
+            "value": 980
+          },
+          "B25009_004E": {
+            "label": "Owner: 2-person",
+            "value": 1420
+          },
+          "B25009_005E": {
+            "label": "Owner: 3-person",
+            "value": 150
+          },
+          "B25009_006E": {
+            "label": "Owner: 4-person",
+            "value": 70
+          },
+          "B25009_007E": {
+            "label": "Owner: 5-person",
+            "value": 25
+          },
+          "B25009_008E": {
+            "label": "Owner: 6-person",
+            "value": 10
+          },
+          "B25009_009E": {
+            "label": "Owner: 7-or-more-person",
+            "value": 5
+          },
+          "B25009_010E": {
+            "label": "Renter-occupied",
+            "value": 500
+          },
+          "B25009_011E": {
+            "label": "Renter: 1-person",
+            "value": 300
+          },
+          "B25009_012E": {
+            "label": "Renter: 2-person",
+            "value": 150
+          },
+          "B25009_013E": {
+            "label": "Renter: 3-person",
+            "value": 30
+          },
+          "B25009_014E": {
+            "label": "Renter: 4-person",
+            "value": 12
+          },
+          "B25009_015E": {
+            "label": "Renter: 5-person",
+            "value": 5
+          },
+          "B25009_016E": {
+            "label": "Renter: 6-person",
+            "value": 2
+          },
+          "B25009_017E": {
+            "label": "Renter: 7-or-more-person",
+            "value": 1
           }
         }
       },
@@ -1488,11 +1740,13 @@
     "vintage": "2020 Decennial (DHC)",
     "geography": "76 selected census blocks, Oakmont, Sonoma County, CA",
     "year": "2020-blocks",
+    "explorerFile": "explorer/blocks2020.json",
     "snapshot": {
       "totalPopulation": 4994,
-      "age65Plus": 3600,
+      "age55Plus": 3840,
       "age85Plus": 600,
-      "pct65Plus": 72.1,
+      "pct55Plus": 76.9,
+      "medianAge": 69.6,
       "totalHousingUnits": 3451,
       "occupiedUnits": 3130,
       "vacantUnits": 321,
@@ -1791,6 +2045,419 @@
           }
         }
       }
+    }
+  },
+  "report2020": {
+    "vintage": "2020 ACS 5-Year (2016–2020) + 2020 Decennial Census",
+    "geography": {
+      "counts": "76 selected Oakmont census blocks (2020 Decennial)",
+      "estimates": "Census Tracts 1516.01 + 1516.02 (2020 ACS 5-Year)",
+      "note": "Counts are exact to Oakmont; ACS estimates are tract-level and include the non-Oakmont fringe within the two tracts."
+    },
+    "summary": {
+      "population": 4994,
+      "medianAge": 69.6,
+      "pct55Plus": 77.4,
+      "ownerOccupiedPct": 93.6,
+      "averageHouseholdSize": 1.76,
+      "medianHouseholdIncome": 78534,
+      "perCapitaIncome": 66078
+    },
+    "ageSex": [
+      {
+        "band": "Under 55",
+        "male": 560,
+        "female": 560,
+        "total": 1120
+      },
+      {
+        "band": "55-59",
+        "male": 40,
+        "female": 40,
+        "total": 80
+      },
+      {
+        "band": "60-64",
+        "male": 80,
+        "female": 80,
+        "total": 160
+      },
+      {
+        "band": "65-69",
+        "male": 600,
+        "female": 600,
+        "total": 1200
+      },
+      {
+        "band": "70-74",
+        "male": 300,
+        "female": 300,
+        "total": 600
+      },
+      {
+        "band": "75-79",
+        "male": 300,
+        "female": 300,
+        "total": 600
+      },
+      {
+        "band": "80-84",
+        "male": 300,
+        "female": 300,
+        "total": 600
+      },
+      {
+        "band": "85+",
+        "male": 300,
+        "female": 300,
+        "total": 600
+      }
+    ],
+    "householdSize": {
+      "total": 2860,
+      "average": 1.76,
+      "distribution": [
+        {
+          "size": "1",
+          "count": 1200,
+          "pct": 42
+        },
+        {
+          "size": "2",
+          "count": 1350,
+          "pct": 47.2
+        },
+        {
+          "size": "3",
+          "count": 180,
+          "pct": 6.3
+        },
+        {
+          "size": "4",
+          "count": 82,
+          "pct": 2.9
+        },
+        {
+          "size": "5",
+          "count": 30,
+          "pct": 1
+        },
+        {
+          "size": "6",
+          "count": 12,
+          "pct": 0.4
+        },
+        {
+          "size": "7+",
+          "count": 6,
+          "pct": 0.2
+        }
+      ]
+    },
+    "income": {
+      "median": 78534,
+      "perCapita": 66078,
+      "familyMedian": 114385,
+      "nonfamilyMedian": 58853,
+      "distribution": [
+        {
+          "label": "< $10k",
+          "count": 0,
+          "pct": 0
+        },
+        {
+          "label": "$10-15k",
+          "count": 0,
+          "pct": 0
+        },
+        {
+          "label": "$15-25k",
+          "count": 0,
+          "pct": 0
+        },
+        {
+          "label": "$25-35k",
+          "count": 0,
+          "pct": 0
+        },
+        {
+          "label": "$35-50k",
+          "count": 0,
+          "pct": 0
+        },
+        {
+          "label": "$50-75k",
+          "count": 0,
+          "pct": 0
+        },
+        {
+          "label": "$75-100k",
+          "count": 470,
+          "pct": 13.9
+        },
+        {
+          "label": "$100-150k",
+          "count": 660,
+          "pct": 19.6
+        },
+        {
+          "label": "$150-200k",
+          "count": 300,
+          "pct": 8.9
+        },
+        {
+          "label": "$200k +",
+          "count": 260,
+          "pct": 7.7
+        }
+      ]
+    },
+    "incomeSources": [
+      {
+        "label": "Social Security",
+        "withCount": 2706,
+        "pctHouseholds": 80.3,
+        "meanAmount": 23479
+      },
+      {
+        "label": "Retirement / pension",
+        "withCount": 1918,
+        "pctHouseholds": 56.9,
+        "meanAmount": 43466
+      },
+      {
+        "label": "Earnings (work)",
+        "withCount": 1240,
+        "pctHouseholds": 36.8,
+        "meanAmount": 106287
+      },
+      {
+        "label": "Self-employment",
+        "withCount": 300,
+        "pctHouseholds": 8.9,
+        "meanAmount": null
+      },
+      {
+        "label": "Supplemental Security Income (SSI)",
+        "withCount": 74,
+        "pctHouseholds": 2.2,
+        "meanAmount": 8073
+      },
+      {
+        "label": "Cash public assistance",
+        "withCount": 20,
+        "pctHouseholds": 0.6,
+        "meanAmount": null
+      },
+      {
+        "label": "SNAP / food stamps",
+        "withCount": 30,
+        "pctHouseholds": 0.9,
+        "meanAmount": null
+      }
+    ],
+    "incomeByTenure": {
+      "ownerMedian": 85057,
+      "renterMedian": 66691,
+      "ownerHouseholds": 2490,
+      "renterHouseholds": 880,
+      "distribution": [
+        {
+          "label": "< $5k",
+          "owner": 0,
+          "renter": 0
+        },
+        {
+          "label": "$5-10k",
+          "owner": 0,
+          "renter": 0
+        },
+        {
+          "label": "$10-15k",
+          "owner": 0,
+          "renter": 0
+        },
+        {
+          "label": "$15-20k",
+          "owner": 0,
+          "renter": 0
+        },
+        {
+          "label": "$20-25k",
+          "owner": 0,
+          "renter": 0
+        },
+        {
+          "label": "$25-35k",
+          "owner": 0,
+          "renter": 0
+        },
+        {
+          "label": "$35-50k",
+          "owner": 700,
+          "renter": 300
+        },
+        {
+          "label": "$50-75k",
+          "owner": 500,
+          "renter": 120
+        },
+        {
+          "label": "$75-100k",
+          "owner": 0,
+          "renter": 0
+        },
+        {
+          "label": "$100-150k",
+          "owner": 0,
+          "renter": 0
+        },
+        {
+          "label": "$150k +",
+          "owner": 0,
+          "renter": 0
+        }
+      ]
+    },
+    "homeValue": {
+      "median": 707911,
+      "distribution": [
+        {
+          "label": "< $300k",
+          "count": 1300,
+          "pct": 52.2
+        },
+        {
+          "label": "$300-500k",
+          "count": 900,
+          "pct": 36.1
+        },
+        {
+          "label": "$500-750k",
+          "count": 0,
+          "pct": 0
+        },
+        {
+          "label": "$750k-1M",
+          "count": 0,
+          "pct": 0
+        },
+        {
+          "label": "$1M +",
+          "count": 0,
+          "pct": 0
+        }
+      ]
+    },
+    "education": {
+      "total45plus": 5033,
+      "pctBachelorsPlus": 57.8,
+      "pctGraduatePlus": 27.4,
+      "bands": [
+        {
+          "label": "High school diploma or less",
+          "count": 514,
+          "pct": 10.2
+        },
+        {
+          "label": "Some college / associate",
+          "count": 1083,
+          "pct": 21.5
+        },
+        {
+          "label": "Bachelor's degree",
+          "count": 1530,
+          "pct": 30.4
+        },
+        {
+          "label": "Graduate or professional degree",
+          "count": 1379,
+          "pct": 27.4
+        }
+      ]
+    },
+    "race": {
+      "total": 4994,
+      "groups": [
+        {
+          "label": "White",
+          "count": 4790,
+          "pct": 95.9
+        },
+        {
+          "label": "Black",
+          "count": 40,
+          "pct": 0.8
+        },
+        {
+          "label": "American Indian / Alaska Native",
+          "count": 40,
+          "pct": 0.8
+        },
+        {
+          "label": "Asian",
+          "count": 40,
+          "pct": 0.8
+        },
+        {
+          "label": "Native Hawaiian / Pacific Islander",
+          "count": 40,
+          "pct": 0.8
+        },
+        {
+          "label": "Some other race",
+          "count": 40,
+          "pct": 0.8
+        },
+        {
+          "label": "Two or more races",
+          "count": 40,
+          "pct": 0.8
+        }
+      ],
+      "hispanicPct": 3.7
+    },
+    "marital": {
+      "total": 5829,
+      "pctMarried": 54,
+      "pctWidowed": 12.7,
+      "pctDivorced": 11.2,
+      "pctNever": 7.9
+    },
+    "placeOfBirth": {
+      "total": 5949,
+      "regions": [
+        {
+          "label": "California",
+          "count": 2692,
+          "pct": 45.3
+        },
+        {
+          "label": "Northeast",
+          "count": 791,
+          "pct": 13.3
+        },
+        {
+          "label": "Midwest",
+          "count": 911,
+          "pct": 15.3
+        },
+        {
+          "label": "South",
+          "count": 357,
+          "pct": 6
+        },
+        {
+          "label": "West (other states)",
+          "count": 456,
+          "pct": 7.7
+        },
+        {
+          "label": "Foreign-born",
+          "count": 713,
+          "pct": 12
+        }
+      ]
     }
   }
 }

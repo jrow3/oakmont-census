@@ -27,11 +27,12 @@ test('buildSnapshot keeps its existing shape (characterization)', () => {
 
 import { buildBlockSection } from './build-payload.mjs';
 
-test('buildBlockSection derives 65+/85+/tenure from summed DHC values', () => {
+test('buildBlockSection derives 55+/85+/tenure from summed DHC values', () => {
   const v = {
     // fixture mirrors the codes fetch-blocks actually returns — no P1_001N, so a total-pop
     // read that isn't in DEC_VARS would surface here as a null instead of passing silently
     P12_001N: 5000,
+    P12_017N: 30, P12_041N: 30,                     // some 55-59 (in 55+, not 65+)
     P12_024N: 100, P12_025N: 50, P12_048N: 120, P12_049N: 70, // some 80-84 and 85+
     P12_020N: 0, P12_021N: 0, P12_022N: 0, P12_023N: 0, P12_044N: 0, P12_045N: 0, P12_046N: 0, P12_047N: 0,
     P3_001N: 5000, P3_002N: 4800,
@@ -42,7 +43,8 @@ test('buildBlockSection derives 65+/85+/tenure from summed DHC values', () => {
   const s = buildBlockSection(v);
   assert.equal(s.snapshot.totalPopulation, 5000);
   assert.equal(s.snapshot.age85Plus, 120);          // P12_025N + P12_049N = 50 + 70
-  assert.equal(s.snapshot.age65Plus, 340);          // 100+50+120+70 (only the nonzero 80-84 & 85+ bands here)
+  assert.equal(s.snapshot.age55Plus, 400);          // 30+30 (55-59) + 100+50+120+70 (80-84 & 85+)
+  assert.equal(s.snapshot.pct55Plus, 8);            // 400 / 5000 * 100
   assert.equal(s.snapshot.ownerOccupied, 2900);     // H4_002 + H4_003
   assert.equal(s.snapshot.ownerOccupiedPct, 90.6);  // 2900 / (2900+300) * 100, 1dp
   assert.equal(s.snapshot.whiteAlonePct, 96);       // 4800/5000

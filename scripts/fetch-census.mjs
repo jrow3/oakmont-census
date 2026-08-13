@@ -106,7 +106,7 @@ async function main() {
   console.log('Fetching 2020 DHC for the Oakmont blocks');
   const blockValues = await fetchBlockValues();
   const oakmont2020 = buildBlockSection(blockValues);
-  console.log(`  Oakmont blocks: population ${oakmont2020.snapshot.totalPopulation}, ${oakmont2020.snapshot.pct65Plus}% age 65+`);
+  console.log(`  Oakmont blocks: population ${oakmont2020.snapshot.totalPopulation}, ${oakmont2020.snapshot.pct55Plus}% age 55+`);
 
   await mkdir(EXPLORER_DIR, { recursive: true });
   const mirrors = {};

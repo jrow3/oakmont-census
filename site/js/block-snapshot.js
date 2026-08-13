@@ -27,7 +27,7 @@ export function renderBlockSnapshot(section) {
 
   document.getElementById('block-kpis').innerHTML = [
     kpiTile('Population', fmt(s.totalPopulation), 'Exact boundary'),
-    kpiTile('Age 65+', pct(s.pct65Plus), 'Of residents'),
+    kpiTile('Age 55+', pct(s.pct55Plus), 'Of residents'),
     kpiTile('Median age', s.medianAge != null ? String(s.medianAge) : '—', 'Years'),
     kpiTile('Housing units', fmt(s.totalHousingUnits), 'All units'),
     kpiTile('Owner-occupied', pct(s.ownerOccupiedPct), 'Of occupied homes'),
@@ -44,7 +44,7 @@ export function renderBlockSnapshot(section) {
   charts.innerHTML =
     `<div class="chart-card reveal"><div class="chart-kicker">Residents by age</div><h3>An older community, precisely drawn</h3>` +
     horizontalBars({ items: ageItems, ariaLabel: 'Population by age bucket' }) +
-    `<p class="chart-caption"><strong>${pct(s.pct65Plus)}</strong> of residents in Oakmont's exact boundary are 65 or older.</p></div>` +
+    `<p class="chart-caption"><strong>${pct(s.pct55Plus)}</strong> of residents in Oakmont's exact boundary are 55 or older.</p></div>` +
     `<div class="chart-card reveal"><div class="chart-kicker">How homes are held</div><h3>Owners vs. renters</h3>` +
     stackedBar({ segments: [
       { label: 'Owner-occupied', value: s.ownerOccupied, color: 'var(--terracotta)' },

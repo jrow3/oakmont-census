@@ -2,7 +2,7 @@
 // Shared by fetch-census.mjs (real API values) and sample-data.mjs (placeholder values).
 
 import { GROUPS } from './census-variables.mjs';
-import { DEC_GROUPS, AGE_65_PLUS, AGE_85_PLUS } from './decennial-variables.mjs';
+import { DEC_GROUPS, AGE_55_PLUS, AGE_85_PLUS } from './decennial-variables.mjs';
 import { medianAgeFromP12 } from './median-age.mjs';
 
 export function buildGroups(values) {
@@ -73,9 +73,9 @@ export function buildBlockSection(values) {
     explorerFile: 'explorer/blocks2020.json',
     snapshot: {
       totalPopulation: totalPop,
-      age65Plus: sum(AGE_65_PLUS),
+      age55Plus: sum(AGE_55_PLUS),
       age85Plus: sum(AGE_85_PLUS),
-      pct65Plus: pct(sum(AGE_65_PLUS), totalPop),
+      pct55Plus: pct(sum(AGE_55_PLUS), totalPop),
       medianAge,
       totalHousingUnits: v('H1_001N'),
       occupiedUnits: v('H3_002N'),

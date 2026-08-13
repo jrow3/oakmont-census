@@ -20,6 +20,8 @@ export async function loadBlockGeoids() {
 }
 
 // Age band code groups (Male + Female), used to derive snapshot figures.
+export const AGE_55_PLUS = ['P12_017N','P12_018N','P12_019N','P12_020N','P12_021N','P12_022N','P12_023N','P12_024N','P12_025N',
+                            'P12_041N','P12_042N','P12_043N','P12_044N','P12_045N','P12_046N','P12_047N','P12_048N','P12_049N'];
 export const AGE_65_PLUS = ['P12_020N','P12_021N','P12_022N','P12_023N','P12_024N','P12_025N',
                             'P12_044N','P12_045N','P12_046N','P12_047N','P12_048N','P12_049N'];
 export const AGE_85_PLUS = ['P12_025N','P12_049N'];
