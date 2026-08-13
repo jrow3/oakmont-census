@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oakmont Village — Methodology</title>
+  <meta name="description" content="Where every figure on the Oakmont census site comes from, what geographic level it exists at, and why some parts use exact counts while others use broader estimates." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍇</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,400&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="sample-banner" class="sample-banner" hidden>
+    <strong>Sample data.</strong> These are placeholder figures for preview. Run the fetch script with a Census API key for the real numbers.
+  </div>
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <p class="kicker">Oakmont Village · Sonoma County, California</p>
+      <h1>How the numbers <em>work</em></h1>
+      <p class="lead">Where every figure on this site comes from, what geographic level it exists at, and why some parts of the report use exact counts while others fall back to broader estimates. It starts simple and gets more technical as you scroll, so read as far as you like.</p>
+      <div class="masthead-meta">
+        <span class="badge">2020 Census &amp; ACS</span>
+        <span class="meta-dot">·</span>
+        <span>Oakmont blocks + Tracts 1516.01/1516.02</span>
+      </div>
+      <nav class="year-nav" aria-label="Pages">
+        <a href="./report.html" class="year-link">Community Report</a>
+        <a href="./index.html" class="year-link">2020 Portrait</a>
+        <a href="./changes.html" class="year-link">2024 Update</a>
+        <a href="./methodology.html" class="year-link active" aria-current="page">Methodology</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="method">
+    <div class="method-layout">
+      <nav class="method-jump" aria-label="On this page">
+        <a href="#short">The short version</a>
+        <a href="#two-kinds">Two kinds of data</a>
+        <a href="#ladder">The geography ladder</a>
+        <a href="#source-map">Which number is which</a>
+        <a href="#fine-print">The fine print</a>
+      </nav>
+
+      <div class="method-content" id="method-body">
+
+        <section class="method-section tier-plain" id="short">
+          <p class="chart-kicker">Start here</p>
+          <h2>The short version</h2>
+          <p class="method-lead">Oakmont isn't its own city or town in the eyes of the U.S. Census Bureau, so there's no ready-made "Oakmont" in the data. To draw the community accurately, we trace it from <strong>76 individual census blocks</strong> that together match Oakmont's boundary.</p>
+          <p>From there, two different government datasets fill in the picture, and they don't work the same way. One is an exact head-count. The other is a survey that produces estimates. Things like how many people live here, how old they are, and who owns versus rents come from the exact count. Other things, like income, education, and home values, only exist as survey estimates for a larger area.</p>
+          <p>That's the whole story in one line: <strong>exact counts where we can get them, careful estimates where we can't.</strong> The rest of this page explains why, in as much or as little detail as you want.</p>
+          <div class="stat-strip">
+            <div class="stat"><span class="stat-value" data-figure="population">4,994</span><span class="stat-label">residents, exact boundary</span></div>
+            <div class="stat"><span class="stat-value" data-figure="pct55">92%</span><span class="stat-label">are age 55 or older</span></div>
+            <div class="stat"><span class="stat-value">2</span><span class="stat-label">Census programs behind it all</span></div>
+          </div>
+        </section>
+
+        <section class="method-section" id="two-kinds">
+          <p class="chart-kicker">The two sources</p>
+          <h2>Two kinds of Census data</h2>
+          <p class="method-lead">Almost every number here comes from one of two U.S. Census Bureau programs. Knowing which is which explains everything else.</p>
+          <div class="two-card">
+            <div class="def-card">
+              <h3>The Decennial Census</h3>
+              <p class="def-tag">Exact · counts only · reaches the block</p>
+              <p>A 100% head-count taken every ten years (2020 is the latest). Because it counts everyone, it's <strong>exact, with no margin of error</strong>, and it's published all the way down to a single city block. But it asks only a handful of questions, so it gives us <strong>counts</strong>: population, age, sex, race, and whether homes are owned, rented, or vacant.</p>
+            </div>
+            <div class="def-card">
+              <h3>The American Community Survey</h3>
+              <p class="def-tag">Estimated · rich detail · stops at the tract</p>
+              <p>A rolling survey sent to a <strong>sample</strong> of households, published as five-year averages. Because it's a sample, its numbers are <strong>estimates with a margin of error</strong>, and its detailed tables are only published for larger areas. But it asks far more: income, education, home value, marital status, and where people were born. It's where all the richer detail comes from.</p>
+            </div>
+          </div>
+          <p class="method-aside">The trade-off, in a phrase: <em>exactness versus richness</em>, and <em>geography versus detail</em>. The next section is the geography half.</p>
+        </section>
+
+        <section class="method-section" id="ladder">
+          <p class="chart-kicker">Where data lives</p>
+          <h2>The geography ladder</h2>
+          <p class="method-lead">Census data is published in nested pieces, from the whole country down to a single block. The smaller the piece, the fewer datasets reach it.</p>
+
+          <div class="geo-ladder" role="img" aria-label="Census geography nests from the nation, to the state, to the county, to the tract, to the block group, to the block. The American Community Survey's detailed tables are published down to the tract. The Decennial Census count is published all the way to the block, where Oakmont's 76 blocks are traced.">
+            <div class="geo-level lvl-nation">
+              <span class="geo-tag">Nation</span><span class="geo-name">United States</span>
+              <div class="geo-level lvl-state">
+                <span class="geo-tag">State</span><span class="geo-name">California</span>
+                <div class="geo-level lvl-county">
+                  <span class="geo-tag">County</span><span class="geo-name">Sonoma</span>
+                  <div class="geo-level lvl-tract">
+                    <span class="geo-tag">Tract</span><span class="geo-name">1516.01 &amp; 1516.02</span>
+                    <span class="geo-reach reach-acs">ACS estimates stop here</span>
+                    <div class="geo-level lvl-bg">
+                      <span class="geo-tag">Block group</span><span class="geo-name">within each tract</span>
+                      <div class="geo-level lvl-block is-oakmont">
+                        <span class="geo-tag">Block</span><span class="geo-name">76 blocks trace Oakmont</span>
+                        <span class="geo-reach reach-dec">Decennial counts reach here</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p>The exact Decennial count reaches the <strong>block</strong>, so we can trace Oakmont's 76 blocks precisely. The ACS's detailed tables stop at the <strong>tract</strong>, a larger area of a few thousand people. Oakmont sits inside <strong>Census Tracts 1516.01 and 1516.02</strong>, which also take in some non-Oakmont residents along the edges.</p>
+          <p>There's one more hurdle. Oakmont has <strong>no Census "place" code</strong> (those are reserved for incorporated cities and recognized communities), and there's <strong>no machine-readable map of the Oakmont Village Association boundary</strong> to hand the Census API. So the exact view isn't a built-in geography; it's a hand-picked list of the 76 blocks that best trace the community's edge.</p>
+        </section>
+
+        <section class="method-section" id="source-map">
+          <p class="chart-kicker">Putting it together</p>
+          <h2>Which number comes from where</h2>
+          <p class="method-lead">Here is exactly which dataset and geography each part of the Community Report draws on, and why.</p>
+          <div class="table-scroll">
+            <table class="source-table">
+              <thead>
+                <tr><th scope="col">What you see</th><th scope="col">Dataset</th><th scope="col">Geography</th><th scope="col">Why</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Population, age &amp; sex</td><td>2020 Decennial (DHC)</td><td>Exact 76 blocks</td><td>100% head-count, published at the block</td></tr>
+                <tr><td>Race &amp; Hispanic origin</td><td>2020 Decennial (DHC)</td><td>Exact 76 blocks</td><td>100% head-count, published at the block</td></tr>
+                <tr><td>Owner / renter, occupancy</td><td>2020 Decennial (DHC)</td><td>Exact 76 blocks</td><td>100% head-count, published at the block</td></tr>
+                <tr><td>Household &amp; per-capita income</td><td>2020 ACS 5-year</td><td>Tracts 1516.01 + 1516.02</td><td>Survey estimate, published only to the tract</td></tr>
+                <tr><td>Education</td><td>2020 ACS 5-year</td><td>Tracts 1516.01 + 1516.02</td><td>Survey estimate, published only to the tract</td></tr>
+                <tr><td>Home value</td><td>2020 ACS 5-year</td><td>Tracts 1516.01 + 1516.02</td><td>Survey estimate, published only to the tract</td></tr>
+                <tr><td>Marital status, place of birth</td><td>2020 ACS 5-year</td><td>Tracts 1516.01 + 1516.02</td><td>Survey estimate, published only to the tract</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="method-aside">This is why a single report mixes two geographies: the exact 76-block count for anything the Decennial measures, and the two-tract ACS estimate for anything only the survey measures. Every figure on the report is tagged with its source for the same reason.</p>
+        </section>
+
+        <section class="method-section fine-print" id="fine-print">
+          <p class="chart-kicker">For the data-minded</p>
+          <h2>The fine print</h2>
+
+          <h3>Why not just get ACS data for the 76 blocks?</h3>
+          <p>This is the most common question, and the answer is that <strong>block-level ACS demographics don't exist.</strong> Because the ACS is a sample, publishing its estimates for a tiny area would be both statistically unreliable and a privacy risk, so the Census Bureau only releases its detailed tables for areas of roughly 1,200 people or more. Income, education, and home value for a single block are never published, at any margin of error. Approaches that appear to show block-level ACS demographics are really filling the gap with non-Census sources such as member surveys or commercial address data; those aren't comparable to Census figures, so this site doesn't use them. Excluding blocks to trace a boundary is legitimate only for the Decennial count, which is exactly where we apply it.</p>
+
+          <h3>Differential privacy</h3>
+          <p>The 2020 Decennial Census adds a small amount of statistical noise to block-level counts to protect individuals (the Bureau's "differential privacy" system). For a single block this can nudge a number by a few people; summed across all 76 Oakmont blocks it largely averages out, which is why the exact-boundary totals are dependable even though any one block isn't guaranteed to the person.</p>
+
+          <h3>Margins of error</h3>
+          <p>Every ACS figure is an estimate with a published margin of error. We show the point estimates for readability, so read them as "about," not "exactly." The five-year 2020 ACS also overlaps in time with the 2016–2020 and 2020–2024 windows, which is why the 2024 comparison page calls its year-over-year changes "directional, not precise."</p>
+
+          <h3>The variables, by table</h3>
+          <p>Every figure traces to a public Census table. The main ones:</p>
+          <ul class="var-list">
+            <li><span class="var-code">P12</span> age &amp; sex (Decennial). The site reports the <strong>55+</strong> share (total minus the under-55 bands) because Oakmont is a 55+ community.</li>
+            <li><span class="var-code">P3</span> race, <span class="var-code">P4</span> Hispanic origin (Decennial).</li>
+            <li><span class="var-code">H1</span> housing units, <span class="var-code">H3</span> occupancy, <span class="var-code">H4</span> tenure / owner vs. renter (Decennial).</li>
+            <li><span class="var-code">B19013</span> household income, <span class="var-code">B19301</span> per-capita income (ACS).</li>
+            <li><span class="var-code">B15001</span> educational attainment, ages 45+ (ACS).</li>
+            <li><span class="var-code">B25077</span> median home value (ACS), owner-occupied homes only.</li>
+          </ul>
+          <p>All of these are public. You can pull them yourself from the <a href="https://api.census.gov/data.html">Census API</a>, or use this site's <strong>Full Data Explorer</strong> on the 2020 Portrait page, which mirrors every published table for these geographies.</p>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p id="footer-source">Source: U.S. Census Bureau — 2020 Decennial Census (DHC) and 2020 ACS 5-Year Estimates.</p>
+    <p class="footer-fine" id="footer-generated"></p>
+  </footer>
+
+  <script type="module">
+    import { initMethodology, showMethodologyError } from './js/methodology.js';
+    initMethodology().catch(showMethodologyError);
+  </script>
+</body>
+</html>

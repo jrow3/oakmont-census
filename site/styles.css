@@ -321,7 +321,7 @@ td.na { color: var(--line-strong); font-style: italic; }
 .kpi-delta-up { color: var(--teal); }
 .kpi-delta-down { color: var(--terracotta); }
 
-.year-nav { display: flex; gap: 1rem; margin-top: 1rem; }
+.year-nav { display: flex; flex-wrap: wrap; gap: .6rem 1rem; margin-top: 1rem; }
 .year-link { font: 600 .9rem/1 'Public Sans', sans-serif; color: var(--ink-2); text-decoration: none; padding-bottom: 2px; border-bottom: 2px solid transparent; }
 .year-link.active { color: var(--terracotta); border-bottom-color: var(--terracotta); }
 
@@ -390,3 +390,62 @@ table.income-grid .ig-total { font-weight: 600; background: var(--wash, #faf6f0)
 }
 /* Report age table: center every column so headers sit over their numbers. */
 .report-table th, .report-table td, .report-table td.num { text-align: center; }
+
+/* ---- Methodology page ---- */
+.method { max-width: 1080px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.method-layout { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 2.5rem; align-items: start; }
+
+.method-jump { position: sticky; top: 1.5rem; display: flex; flex-direction: column; gap: .15rem; }
+.method-jump a { font: 600 .82rem/1.3 'Public Sans', sans-serif; color: var(--ink-3); text-decoration: none; padding: .4rem .7rem; border-left: 2px solid var(--line); border-radius: 0 6px 6px 0; }
+.method-jump a:hover { color: var(--ink); }
+.method-jump a.active { color: var(--terracotta); border-left-color: var(--terracotta); background: #fdf0e7; }
+
+.method-content { display: flex; flex-direction: column; gap: 2.75rem; }
+.method-section { display: flex; flex-direction: column; gap: .85rem; }
+.method-section h2 { font: 600 1.7rem/1.15 var(--font-display); margin: .1rem 0 .1rem; }
+.method-section p { margin: 0; }
+.method-lead { font: 500 1.05rem/1.6 'Public Sans', sans-serif; color: var(--ink); }
+.tier-plain .method-lead { font-size: 1.18rem; }
+.method-aside { color: var(--ink-2); border-left: 3px solid var(--line-strong); padding-left: .9rem; font-size: .92rem; }
+
+.stat-strip { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: .5rem; }
+.stat { flex: 1; min-width: 150px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.1rem; box-shadow: var(--shadow-sm); }
+.stat-value { display: block; font: 600 1.9rem var(--font-display); color: var(--terracotta); line-height: 1.1; }
+.stat-label { font: 500 .8rem 'Public Sans', sans-serif; color: var(--ink-2); }
+
+.two-card { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+.def-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.2rem 1.3rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: .5rem; }
+.def-card h3 { font: 600 1.2rem var(--font-display); margin: 0; }
+.def-tag { font: 600 .7rem 'Public Sans', sans-serif; text-transform: uppercase; letter-spacing: .05em; color: var(--teal); margin: 0; }
+.def-card p:last-child { color: var(--ink-2); font-size: .92rem; line-height: 1.55; }
+
+.geo-ladder { margin: .3rem 0 .4rem; }
+.geo-level { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .6rem; border: 1px solid var(--line-strong); border-radius: 12px; padding: .6rem .7rem; background: var(--card); }
+.geo-level .geo-level { flex-basis: 100%; margin-top: .55rem; }
+.geo-tag { font: 600 .62rem 'Public Sans', sans-serif; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); background: var(--paper-tint); border-radius: 999px; padding: .2rem .5rem; }
+.geo-name { font: 600 .95rem 'Public Sans', sans-serif; color: var(--ink); }
+.geo-reach { margin-left: auto; font: 600 .68rem 'Public Sans', sans-serif; color: #fff; padding: .2rem .55rem; border-radius: 999px; }
+.reach-acs { background: var(--teal); }
+.reach-dec { background: var(--terracotta); }
+.is-oakmont { border-color: var(--terracotta); background: #fdf0e7; }
+.is-oakmont .geo-name { color: var(--terracotta-dk); }
+
+.table-scroll { overflow-x: auto; }
+.source-table { width: 100%; border-collapse: collapse; font: 400 .9rem 'Public Sans', sans-serif; }
+.source-table th { text-align: left; font-weight: 600; color: var(--ink); border-bottom: 2px solid var(--line-strong); padding: .6rem .7rem; white-space: nowrap; }
+.source-table td { border-bottom: 1px solid var(--line); padding: .6rem .7rem; color: var(--ink-2); vertical-align: top; }
+.source-table td:first-child { color: var(--ink); font-weight: 500; }
+
+.fine-print { font-size: .92rem; }
+.fine-print h3 { font: 600 1.08rem var(--font-display); margin: 1.1rem 0 -.1rem; }
+.fine-print p { color: var(--ink-2); line-height: 1.6; }
+.var-list { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: .45rem; color: var(--ink-2); line-height: 1.55; }
+.var-code { font: 600 .82rem var(--font-mono); color: var(--terracotta-dk); background: var(--paper-tint); border-radius: 5px; padding: .05rem .35rem; }
+
+@media (max-width: 800px) {
+  .method-layout { grid-template-columns: 1fr; gap: 1.25rem; }
+  .method-jump { position: static; flex-direction: row; flex-wrap: wrap; gap: .4rem; }
+  .method-jump a { border-left: none; border-bottom: 2px solid var(--line); border-radius: 6px 6px 0 0; padding: .35rem .5rem; }
+  .method-jump a.active { border-left-color: transparent; border-bottom-color: var(--terracotta); }
+  .two-card { grid-template-columns: 1fr; }
+}
