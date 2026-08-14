@@ -430,6 +430,14 @@ table.income-grid .ig-total { font-weight: 600; background: var(--wash, #faf6f0)
 .is-oakmont { border-color: var(--terracotta); background: #fdf0e7; }
 .is-oakmont .geo-name { color: var(--terracotta-dk); }
 
+.map-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: .5rem 0 .3rem; }
+.map-panel { display: flex; flex-direction: column; gap: .5rem; }
+.mini-map { height: 260px; border-radius: var(--radius); border: 1px solid var(--line-strong); overflow: hidden; background: var(--paper-tint); }
+.map-panel figcaption { font: 400 .82rem/1.45 'Public Sans', sans-serif; color: var(--ink-2); }
+.map-tag { display: inline-block; font: 600 .64rem 'Public Sans', sans-serif; text-transform: uppercase; letter-spacing: .05em; color: #fff; padding: .12rem .45rem; border-radius: 999px; margin-right: .3rem; }
+.map-tag-acs { background: var(--teal); }
+.map-tag-dec { background: var(--terracotta); }
+
 .table-scroll { overflow-x: auto; }
 .source-table { width: 100%; border-collapse: collapse; font: 400 .9rem 'Public Sans', sans-serif; }
 .source-table th { text-align: left; font-weight: 600; color: var(--ink); border-bottom: 2px solid var(--line-strong); padding: .6rem .7rem; white-space: nowrap; }
@@ -448,4 +456,5 @@ table.income-grid .ig-total { font-weight: 600; background: var(--wash, #faf6f0)
   .method-jump a { border-left: none; border-bottom: 2px solid var(--line); border-radius: 6px 6px 0 0; padding: .35rem .5rem; }
   .method-jump a.active { border-left-color: transparent; border-bottom-color: var(--terracotta); }
   .two-card { grid-template-columns: 1fr; }
+  .map-pair { grid-template-columns: 1fr; }
 }

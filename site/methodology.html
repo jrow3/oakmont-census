@@ -10,6 +10,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,400&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 <body>
   <div id="sample-banner" class="sample-banner" hidden>
@@ -108,6 +112,18 @@
           </div>
 
           <p>The exact Decennial count reaches the <strong>block</strong>, so we can trace Oakmont's 76 blocks precisely. The ACS's detailed tables stop at the <strong>tract</strong>, a larger area of a few thousand people. Oakmont sits inside <strong>Census Tracts 1516.01 and 1516.02</strong>, which also take in some non-Oakmont residents along the edges.</p>
+
+          <figure class="map-pair">
+            <div class="map-panel">
+              <div id="tract-map" class="mini-map"></div>
+              <figcaption><span class="map-tag map-tag-acs">ACS geography</span> Census Tracts 1516.01 + 1516.02 — the smallest area the survey publishes, spilling past Oakmont's edges.</figcaption>
+            </div>
+            <div class="map-panel">
+              <div id="block-map" class="mini-map"></div>
+              <figcaption><span class="map-tag map-tag-dec">Decennial geography</span> The 76 blocks, drawn tightly to Oakmont's boundary.</figcaption>
+            </div>
+          </figure>
+          <p class="method-aside">Both maps are at the same scale. The tracts (left) are the smallest area the ACS survey reports, and they reach past Oakmont; the 76 Decennial blocks (right) trace the community itself. That gap is exactly why counts use the blocks and estimates use the tracts.</p>
           <p>There's one more hurdle. Oakmont has <strong>no Census "place" code</strong> (those are reserved for incorporated cities and recognized communities), and there's <strong>no machine-readable map of the Oakmont Village Association boundary</strong> to hand the Census API. So the exact view isn't a built-in geography; it's a hand-picked list of the 76 blocks that best trace the community's edge.</p>
         </section>
 
@@ -171,7 +187,9 @@
 
   <script type="module">
     import { initMethodology, showMethodologyError } from './js/methodology.js';
+    import { renderGeoMaps } from './js/geo-maps.js';
     initMethodology().catch(showMethodologyError);
+    renderGeoMaps();
   </script>
 </body>
 </html>
