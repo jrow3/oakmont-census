@@ -2,8 +2,8 @@
 // Decennial block geography (76 blocks), drawn at the SAME scale so the block boundary reads as a
 // tighter subset of the tracts. Leaflet is loaded globally (CDN) by methodology.html.
 
-const TRACT_STYLE = { color: '#0e9384', weight: 1.5, fillColor: '#0e9384', fillOpacity: 0.12 };
-const BLOCK_STYLE = { color: '#b5502e', weight: 1, fillColor: '#c96a44', fillOpacity: 0.4 };
+const TRACT_STYLE = { color: '#0b7a6e', weight: 2.5, fillColor: '#0e9384', fillOpacity: 0.18 };
+const BLOCK_STYLE = { color: '#a5401f', weight: 1.5, fillColor: '#c96a44', fillOpacity: 0.5 };
 
 async function loadGeo(path) {
   const res = await fetch(path, { cache: 'force-cache' });
@@ -13,7 +13,7 @@ async function loadGeo(path) {
 
 function baseMap(el) {
   const map = window.L.map(el, { scrollWheelZoom: false, zoomControl: false, attributionControl: true, zoomSnap: 0 });
-  window.L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 19,
   }).addTo(map);
   return map;
@@ -39,13 +39,11 @@ export async function renderGeoMaps() {
   L.geoJSON(blocks, { style: BLOCK_STYLE }).addTo(blockMap);
 
   // Same scale: put BOTH maps at the same center and zoom (the tract extent contains the blocks),
-  // so the 76 blocks read as a tighter cluster inside the same frame. Zoom is set partway between
-  // "fit the tracts fully" and "fill the frame" to trim surrounding whitespace without cropping much.
+  // so the 76 blocks read as a tighter cluster inside the same frame. Zoom is the level that fits
+  // the whole tract extent, backed off a hair so the tracts never spill off the edges.
   const bounds = tractLayer.getBounds();
   const center = bounds.getCenter();
-  const zoomFit = tractMap.getBoundsZoom(bounds, false);
-  const zoomFill = tractMap.getBoundsZoom(bounds, true);
-  const zoom = (zoomFit + zoomFill) / 2;
+  const zoom = tractMap.getBoundsZoom(bounds, false) - 0.1;
   tractMap.setView(center, zoom, { animate: false });
   blockMap.setView(center, zoom, { animate: false });
 }
