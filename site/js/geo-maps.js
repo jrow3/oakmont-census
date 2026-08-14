@@ -12,7 +12,7 @@ async function loadGeo(path) {
 }
 
 function baseMap(el) {
-  const map = window.L.map(el, { scrollWheelZoom: false, zoomControl: false, attributionControl: true });
+  const map = window.L.map(el, { scrollWheelZoom: false, zoomControl: false, attributionControl: true, zoomSnap: 0 });
   window.L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 19,
   }).addTo(map);
@@ -38,9 +38,14 @@ export async function renderGeoMaps() {
   const tractLayer = L.geoJSON(tracts, { style: TRACT_STYLE }).addTo(tractMap);
   L.geoJSON(blocks, { style: BLOCK_STYLE }).addTo(blockMap);
 
-  // Same scale: fit BOTH maps to the tract extent (which contains the blocks), so the 76 blocks
-  // read as a tighter cluster inside the same frame.
-  const bounds = tractLayer.getBounds().pad(0.04);
-  tractMap.fitBounds(bounds);
-  blockMap.fitBounds(bounds);
+  // Same scale: put BOTH maps at the same center and zoom (the tract extent contains the blocks),
+  // so the 76 blocks read as a tighter cluster inside the same frame. Zoom is set partway between
+  // "fit the tracts fully" and "fill the frame" to trim surrounding whitespace without cropping much.
+  const bounds = tractLayer.getBounds();
+  const center = bounds.getCenter();
+  const zoomFit = tractMap.getBoundsZoom(bounds, false);
+  const zoomFill = tractMap.getBoundsZoom(bounds, true);
+  const zoom = (zoomFit + zoomFill) / 2;
+  tractMap.setView(center, zoom, { animate: false });
+  blockMap.setView(center, zoom, { animate: false });
 }
