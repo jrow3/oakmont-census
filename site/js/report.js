@@ -104,7 +104,8 @@ function incomeSection(r) {
      </div>
      ${horizontalBars({ items, ariaLabel: 'Households by income bracket', format: fmt })}
      <p class="chart-caption">Family households (typically couples) earn well above people living alone — the same split the 2010 report found.</p>
-     <p class="report-note"><strong>Household vs. family:</strong> a <em>household</em> is everyone in a home, including a person living alone; a <em>family</em> is a householder plus relatives. The family median runs highest, and the household median sits below it because it also counts the many one-person homes.</p>`);
+     <p class="report-note"><strong>Household vs. family:</strong> a <em>household</em> is everyone in a home, including a person living alone; a <em>family</em> is a householder plus relatives. The family median runs highest, and the household median sits below it because it also counts the many one-person homes.</p>
+     <p class="report-note"><strong>What counts as income here:</strong> the Census measures <em>money income</em> — cash a household receives, counted before taxes. It <em>does</em> include Social Security, SSI, pensions and regular retirement-account withdrawals (IRA, Roth IRA, 401(k)), VA payments, and interest and dividends — whether or not any of it is taxable. It does <em>not</em> include proceeds from selling a home, withdrawals from savings, money borrowed against a home (reverse mortgage, HELOC), inheritances, life insurance payouts, or one-time gifts. That gap matters in a retirement community: a household living comfortably on savings and home equity can still report a modest income here.</p>`);
 }
 
 function incomeSourcesSection(r) {
