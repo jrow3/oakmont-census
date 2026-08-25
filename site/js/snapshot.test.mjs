@@ -50,15 +50,25 @@ test('a level reports its own units — a percentage of an age is meaningless', 
 });
 
 test('a one-year move is singular', () => {
-  assert.match(deltaBadge('medianAge', 72, 71, OPTS), /\+1 year since/);
-  assert.match(deltaBadge('medianAge', 70, 71, OPTS), /-1 year since/);
+  assert.match(deltaBadge('medianAge', 72, 71, OPTS), /\+1 year</);
+  assert.match(deltaBadge('medianAge', 70, 71, OPTS), /-1 year</);
 });
 
 test('an unchanged figure says so rather than rendering blank', () => {
   // A blank where every neighbouring tile has a figure reads as missing data.
   const badge = deltaBadge('medianAge', 71, 71, OPTS);
-  assert.match(badge, /Unchanged since 2015–2019/);
+  assert.match(badge, /Unchanged/);
   assert.doesNotMatch(badge, /▲|▼/);
+});
+
+test('no badge names the baseline, because a wrapped badge breaks the row', () => {
+  // Four of the ten wrapped to a second line when each repeated "since 2015–2019", which dropped
+  // those tiles' sub-labels 20px below their neighbours'. The page states the baseline once.
+  for (const badge of [
+    deltaBadge('medianHouseholdIncome', 104238, 73440, OPTS),
+    deltaBadge('povertyRate', 4.7, 3.2, OPTS),
+    deltaBadge('medianAge', 71, 71, OPTS),
+  ]) assert.doesNotMatch(badge, /2015–2019/);
 });
 
 test('a change too small to round to a whole percent still says unchanged', () => {

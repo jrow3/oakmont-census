@@ -80,12 +80,12 @@ export function deltaBadge(key, current, prior, opts) {
   // Say "unchanged" rather than nothing. A blank space where every neighbouring tile has a figure
   // reads as missing data, not as stability.
   if (dir === 'flat') {
-    return `<div class="kpi-delta">Unchanged since ${opts.baselineLabel}</div>`;
+    return '<div class="kpi-delta">Unchanged</div>';
   }
   const arrow = dir === 'up' ? '▲' : '▼';
   const sentiment = deltaSentiment(key, dir);
   const tone = sentiment ? ` kpi-delta-${sentiment}` : '';
-  return `<div class="kpi-delta${tone}">${arrow} ${text} since ${opts.baselineLabel}</div>`;
+  return `<div class="kpi-delta${tone}">${arrow} ${text}</div>`;
 }
 
 export function renderSnapshot(section, meta, opts = {}) {
@@ -143,6 +143,13 @@ export function renderSnapshot(section, meta, opts = {}) {
     kpiTile('Poverty rate', pct(s.povertyRate), 'Below poverty line', cd('povertyRate')),
     kpiTile('Median age', s.medianAge != null ? String(s.medianAge) : '—', 'Years', cd('medianAge')),
   ].join('');
+
+  // Said once here rather than on each tile, where it wrapped.
+  const baselineNote = document.getElementById('kpi-baseline');
+  if (baselineNote) {
+    baselineNote.textContent = cmp ? `Every change shown is measured against the ${cmp.baselineLabel} survey.` : '';
+    baselineNote.hidden = !cmp;
+  }
 
   // ── Charts ──
   const pop = s.totalPopulation || 1;

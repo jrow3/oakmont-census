@@ -27,7 +27,21 @@
   --shadow-md: 0 2px 6px rgba(74, 53, 32, 0.08), 0 12px 30px rgba(74, 53, 32, 0.09);
   --radius: 14px;
   --maxw: 1120px;
+
+  /* The page's content column. The masthead, main and the footer all read these two, so the
+     headline, the body and the source line share one left edge. Anything that sets its own
+     max-width or side padding inside main puts a second gutter on top of main's and shifts that
+     region right of everything else. */
+  --col: var(--maxw);
+  --gutter: 24px;
 }
+
+/* The report sets a narrower measure for prose and the methodology page allows for its jump-nav;
+   the frame follows the body rather than the body sitting inside a wider frame. If :has() is
+   unsupported the column stays 1120px everywhere — wider than intended on those two pages, but
+   still aligned, which is the property that matters. */
+body:has(main.report) { --col: 920px; }
+body:has(main.method) { --col: 1080px; }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -61,17 +75,17 @@ em { font-style: italic; }
 
 /* ── Masthead ──────────────────────────────────────────────────── */
 .masthead {
-  padding: clamp(44px, 8vw, 92px) 24px clamp(30px, 5vw, 54px);
+  padding: clamp(44px, 8vw, 92px) 0 clamp(30px, 5vw, 54px);
   border-bottom: 1px solid var(--line);
   position: relative;
 }
 .masthead::after {
   content: '';
   position: absolute; left: 50%; bottom: -1px; transform: translateX(-50%);
-  width: min(var(--maxw), calc(100% - 48px)); height: 3px;
+  width: calc(min(var(--col), 100%) - 2 * var(--gutter)); height: 3px;
   background: linear-gradient(90deg, var(--terracotta) 0%, var(--gold) 42%, transparent 78%);
 }
-.masthead-inner { max-width: var(--maxw); margin: 0 auto; }
+.masthead-inner { max-width: var(--col); margin: 0 auto; padding: 0 var(--gutter); }
 .kicker {
   font-size: 0.8rem; font-weight: 600; letter-spacing: 0.16em;
   text-transform: uppercase; color: var(--terracotta-dk);
@@ -89,7 +103,7 @@ em { font-style: italic; }
   color: var(--ink-2); max-width: 44ch; margin: 18px 0 0; line-height: 1.45;
 }
 .masthead-meta {
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  display: flex; align-items: baseline; gap: 6px 14px; flex-wrap: wrap;
   margin-top: 22px; font-size: 0.86rem; color: var(--ink-3);
 }
 .badge {
@@ -97,10 +111,10 @@ em { font-style: italic; }
   font-size: 0.74rem; letter-spacing: 0.05em; text-transform: uppercase;
   padding: 5px 12px; border-radius: 999px;
 }
-.meta-dot { color: var(--line-strong); }
+
 
 /* ── Layout shells ─────────────────────────────────────────────── */
-main { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+main { max-width: var(--col); margin: 0 auto; padding: 0 var(--gutter); }
 .snapshot { padding: clamp(34px, 5vw, 56px) 0; }
 
 /* ── KPI tiles ─────────────────────────────────────────────────── */
@@ -187,7 +201,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
 }
 
 /* ── Explorer ──────────────────────────────────────────────────── */
-.explorer-section { max-width: var(--maxw); margin: 0 auto clamp(40px, 6vw, 72px); padding: 0 24px; }
+.explorer-section { margin-bottom: clamp(40px, 6vw, 72px); }
 .explorer-toggle {
   width: 100%; text-align: left; cursor: pointer;
   background: var(--card); border: 1px solid var(--line-strong);
@@ -287,7 +301,7 @@ td.na { color: var(--line-strong); font-style: italic; }
 
 /* ── Footer ────────────────────────────────────────────────────── */
 .site-footer {
-  max-width: var(--maxw); margin: 0 auto; padding: 30px 24px 60px;
+  max-width: var(--col); margin: 0 auto; padding: 30px var(--gutter) 60px;
   border-top: 1px solid var(--line); font-size: 0.82rem; color: var(--ink-3);
 }
 .site-footer p + p { margin-top: 8px; }
@@ -322,12 +336,15 @@ td.na { color: var(--line-strong); font-style: italic; }
 
 /* Delta tone is about meaning, not direction: rising poverty and rising income both point up, and
    colouring them alike reads as endorsement. Figures with no obvious good direction stay neutral. */
-.kpi-delta { margin-top: .35rem; font-size: .8rem; font-weight: 600; color: var(--ink-2); }
+/* One line, always. A wrapped badge pushes its tile's sub-label below its neighbours' and the
+   row stops reading as a row. The baseline it used to name now sits under the grid. */
+.kpi-delta { margin-top: .35rem; font-size: .8rem; font-weight: 600; color: var(--ink-2); white-space: nowrap; }
 .kpi-delta-good { color: var(--teal); }
 .kpi-delta-bad { color: var(--terracotta); }
+.kpi-baseline { margin-top: .9rem; font-size: .85rem; color: var(--ink-3); }
 
 /* Explore page: plain-language intro and the dataset switcher. */
-.explore-intro { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: .75rem; }
+.explore-intro { padding-block: clamp(28px, 4vw, 44px) 0; display: flex; flex-direction: column; gap: .75rem; }
 .explore-intro p { margin: 0; max-width: 72ch; color: var(--ink-2); line-height: 1.6; }
 .explore-intro p strong { color: var(--ink); }
 .dataset-switch { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: .75rem; margin-top: .5rem; }
@@ -416,7 +433,7 @@ table.income-grid .ig-total { font-weight: 600; background: var(--wash, #faf6f0)
 .leaflet-container { background: var(--wash, #faf6f0); font: inherit; }
 
 /* ── Community Report ── */
-.report { max-width: 920px; margin: 0 auto; padding: 2rem 1.25rem 4rem; display: flex; flex-direction: column; gap: 2.5rem; }
+.report { padding-block: 2rem 4rem; display: flex; flex-direction: column; gap: 2.5rem; }
 .report-section { display: flex; flex-direction: column; gap: 1rem; }
 .report-head h2 { margin: .15rem 0 0; font: 600 1.6rem/1.1 'Fraunces', serif; }
 .report-source { margin: 0; font: 400 .8rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); }
@@ -431,7 +448,7 @@ table.income-grid .ig-total { font-weight: 600; background: var(--wash, #faf6f0)
 .report-source-detail > summary:hover { color: var(--teal); }
 .report-source-detail .report-source { margin: .25rem 0 0; }
 .report-subhead { margin: .75rem 0 0; font: 600 1rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); }
-.report-basis { margin: .25rem 0 0; font: 400 .78rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); }
+.report-basis { margin: .55rem 0 0; font: 400 .78rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); }
 .report-basis strong { font-weight: 600; color: var(--ink, #2b2621); }
 .method-link { font-weight: 600; color: var(--teal); }
 .report-details > summary { cursor: pointer; font: 500 .9rem 'Public Sans', sans-serif; color: var(--teal); padding: .35rem 0; }
@@ -457,7 +474,7 @@ table.income-grid .ig-total { font-weight: 600; background: var(--wash, #faf6f0)
 .report-table th, .report-table td, .report-table td.num { text-align: center; }
 
 /* ---- Methodology page ---- */
-.method { max-width: 1080px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.method { padding-block: 2rem 4rem; }
 .method-layout { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 2.5rem; align-items: start; }
 
 .method-jump { position: sticky; top: 1.5rem; display: flex; flex-direction: column; gap: .15rem; }
