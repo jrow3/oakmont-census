@@ -23,3 +23,14 @@ export function aggregate(label, values, weights) {
   }
   return anyValid ? sum : null;
 }
+
+// Margins do not aggregate the way estimates do. Summed counts combine as the root of the sum of
+// squares (Census Bureau, "Calculating Measures of Error for Derived Estimates"). A weighted
+// average of two medians has no published combined margin at all — the largest component margin is
+// a floor, so a caller that shows it must call it approximate rather than exact.
+export function aggregateMargin(label, margins) {
+  const valid = margins.filter((m) => m != null && m >= 0);
+  if (!valid.length) return null;
+  if (isWeighted(label)) return Math.max(...valid);
+  return Math.round(Math.sqrt(valid.reduce((a, m) => a + m * m, 0)));
+}

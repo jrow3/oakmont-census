@@ -1,6 +1,7 @@
 // Pull the FULL ACS 5-year detailed-table catalog (incl. race-iterated tables) for the two
 // Oakmont tracts, aggregate across them, and return a per-year mirror object for the explorer.
-// One request per table via get=group(ID); estimates only. Medians are weighted by tract population.
+// One request per table via get=group(ID), which returns each estimate and its margin of error in
+// the same response. Medians are weighted by tract population.
 
 import { GEO } from './census-variables.mjs';
 import { shapeTable } from './mirror.mjs';

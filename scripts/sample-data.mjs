@@ -176,9 +176,12 @@ function sampleMirror(vals, groups, meta) {
   for (const g of Object.values(groups)) {
     for (const [code, label] of Object.entries(g.variables)) {
       const id = tableIdOf(code);
-      (tables[id] ||= { concept: g.label, variables: {} }).variables[code] = {
-        label, value: vals[code] ?? null,
-      };
+      const value = vals[code] ?? null;
+      // Sample margins so the explorer's margin column is visible in a keyless preview. Real
+      // margins come from the Census in the same response as the estimate.
+      const moe = !String(meta.dataset || '').startsWith('acs') || value == null ? null : Math.max(1, Math.round(Math.sqrt(Math.abs(value)) * 3));
+      (tables[id] ||= { concept: g.label, variables: {} }).variables[code] =
+        moe == null ? { label, value } : { label, value, moe };
     }
   }
   return { meta, tables };

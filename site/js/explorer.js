@@ -74,10 +74,13 @@ export async function renderExplorer(root, { explorerFile, featured = [], year =
   function rowsFor(id) {
     const denom = tableTotal(id);
     return Object.entries(tables[id].variables).map(([code, v]) => ({
-      code, label: v.label, value: v.value,
+      code, label: v.label, value: v.value, moe: v.moe ?? null,
       pct: v.value != null && denom ? (v.value / denom) * 100 : null,
     }));
   }
+
+  // Decennial tables carry no margins at all, so the column only appears where it means something.
+  const hasMargins = (rows) => rows.some((r) => r.moe != null);
 
   function sortRows(rows, key) {
     if (!key) return rows;
@@ -97,6 +100,7 @@ export async function renderExplorer(root, { explorerFile, featured = [], year =
     let rows = rowsFor(id);
     rows = sortRows(rows, state.sort);
     const maxV = Math.max(0, ...rows.map((r) => r.value ?? 0));
+    const showMoe = hasMargins(rows);
     tableView.innerHTML = `
       <div class="table-view-head">
         <h4><span class="catalog-id">${id}</span> ${escapeHtml(tables[id].concept || '')}</h4>
@@ -107,14 +111,16 @@ export async function renderExplorer(root, { explorerFile, featured = [], year =
         <thead><tr>
           <th data-sort="code">Variable</th><th data-sort="label">Label</th>
           <th data-sort="value" style="text-align:right">Value</th>
+          ${showMoe ? '<th data-sort="moe" style="text-align:right">± Margin of error</th>' : ''}
           <th data-sort="pct" style="text-align:right">% of total</th><th>Distribution</th>
         </tr></thead>
         <tbody>${rows.map((r) => {
           const value = r.value != null ? fmt(r.value) : '<span class="na">N/A</span>';
           const p = r.pct != null ? `${r.pct.toFixed(1)}%` : '<span class="na">—</span>';
           const w = maxV > 0 && r.value != null ? Math.max(1, Math.round((r.value / maxV) * 100)) : 0;
+          const moe = !showMoe ? '' : `<td class="num">${r.moe != null ? '±' + fmt(r.moe) : '<span class="na">—</span>'}</td>`;
           return `<tr><td class="code">${r.code}</td><td>${escapeHtml(r.label)}</td>
-            <td class="num">${value}</td><td class="pct">${p}</td>
+            <td class="num">${value}</td>${moe}<td class="pct">${p}</td>
             <td><div class="dist-bar"><i style="width:${w}%"></i></div></td></tr>`;
         }).join('')}</tbody>
       </table></div>`;
@@ -124,13 +130,13 @@ export async function renderExplorer(root, { explorerFile, featured = [], year =
       renderTable();
     }));
     tableView.querySelector('#dl-current').addEventListener('click', () =>
-      downloadCsv([['Table', 'Concept', 'Variable', 'Label', 'Value', '% of Total'],
-        ...rowsFor(id).map((r) => [id, tables[id].concept || '', r.code, r.label, r.value ?? '',
+      downloadCsv([['Table', 'Concept', 'Variable', 'Label', 'Value', 'Margin of Error', '% of Total'],
+        ...rowsFor(id).map((r) => [id, tables[id].concept || '', r.code, r.label, r.value ?? '', r.moe ?? '',
           r.pct != null ? `${r.pct.toFixed(2)}%` : ''])], `oakmont_${year}_${id}.csv`));
     tableView.querySelector('#dl-all').addEventListener('click', () => {
-      const csv = [['Table', 'Concept', 'Variable', 'Label', 'Value', '% of Total']];
+      const csv = [['Table', 'Concept', 'Variable', 'Label', 'Value', 'Margin of Error', '% of Total']];
       for (const tid of ids) for (const r of rowsFor(tid))
-        csv.push([tid, tables[tid].concept || '', r.code, r.label, r.value ?? '',
+        csv.push([tid, tables[tid].concept || '', r.code, r.label, r.value ?? '', r.moe ?? '',
           r.pct != null ? `${r.pct.toFixed(2)}%` : '']);
       downloadCsv(csv, `oakmont_${year}_all_data.csv`);
     });

@@ -8,14 +8,16 @@ const DATASETS = {
     sectionKey: 'acs2020',
     featured: ['B01001', 'B01002', 'B19001', 'B19019', 'B25003', 'B25034', 'B15003', 'B02001'],
     caveat: 'A survey of a sample of households, not a count of everyone. It covers two census tracts, '
-      + 'which reach a little past Oakmont. Every figure here is the Bureau’s estimate; the margin of '
-      + 'error it publishes alongside is not shown, so read these as “about”, not “exactly”.',
+      + 'which reach a little past Oakmont. Each figure is an estimate, shown with the Bureau’s margin of '
+      + 'error: the true number is very likely within that much either way. Medians are combined across '
+      + 'the two tracts, so their margins are the wider of the two rather than an exact combined figure.',
   },
   acs2024: {
     sectionKey: 'acs2024',
     featured: ['B01001', 'B01002', 'B19001', 'B19019', 'B25003', 'B25034', 'B15003', 'B02001'],
-    caveat: 'The same survey as 2016–2020, asked of a later sample. The two overlap in 2020, so they '
-      + 'are not a clean before-and-after — see What’s Changed for a comparison that is.',
+    caveat: 'The same survey as 2016–2020, asked of a later sample, and shown with the same margins of '
+      + 'error. The two overlap in 2020, so they are not a clean before-and-after — see What’s Changed '
+      + 'for a comparison that is.',
   },
   blocks2020: {
     sectionKey: 'oakmont2020',
