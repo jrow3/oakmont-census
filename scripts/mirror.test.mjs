@@ -32,6 +32,18 @@ test('shapeTable keeps the margin the Census sent in the same response', () => {
   assert.equal(t.variables.B19001_001E.moe, 25); // sqrt(15^2 + 20^2)
 });
 
+test('a margin is aggregated the same way its estimate is', () => {
+  // The invariant that matters: if the value was population-weighted, the margin must not be
+  // root-sum-of-squared as though it had been summed. Both read the same label to decide.
+  const h = ['B19013_001E', 'B19013_001M', 'state', 'county', 'tract'];
+  const t = shapeTable('Household Income', [h,
+    ['90000', '6000', '06', '097', '151601'],
+    ['70000', '9000', '06', '097', '151602'],
+  ], { B19013_001E: 'Median household income' }, pops, rowKey);
+  assert.equal(t.variables.B19013_001E.value, 75000);   // weighted, not summed
+  assert.equal(t.variables.B19013_001E.moe, 9000);      // the wider of the two, not sqrt(6000^2+9000^2)
+});
+
 test('a variable with no margin column carries no margin key at all', () => {
   // Rather than a null the explorer would have to render as an empty cell.
   const t = shapeTable('Household Income', [header, ...rows], labels, pops, rowKey);
