@@ -3,20 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Oakmont Village — Community Snapshot</title>
-  <meta name="description" content="A census snapshot of Oakmont Village, Sonoma County, California, from the U.S. Census Bureau's American Community Survey." />
+  <title>Oakmont Village — Community Report</title>
+  <meta name="description" content="Who lives in Oakmont Village, Sonoma County, California — a 2020 community report built only from U.S. Census Bureau data." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍇</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,400&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./styles.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 <body>
-
   <div id="sample-banner" class="sample-banner" hidden>
     <strong>Sample data.</strong> These are placeholder figures for preview. Run the fetch script with a Census API key for the real numbers.
   </div>
@@ -24,81 +23,46 @@
   <header class="masthead">
     <div class="masthead-inner">
       <p class="kicker">Oakmont Village · Sonoma County, California</p>
-      <h1>Community <em>Snapshot</em></h1>
-      <p class="lead">A portrait of the neighborhood in numbers, drawn from the U.S. Census Bureau's American Community Survey.</p>
+      <h1>Community <em>Report</em></h1>
+      <p class="lead">Who lives in Oakmont, in numbers — drawn only from U.S. Census Bureau data.</p>
       <div class="masthead-meta">
-        <span class="badge" id="badge-year">ACS 5-Year</span>
+        <span class="badge">2020 Census &amp; survey</span>
         <span class="meta-dot">·</span>
-        <span id="meta-geo">Census Tracts 1516.01 + 1516.02</span>
+        <span id="report-geo">Oakmont blocks + Tracts 1516.01/1516.02</span>
       </div>
-      <nav class="year-nav" aria-label="Data year">
-        <a href="./report.html" class="year-link">Community Report</a>
-        <a href="./index.html" class="year-link active" aria-current="page">2020 Portrait</a>
-        <a href="./changes.html" class="year-link">2024 Update</a>
-        <a href="./methodology.html" class="year-link">Methodology</a>
+      <nav class="year-nav" aria-label="Sections">
+        <a href="./index.html" class="year-link active" aria-current="page">
+          <span class="year-link-label">Community Report</span>
+          <span class="year-link-sub">Who lives here</span>
+        </a>
+        <a href="./changes.html" class="year-link">
+          <span class="year-link-label">What's Changed</span>
+          <span class="year-link-sub">Is it changing?</span>
+        </a>
+        <a href="./explore.html" class="year-link">
+          <span class="year-link-label">Explore the Data</span>
+          <span class="year-link-sub">Every figure, searchable</span>
+        </a>
+        <a href="./methodology.html" class="year-link">
+          <span class="year-link-label">Methodology</span>
+          <span class="year-link-sub">How we know this</span>
+        </a>
       </nav>
     </div>
   </header>
 
-  <main>
-    <section class="snapshot" aria-label="Community snapshot">
-      <div class="kpi-grid" id="kpis"></div>
-
-      <div class="chart-grid" id="charts"></div>
-
-      <div class="callouts" id="callouts"></div>
-
-      <p class="method-note" id="method-note"></p>
-    </section>
-
-    <section class="explorer-section" aria-label="Full data explorer">
-      <button class="explorer-toggle" id="explorer-toggle" aria-expanded="false" aria-controls="explorer">
-        <span class="explorer-toggle-label">Full data explorer</span>
-        <span class="explorer-toggle-sub">Every variable, sortable and searchable, with CSV export</span>
-        <span class="chevron" aria-hidden="true"></span>
-      </button>
-      <div class="explorer" id="explorer" hidden></div>
-    </section>
-
-    <section class="block-panel" aria-label="Oakmont proper, 2020 blocks">
-      <div class="block-panel-head">
-        <p class="kicker">The exact boundary · 2020 Decennial Census</p>
-        <h2>Oakmont <em>proper</em></h2>
-        <p class="lead">The same community drawn to its actual block boundary — 100% counts, no survey estimation.</p>
-      </div>
-      <figure class="block-map-card">
-        <div id="block-map" class="block-map"></div>
-        <figcaption>The census blocks selected to trace Oakmont's boundary, over an OpenStreetMap / CARTO basemap.</figcaption>
-      </figure>
-      <div class="kpi-grid" id="block-kpis"></div>
-      <div class="chart-grid" id="block-charts"></div>
-      <p class="method-note" id="block-method-note"></p>
-      <div class="explorer-section">
-        <button class="explorer-toggle" id="block-explorer-toggle" aria-expanded="false" aria-controls="block-explorer">
-          <span class="explorer-toggle-label">Full block-level explorer</span>
-          <span class="explorer-toggle-sub">Every 2020 decennial variable, sortable, with CSV export</span>
-          <span class="chevron" aria-hidden="true"></span>
-        </button>
-        <div class="explorer" id="block-explorer" hidden></div>
-      </div>
-    </section>
-  </main>
+  <main id="report" class="report"></main>
 
   <footer class="site-footer">
-    <p id="footer-source">Source: U.S. Census Bureau, American Community Survey.</p>
-    <p class="footer-fine">
-      Oakmont has no boundary of its own in Census records — it sits inside the City of Santa Rosa —
-      so these figures cover Census Tracts 1516.01 and 1516.02 in Sonoma County. Counts are summed
-      across the two tracts; medians are population-weighted approximations.
-    </p>
+    <p id="footer-source">Source: U.S. Census Bureau — 2020 Decennial Census (DHC) and the 2016–2020 American Community Survey.</p>
     <p class="footer-fine" id="footer-generated"></p>
   </footer>
 
   <div id="tooltip" class="tooltip" role="status" aria-live="off" hidden></div>
 
   <script type="module">
-    import { initPage, showError } from './js/page.js';
-    initPage({ section: 'acs2020' }).catch(showError);
+    import { renderReport, showReportError } from './js/report.js';
+    renderReport().catch(showReportError);
   </script>
 </body>
 </html>

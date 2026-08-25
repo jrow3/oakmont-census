@@ -3,50 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Oakmont Village — Community Report (2020)</title>
-  <meta name="description" content="A reliable 2020 demographic report for Oakmont Village, Sonoma County, California, built only from U.S. Census Bureau data." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍇</text></svg>" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,400&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <title>Oakmont Village — Community Report</title>
+  <!-- The Community Report and the old 2020 Portrait were two views of the same year, so they were
+       merged onto the site root. This page stays as a redirect because the URL has been shared. -->
+  <link rel="canonical" href="./index.html" />
+  <meta http-equiv="refresh" content="0; url=./index.html" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <div id="sample-banner" class="sample-banner" hidden>
-    <strong>Sample data.</strong> These are placeholder figures for preview. Run the fetch script with a Census API key for the real numbers.
-  </div>
-
-  <header class="masthead">
-    <div class="masthead-inner">
-      <p class="kicker">Oakmont Village · Sonoma County, California</p>
-      <h1>Community <em>Report</em></h1>
-      <p class="lead">A demographic snapshot of our 55+ community, drawn only from U.S. Census Bureau data — the 2020 Decennial Census for exact counts and the 2020 American Community Survey for income, education, and housing.</p>
-      <div class="masthead-meta">
-        <span class="badge">2020 Census &amp; ACS</span>
-        <span class="meta-dot">·</span>
-        <span id="report-geo">Oakmont blocks + Tracts 1516.01/1516.02</span>
-      </div>
-      <nav class="year-nav" aria-label="Pages">
-        <a href="./report.html" class="year-link active" aria-current="page">Community Report</a>
-        <a href="./index.html" class="year-link">2020 Portrait</a>
-        <a href="./changes.html" class="year-link">2024 Update</a>
-        <a href="./methodology.html" class="year-link">Methodology</a>
-      </nav>
-    </div>
-  </header>
-
-  <main id="report" class="report"></main>
-
-  <footer class="site-footer">
-    <p id="footer-source">Source: U.S. Census Bureau — 2020 Decennial Census (DHC) and 2020 ACS 5-Year Estimates.</p>
-    <p class="footer-fine" id="footer-generated"></p>
-  </footer>
-
-  <div id="tooltip" class="tooltip" role="status" aria-live="off" hidden></div>
-
-  <script type="module">
-    import { renderReport, showReportError } from './js/report.js';
-    renderReport().catch(showReportError);
-  </script>
+  <main class="report">
+    <p class="explorer-loading">
+      The Community Report now lives at <a class="method-link" href="./index.html">the front page</a>.
+      Redirecting…
+    </p>
+  </main>
+  <script>location.replace('./index.html');</script>
 </body>
 </html>

@@ -326,6 +326,24 @@ td.na { color: var(--line-strong); font-style: italic; }
 .kpi-delta-good { color: var(--teal); }
 .kpi-delta-bad { color: var(--terracotta); }
 
+/* Explore page: plain-language intro and the dataset switcher. */
+.explore-intro { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: .75rem; }
+.explore-intro p { margin: 0; max-width: 72ch; color: var(--ink-2); line-height: 1.6; }
+.explore-intro p strong { color: var(--ink); }
+.dataset-switch { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: .75rem; margin-top: .5rem; }
+.dataset-btn { text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: .9rem 1rem; cursor: pointer; display: flex; flex-direction: column; gap: .25rem; font: inherit; }
+.dataset-btn:hover { border-color: var(--line-strong); }
+.dataset-btn:focus-visible { outline: 2px solid var(--terracotta); outline-offset: 2px; }
+.dataset-btn.is-on { border-color: var(--terracotta); box-shadow: inset 0 0 0 1px var(--terracotta); }
+.dataset-name { font: 600 1rem 'Public Sans', sans-serif; color: var(--ink); }
+.dataset-btn.is-on .dataset-name { color: var(--terracotta); }
+.dataset-note { font: 400 .82rem/1.4 'Public Sans', sans-serif; color: var(--ink-3); }
+
+/* The block map, when shown inside a report section. */
+.block-map-card { margin: 0; }
+.block-map-card figcaption { margin-top: .5rem; font-size: .85rem; color: var(--ink-2); line-height: 1.5; }
+.block-map { height: 380px; border-radius: var(--radius); border: 1px solid var(--line); }
+
 /* How the comparison works — sits above the numbers on the change page. */
 .change-basis { background: var(--paper-tint); border-radius: 10px; padding: 1.1rem 1.3rem; margin-bottom: 22px; }
 .change-basis p { margin: 0 0 .6rem; font-size: .95rem; line-height: 1.55; color: var(--ink-2); max-width: 70ch; }
@@ -342,12 +360,22 @@ td.na { color: var(--line-strong); font-style: italic; }
   .basis-note { grid-column: 1 / -1; }
 }
 
-.year-nav { display: flex; flex-wrap: wrap; gap: .6rem 1rem; margin-top: 1rem; }
-.year-link { font: 600 .9rem/1 'Public Sans', sans-serif; color: var(--ink-2); text-decoration: none; padding-bottom: 2px; border-bottom: 2px solid transparent; }
-.year-link:hover { color: var(--ink); border-bottom-color: var(--line-strong); }
+.year-nav { display: flex; flex-wrap: wrap; gap: .6rem 1.6rem; margin-top: 1.1rem; }
+/* Two lines: the destination, and what you'd find there. The subtitle is real text rather than a
+   title attribute, which touch and screen-reader users never see. */
+.year-link { display: flex; flex-direction: column; gap: .1rem; text-decoration: none; padding-bottom: 3px; border-bottom: 2px solid transparent; }
+.year-link-label { font: 600 .9rem/1.2 'Public Sans', sans-serif; color: var(--ink-2); }
+.year-link-sub { font: 400 .74rem/1.2 'Public Sans', sans-serif; color: var(--ink-3); }
+.year-link:hover { border-bottom-color: var(--line-strong); }
+.year-link:hover .year-link-label { color: var(--ink); }
 /* Keyboard users could not see which tab they were on: there was no focus style at all. */
 .year-link:focus-visible { outline: 2px solid var(--terracotta); outline-offset: 3px; border-radius: 2px; }
-.year-link.active, .year-link[aria-current="page"] { color: var(--terracotta); border-bottom-color: var(--terracotta); }
+.year-link.active, .year-link[aria-current="page"] { border-bottom-color: var(--terracotta); }
+.year-link.active .year-link-label, .year-link[aria-current="page"] .year-link-label { color: var(--terracotta); }
+@media (max-width: 560px) {
+  .year-nav { gap: .5rem 1.1rem; }
+  .year-link-sub { display: none; }
+}
 
 .block-panel { max-width: 1080px; margin: 0 auto; padding: 3rem 1.5rem 1rem; border-top: 1px solid var(--line); }
 .block-panel-head { margin-bottom: 1.5rem; }

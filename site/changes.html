@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Oakmont Village — What's Changed (2024)</title>
-  <meta name="description" content="A census snapshot of Oakmont Village, Sonoma County, California, from the U.S. Census Bureau's American Community Survey." />
+  <title>Oakmont Village — What's Changed</title>
+  <meta name="description" content="How Oakmont Village changed between two U.S. Census surveys, 2015–2019 and 2020–2024, with dollar figures adjusted for inflation." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍇</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,11 +27,23 @@
         <span class="meta-dot">·</span>
         <span id="meta-geo">Census Tracts 1516.01 + 1516.02</span>
       </div>
-      <nav class="year-nav" aria-label="Data year">
-        <a href="./report.html" class="year-link">Community Report</a>
-        <a href="./index.html" class="year-link">2020 Portrait</a>
-        <a href="./changes.html" class="year-link active" aria-current="page">2024 Update</a>
-        <a href="./methodology.html" class="year-link">Methodology</a>
+      <nav class="year-nav" aria-label="Sections">
+        <a href="./index.html" class="year-link">
+          <span class="year-link-label">Community Report</span>
+          <span class="year-link-sub">Who lives here</span>
+        </a>
+        <a href="./changes.html" class="year-link active" aria-current="page">
+          <span class="year-link-label">What's Changed</span>
+          <span class="year-link-sub">Is it changing?</span>
+        </a>
+        <a href="./explore.html" class="year-link">
+          <span class="year-link-label">Explore the Data</span>
+          <span class="year-link-sub">Every figure, searchable</span>
+        </a>
+        <a href="./methodology.html" class="year-link">
+          <span class="year-link-label">Methodology</span>
+          <span class="year-link-sub">How we know this</span>
+        </a>
       </nav>
     </div>
   </header>
@@ -49,13 +61,10 @@
       <p class="method-note" id="method-note"></p>
     </section>
 
-    <section class="explorer-section" aria-label="Full data explorer">
-      <button class="explorer-toggle" id="explorer-toggle" aria-expanded="false" aria-controls="explorer">
-        <span class="explorer-toggle-label">Full data explorer</span>
-        <span class="explorer-toggle-sub">Every variable, sortable and searchable, with CSV export</span>
-        <span class="chevron" aria-hidden="true"></span>
-      </button>
-      <div class="explorer" id="explorer" hidden></div>
+    <section class="explorer-section">
+      <p class="method-note">Looking for a figure that isn't here?
+        <a class="method-link" href="./explore.html">Explore the full data</a> — every Census table for
+        Oakmont, searchable and downloadable.</p>
     </section>
   </main>
 

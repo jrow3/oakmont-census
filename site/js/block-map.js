@@ -4,7 +4,13 @@
 
 export async function renderBlockMap() {
   const el = document.getElementById('block-map');
-  if (!el || !window.L) return;
+  if (!el) return;
+  // Returning silently here leaves an empty grey box that looks like a broken page and reports
+  // nothing to the console — say what happened instead.
+  if (!window.L) {
+    el.innerHTML = '<p class="explorer-loading">Map unavailable — the map library did not load.</p>';
+    return;
+  }
   const L = window.L;
 
   let geo;
