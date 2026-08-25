@@ -422,6 +422,14 @@ table.income-grid .ig-total { font-weight: 600; background: var(--wash, #faf6f0)
 .report-source { margin: 0; font: 400 .8rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); }
 .report-note { font: 400 .95rem/1.5 'Public Sans', sans-serif; color: var(--ink, #2b2621); }
 .kpi-src { margin-top: .35rem; font: 500 .68rem 'Public Sans', sans-serif; letter-spacing: .04em; text-transform: uppercase; color: var(--teal); }
+/* The plain-English statement that opens each section. Bigger than body text and full ink, so it
+   reads before the chart rather than after it. */
+.report-lead { margin: 0 0 .25rem; font: 400 1.12rem/1.55 var(--font-display); color: var(--ink); max-width: 62ch; }
+/* The Census citation, folded away. It matters, but not before the finding. */
+.report-source-detail { margin-top: .25rem; }
+.report-source-detail > summary { font-size: .82rem; color: var(--ink-3); }
+.report-source-detail > summary:hover { color: var(--teal); }
+.report-source-detail .report-source { margin: .25rem 0 0; }
 .report-subhead { margin: .75rem 0 0; font: 600 1rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); }
 .report-basis { margin: .25rem 0 0; font: 400 .78rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); }
 .report-basis strong { font-weight: 600; color: var(--ink, #2b2621); }

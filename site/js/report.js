@@ -19,12 +19,21 @@ const kpi = (label, value, sub, source) =>
 const basisTag = (basis) => !basis ? '' :
   `<p class="report-basis">Counts <strong>${escapeHtml(basis.label)}</strong> · <a href="./methodology.html#${basis.anchor || 'bases'}">why</a></p>`;
 
+// Plain statement first, chart second, citation last and folded away. A reader who wants to know
+// which Census table this came from can ask; one who just wants to know what it says shouldn't
+// have to read past a table code to find out.
 function section(id, kicker, title, source, bodyHtml, basis) {
   return `<section class="report-section reveal" id="${id}">
-    <div class="report-head"><p class="chart-kicker">${kicker}</p><h2>${title}</h2><p class="report-source">${source}</p>${basisTag(basis)}</div>
+    <div class="report-head"><p class="chart-kicker">${kicker}</p><h2>${title}</h2>${basisTag(basis)}</div>
     ${bodyHtml}
+    <details class="report-details report-source-detail">
+      <summary>Where this figure comes from</summary>
+      <p class="report-source">${source}</p>
+    </details>
   </section>`;
 }
+
+const lead = (text) => `<p class="report-lead">${text}</p>`;
 
 export async function renderReport() {
   const res = await fetch('./data.json', { cache: 'no-cache' });
@@ -145,7 +154,8 @@ function ageSexSection(r) {
   const bandRows = rows.map((b) => `<tr><td>${b.band}</td>${cells(b.male, b.female, b.total)}</tr>`).join('');
   return section('age', 'Age & gender', 'Older, and mostly women',
     'U.S. Census Bureau, 2020 Decennial Census (exact Oakmont blocks).',
-    `<div class="legend-row"><span class="legend-item"><span class="legend-swatch" style="background:var(--teal)"></span>Male</span><span class="legend-item"><span class="legend-swatch" style="background:var(--terracotta)"></span>Female</span></div>
+    `${lead('Most people here are past retirement age, and women outnumber men by more in every band as the ages climb.')}
+     <div class="legend-row"><span class="legend-item"><span class="legend-swatch" style="background:var(--teal)"></span>Male</span><span class="legend-item"><span class="legend-swatch" style="background:var(--terracotta)"></span>Female</span></div>
      ${pairedBars({ items, ariaLabel: 'Population by age band and sex' })}
      <div class="table-wrap"><table class="report-table"><thead><tr><th>Age</th><th>Male</th><th>Female</th><th>Total</th></tr></thead>
        <tbody>
@@ -162,7 +172,8 @@ function householdSection(r) {
   const items = r.householdSize.distribution.map((d) => ({ label: `${d.size}-person`, value: d.count }));
   return section('households', 'Households', 'Most of us live alone or as a couple',
     'U.S. Census Bureau, 2020 ACS 5-Year (tracts). Household size from table B25009.',
-    `${horizontalBars({ items, ariaLabel: 'Households by size', format: fmt })}
+    `${lead('Almost every home in Oakmont holds one person or two.')}
+     ${horizontalBars({ items, ariaLabel: 'Households by size', format: fmt })}
      <p class="chart-caption">Oakmont averages <strong>${r.householdSize.average ?? '—'}</strong> people per household — one- and two-person homes dominate, consistent with a retirement community.</p>`,
     { label: 'households in the two tracts', anchor: 'bases' });
 }
@@ -172,7 +183,8 @@ function incomeSection(r) {
   const items = i.distribution.map((d) => ({ label: d.label, value: d.count }));
   return section('income', 'Income', 'Household and family income',
     'U.S. Census Bureau, 2020 ACS 5-Year (tracts).',
-    `<div class="stat-row">
+    `${lead('Half of Oakmont\'s households take in more than the median figure below, and half less.')}
+     <div class="stat-row">
        <div class="stat"><div class="stat-value">${money(i.median)}</div><div class="stat-label">Median household income</div></div>
        <div class="stat"><div class="stat-value">${money(i.perCapita)}</div><div class="stat-label">Per-capita income</div></div>
        <div class="stat"><div class="stat-value">${money(i.familyMedian)}</div><div class="stat-label">Median family income</div></div>
@@ -205,7 +217,8 @@ function incomeSourcesSection(r) {
   }).join('');
   return section('sources', 'Sources of income', 'What households live on',
     'U.S. Census Bureau, 2020 ACS 5-Year (tracts). Shares are % of households receiving each source.',
-    `<div class="src-head"><div class="src-label"></div><div class="src-bar"></div><div class="src-pct">Households</div><div class="src-mean">Average amount</div></div>
+    `${lead('Most households here live on Social Security and a pension rather than a pay cheque.')}
+     <div class="src-head"><div class="src-label"></div><div class="src-bar"></div><div class="src-pct">Households</div><div class="src-mean">Average amount</div></div>
      <div class="src-list">${rows}</div>`,
     { label: 'households in the two tracts', anchor: 'bases' });
 }
@@ -250,7 +263,8 @@ function educationSection(r) {
   const items = e.bands.map((b) => ({ label: b.label, value: b.count }));
   return section('education', 'Education', 'A highly educated community',
     'U.S. Census Bureau, 2020 ACS 5-Year (tracts). Population 45 and over (table B15001).',
-    `<div class="stat-row">
+    `${lead('More than half of Oakmont\'s older residents hold a university degree, and about a quarter hold a postgraduate one.')}
+     <div class="stat-row">
        <div class="stat"><div class="stat-value">${percent(e.pctBachelorsPlus)}</div><div class="stat-label">Bachelor's degree or higher</div></div>
        <div class="stat"><div class="stat-value">${percent(e.pctGraduatePlus)}</div><div class="stat-label">Graduate or professional degree</div></div>
      </div>
@@ -263,7 +277,8 @@ function raceSection(r) {
   const items = r.race.groups.filter((g) => (g.count || 0) > 0).map((g) => ({ label: g.label, value: g.count }));
   return section('race', 'Race & ethnicity', 'Predominantly white',
     'U.S. Census Bureau, 2020 Decennial Census (exact Oakmont blocks). Race and Hispanic origin are separate questions.',
-    `${horizontalBars({ items, ariaLabel: 'Residents by race', format: fmt })}
+    `${lead('Oakmont is overwhelmingly white, more so than Sonoma County as a whole.')}
+     ${horizontalBars({ items, ariaLabel: 'Residents by race', format: fmt })}
      <p class="chart-caption"><strong>${percent(r.race.hispanicPct)}</strong> of residents identify as Hispanic or Latino (of any race).</p>`,
     { label: 'everyone living in Oakmont', anchor: 'bases' });
 }
@@ -285,7 +300,8 @@ function maritalSection(r) {
   return section('marital', 'Marital status', 'Married, widowed, or on their own',
     `U.S. Census Bureau, 2020 ACS 5-Year (tracts). ${m55 ? 'Residents 55+ (table B12002); all-ages figures from B12001.' : 'Population 15+ (table B12001).'}`,
     m55
-      ? `${bars(m55)}<p class="chart-caption">Among the ${num(m55.total)} residents aged 55 and over.</p>${allAges}`
+      ? `${lead('About half of Oakmont\'s residents are married. Widowhood is far more common here than in most places, which is what an older population looks like.')}
+         ${bars(m55)}<p class="chart-caption">Among the ${num(m55.total)} residents aged 55 and over.</p>${allAges}`
       : bars(m),
     { label: m55 ? 'residents 55 and over' : 'residents 15 and over', anchor: 'bases' });
 }
@@ -300,7 +316,8 @@ function placeOfBirthSection(r) {
      <p class="chart-caption">Among the ${num(p55.total)} residents aged 55 and over.</p>`;
   return section('origin', 'Where residents were born', 'Mostly California and elsewhere in the U.S.',
     `U.S. Census Bureau, 2020 ACS 5-Year (tracts). ${p55 ? 'Residents 55+ (table B06001); regional detail from B05002, all ages.' : 'Place of birth (table B05002).'}`,
-    `${headline}
+    `${lead('Oakmont is largely a community of people who moved here. Among residents 55 and over, more were born in another state than in California.')}
+     ${headline}
      <h3 class="report-subhead">Where in the country, all residents</h3>
      ${horizontalBars({ items, ariaLabel: 'Place of birth', format: (n) => percent(n) })}`,
     { label: p55 ? 'residents 55 and over, then all residents' : 'all residents', anchor: 'bases' });
