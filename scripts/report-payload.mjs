@@ -261,6 +261,9 @@ const BIRTH_REGIONS = [
   { label: 'Midwest', code: 'B05002_006E' },
   { label: 'South', code: 'B05002_007E' },
   { label: 'West (other states)', code: 'B05002_008E' },
+  // _009 (born outside the US to American parents) was missing, so the bars summed 29 short of
+  // the total printed above them. Small, but it is the sort of gap a reader adds up by hand.
+  { label: 'Born abroad to U.S. parents', code: 'B05002_009E' },
   { label: 'Foreign-born', code: 'B05002_013E' },
 ];
 

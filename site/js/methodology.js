@@ -42,10 +42,17 @@ function enclaveFigures(enclaves) {
 
 export function resolveFigures(data) {
   const snapshot = (data.oakmont2020 && data.oakmont2020.snapshot) || {};
+  const tract = (data.acs2020 && data.acs2020.snapshot) || {};
   return {
     population: snapshot.totalPopulation ?? null,
     pct55: snapshot.pct55Plus ?? null,
     blocks: snapshot.blockCount ?? null,
+    // How far past Oakmont the tracts reach: everyone the survey covers, less everyone the
+    // block count found inside the boundary.
+    fringePop: tract.totalPopulation != null && snapshot.totalPopulation != null
+      ? tract.totalPopulation - snapshot.totalPopulation
+      : null,
+    ownerShare: tract.ownerOccupiedPct ?? null,
     ...enclaveFigures(data.enclaves2020),
   };
 }
@@ -57,6 +64,8 @@ const FIGURE_FORMAT = {
   population: asNum,
   pct55: asPct,
   blocks: asNum,
+  fringePop: asNum,
+  ownerShare: asPct,
   wildOakAddresses: asNum,
   wildOakBlockAddresses: asNum,
   wildOakOtherHomes: asNum,

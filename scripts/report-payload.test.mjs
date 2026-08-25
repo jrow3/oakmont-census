@@ -221,11 +221,22 @@ test('deriveRace maps P3 race codes and P4 Hispanic origin from the block sectio
   assert.equal(r.hispanicPct, 3.7);
 });
 
+// Live 2016-2020 tract values. Kept real so the sum below is a genuine tie, not one arranged to
+// pass: the chart shipped 29 people short because B05002_009E was left out of the region list.
+const BIRTH_TABLES = T({
+  B05002_001E: 5949, B05002_003E: 2692, B05002_005E: 791, B05002_006E: 911,
+  B05002_007E: 357, B05002_008E: 456, B05002_009E: 29, B05002_013E: 713,
+});
+
 test('derivePlaceOfBirth breaks out Census regions of origin', () => {
-  const tables = T({ B05002_001E: 100, B05002_003E: 45, B05002_005E: 13, B05002_006E: 15, B05002_007E: 6, B05002_008E: 8, B05002_013E: 12 });
-  const p = derivePlaceOfBirth(tables);
-  assert.equal(p.regions.length, 6);
-  assert.equal(p.regions.find((r) => r.label === 'California').pct, 45);
-  assert.equal(p.regions.find((r) => r.label === 'Midwest').pct, 15);
-  assert.equal(p.regions.find((r) => r.label === 'Foreign-born').pct, 12);
+  const p = derivePlaceOfBirth(BIRTH_TABLES);
+  assert.equal(p.regions.length, 7);
+  assert.equal(p.regions.find((r) => r.label === 'California').count, 2692);
+  assert.equal(p.regions.find((r) => r.label === 'Midwest').count, 911);
+  assert.equal(p.regions.find((r) => r.label === 'Foreign-born').count, 713);
+});
+
+test('the birth regions account for everyone in the stated total', () => {
+  const p = derivePlaceOfBirth(BIRTH_TABLES);
+  assert.equal(p.regions.reduce((a, r) => a + r.count, 0), p.total);
 });

@@ -26,10 +26,19 @@ jobs:
         with:
           node-version: 22
 
+      - name: Run tests
+        run: node --test
+
       - name: Fetch census data into site/data.json
         env:
           CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
         run: node scripts/fetch-census.mjs
+
+      # Runs against the data just fetched, not a fixture: it checks every chart's parts still add
+      # up to the universe printed beside them. A new ACS vintage that reshapes a table fails here
+      # rather than shipping a page that contradicts itself.
+      - name: Reconcile the built payload
+        run: node scripts/reconcile.mjs
 
       - uses: actions/upload-pages-artifact@v3
         with:

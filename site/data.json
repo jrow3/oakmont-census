@@ -1,7 +1,7 @@
 {
   "meta": {
     "geography": "Census Tracts 1516.01 + 1516.02, Sonoma County, CA",
-    "generatedAt": "2026-08-25T04:11:18.590Z",
+    "generatedAt": "2026-08-25T18:47:20.364Z",
     "sample": true
   },
   "acs2020": {
@@ -2611,6 +2611,14 @@
       "medianHomeValue",
       "medianGrossRent"
     ],
+    "rateFields": [
+      "ownerOccupiedPct",
+      "unemploymentRate",
+      "povertyRate"
+    ],
+    "levelFields": [
+      "medianAge"
+    ],
     "source": "https://www.census.gov/programs-surveys/acs/guidance/comparing-acs-data/2024.html"
   },
   "oakmont2020": {
@@ -3363,6 +3371,11 @@
           "label": "West (other states)",
           "count": 456,
           "pct": 7.7
+        },
+        {
+          "label": "Born abroad to U.S. parents",
+          "count": null,
+          "pct": 0
         },
         {
           "label": "Foreign-born",

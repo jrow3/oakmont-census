@@ -85,13 +85,14 @@
           <div class="two-card">
             <div class="def-card">
               <h3>The Decennial Census</h3>
-              <p class="def-tag">Exact · counts only · reaches the block</p>
-              <p>A 100% head-count taken every ten years (2020 is the latest). Because it counts everyone, it's <strong>exact, with no margin of error</strong>, and it's published all the way down to a single city block. But it asks only a handful of questions, so it gives us <strong>counts</strong>: population, age, sex, race, and whether homes are owned, rented, or vacant.</p>
+              <p class="def-tag">A head-count · counts only · reaches the block</p>
+              <p>A 100% head-count taken every ten years (2020 is the latest). Because it counts everyone rather than sampling, it carries <strong>no margin of error</strong>, and it's published all the way down to a single city block. But it asks only a handful of questions, so it gives us <strong>counts</strong>: population, age, sex, race, Hispanic origin, and whether homes are owned, rented, or vacant.</p>
+              <p>It isn't flawless. The Bureau adds a small amount of deliberate statistical noise to block-level figures to protect individuals, so a single block can be off by a few people — <a class="method-link" href="#privacy">more on that below</a>.</p>
             </div>
             <div class="def-card">
               <h3>The American Community Survey</h3>
-              <p class="def-tag">Estimated · rich detail · stops at the tract</p>
-              <p>A rolling survey sent to a <strong>sample</strong> of households, published as five-year averages. Because it's a sample, its numbers are <strong>estimates with a margin of error</strong>, and its detailed tables are only published for larger areas. But it asks far more: income, education, home value, marital status, and where people were born. It's where all the richer detail comes from.</p>
+              <p class="def-tag">Estimated · rich detail · never reaches the block</p>
+              <p>A rolling survey sent to a <strong>sample</strong> of households, published as five-year averages. Because it's a sample, its numbers are <strong>estimates with a margin of error</strong>, and they are never published for an area as small as a block. But it asks far more: income, education, home value, marital status, and where people were born. It's where all the richer detail comes from.</p>
             </div>
           </div>
           <p class="method-aside">The trade-off, in a phrase: <em>exactness versus richness</em>, and <em>geography versus detail</em>. The next section is the geography half.</p>
@@ -102,7 +103,7 @@
           <h2>The geography ladder</h2>
           <p class="method-lead">Census data is published in nested pieces, from the whole country down to a single block. The smaller the piece, the fewer datasets reach it.</p>
 
-          <div class="geo-ladder" role="img" aria-label="Census geography nests from the nation, to the state, to the county, to the tract, to the block group, to the block. The American Community Survey's detailed tables are published down to the tract. The Decennial Census count is published all the way to the block, where Oakmont's blocks are traced.">
+          <div class="geo-ladder" role="img" aria-label="Census geography nests from the nation, to the state, to the county, to the tract, to the block group, to the block. Some American Community Survey tables reach the block group; none reach the block. The Decennial Census count is published all the way to the block, where Oakmont's blocks are traced.">
             <div class="geo-level lvl-nation">
               <span class="geo-tag">Nation</span><span class="geo-name">United States</span>
               <div class="geo-level lvl-state">
@@ -111,12 +112,13 @@
                   <span class="geo-tag">County</span><span class="geo-name">Sonoma</span>
                   <div class="geo-level lvl-tract">
                     <span class="geo-tag">Tract</span><span class="geo-name">1516.01 &amp; 1516.02</span>
-                    <span class="geo-reach reach-acs">ACS estimates stop here</span>
+                    <span class="geo-reach reach-acs">every survey table reaches here</span>
                     <div class="geo-level lvl-bg">
-                      <span class="geo-tag">Block group</span><span class="geo-name">within each tract</span>
+                      <span class="geo-tag">Block group</span><span class="geo-name">6 of them across the two tracts</span>
+                      <span class="geo-reach reach-acs">some survey tables reach here</span>
                       <div class="geo-level lvl-block is-oakmont">
                         <span class="geo-tag">Block</span><span class="geo-name"><span data-figure="blocks">75</span> blocks trace Oakmont</span>
-                        <span class="geo-reach reach-dec">Decennial counts reach here</span>
+                        <span class="geo-reach reach-dec">only the head-count reaches here</span>
                       </div>
                     </div>
                   </div>
@@ -125,7 +127,11 @@
             </div>
           </div>
 
-          <p>The exact Decennial count reaches the <strong>block</strong>, so we can trace Oakmont's <span data-figure="blocks">75</span> blocks precisely. The ACS's detailed tables stop at the <strong>tract</strong>, a larger area of a few thousand people. Oakmont sits inside <strong>Census Tracts 1516.01 and 1516.02</strong>, which also take in some non-Oakmont residents along the edges.</p>
+          <p>The head-count reaches the <strong>block</strong>, so Oakmont's <span data-figure="blocks">75</span> blocks can be traced exactly. The survey never does — <strong>no ACS figure is published for a block</strong>, at any margin of error.</p>
+
+          <p>The survey does reach one step below the tract, to the <strong>block group</strong>, for some of its tables. That sounds like it should help, and for Oakmont it doesn't. Oakmont's blocks are spread across <strong>all six</strong> block groups in the two tracts, and only three of the six lie wholly inside Oakmont. Those three hold about half its residents; the other three bring in roughly 1,250 people who live outside the community. Using block groups would mean covering half of Oakmont, or importing nearly as many outsiders as the tracts do — and the tables this report leans on most, like education by age and marital status by age, aren't among those published that small.</p>
+
+          <p>So the tracts it is. Oakmont sits inside <strong>Census Tracts 1516.01 and 1516.02</strong>, which also take in non-Oakmont residents along the edges.</p>
 
           <figure class="map-pair">
             <div class="map-panel">
@@ -137,7 +143,7 @@
               <figcaption><span class="map-tag map-tag-dec">Decennial geography</span> The <span data-figure="blocks">75</span> blocks, drawn tightly to Oakmont's boundary.</figcaption>
             </div>
           </figure>
-          <p class="method-aside">Both maps are at the same scale. The tracts (left) are the smallest area the ACS survey reports, and they reach past Oakmont; the <span data-figure="blocks">75</span> Decennial blocks (right) trace the community itself. That gap is exactly why counts use the blocks and estimates use the tracts.</p>
+          <p class="method-aside">Both maps are at the same scale. The tracts (left) are the area the survey figures cover, and they reach past Oakmont; the <span data-figure="blocks">75</span> Decennial blocks (right) trace the community itself. That gap is exactly why counts use the blocks and estimates use the tracts.</p>
           <p>There's one more hurdle. Oakmont sits inside the City of Santa Rosa and has <strong>no Census "place" code of its own</strong> — those go to cities and towns, not to neighbourhoods within them — and there's <strong>no machine-readable map of the Oakmont Village Association boundary</strong> to hand the Census API. So the exact view isn't a built-in geography; it's a hand-picked list of the <span data-figure="blocks">75</span> blocks that best trace the community's edge.</p>
         </section>
 
@@ -170,7 +176,7 @@
           <h3>How these were measured</h3>
           <p>Census data can't size either area, so this uses Sonoma County's public address-point file, counting the addresses on Wild Oak Drive and Court, and the unit addresses at 301 White Oak Drive. As a check on the method, those address points total <span data-figure="calibAddresses">3,524</span> across the footprint against <span data-figure="calibUnits">3,427</span> Census housing units — close enough agreement to trust the shares. The population figures are ranges rather than single numbers, because the split of a block's residents between an area and its neighbours isn't published; the range spans two reasonable ways of estimating it.</p>
 
-          <p class="method-aside">Worth keeping in proportion: every income, education and home-value figure on this site is a tract estimate, and the tracts already reach past Oakmont to take in roughly <strong>955</strong> non-Oakmont residents along Los Alamos Road, Bennett Valley and the Highway 12 corridor. That is many times either area discussed here, and no change to the block list would affect it.</p>
+          <p class="method-aside">Worth keeping in proportion: every income, education and home-value figure on this site is a tract estimate, and the tracts already reach past Oakmont to take in an estimated <strong><span data-figure="fringePop">1,000</span></strong> non-Oakmont residents along Los Alamos Road, Bennett Valley and the Highway 12 corridor. That is many times either area discussed here, and no change to the block list would affect it.</p>
         </section>
 
         <section class="method-section" id="source-map">
@@ -186,10 +192,10 @@
                 <tr><td>Population, age &amp; sex</td><td>2020 Decennial (DHC)</td><td>Exact <span data-figure="blocks">75</span> blocks</td><td>100% head-count, published at the block</td></tr>
                 <tr><td>Race &amp; Hispanic origin</td><td>2020 Decennial (DHC)</td><td>Exact <span data-figure="blocks">75</span> blocks</td><td>100% head-count, published at the block</td></tr>
                 <tr><td>Owner / renter, occupancy</td><td>2020 Decennial (DHC)</td><td>Exact <span data-figure="blocks">75</span> blocks</td><td>100% head-count, published at the block</td></tr>
-                <tr><td>Household &amp; per-capita income</td><td>2020 ACS 5-year</td><td>Tracts 1516.01 + 1516.02</td><td>Survey estimate, published only to the tract</td></tr>
-                <tr><td>Education</td><td>2020 ACS 5-year</td><td>Tracts 1516.01 + 1516.02</td><td>Survey estimate, published only to the tract</td></tr>
-                <tr><td>Home value</td><td>2020 ACS 5-year</td><td>Tracts 1516.01 + 1516.02</td><td>Survey estimate, published only to the tract</td></tr>
-                <tr><td>Marital status, place of birth</td><td>2020 ACS 5-year</td><td>Tracts 1516.01 + 1516.02</td><td>Survey estimate, published only to the tract</td></tr>
+                <tr><td>Household &amp; per-capita income</td><td>2020 ACS 5-year</td><td>Tracts 1516.01 + 1516.02</td><td>Survey estimate, never published as small as a block</td></tr>
+                <tr><td>Education</td><td>2020 ACS 5-year</td><td>Tracts 1516.01 + 1516.02</td><td>Survey estimate, never published as small as a block</td></tr>
+                <tr><td>Home value</td><td>2020 ACS 5-year</td><td>Tracts 1516.01 + 1516.02</td><td>Survey estimate, never published as small as a block</td></tr>
+                <tr><td>Marital status, place of birth</td><td>2020 ACS 5-year</td><td>Tracts 1516.01 + 1516.02</td><td>Survey estimate, never published as small as a block</td></tr>
               </tbody>
             </table>
           </div>
@@ -211,25 +217,26 @@
                 <tr><td>Marital status</td><td>Residents 55 and over</td><td>Table B12002 crosses marital status with age at a real 55 line, so this matches who actually lives here. The all-ages figures are kept underneath.</td></tr>
                 <tr><td>Where residents were born</td><td>Residents 55+, then all residents</td><td>Table B06001 has an age cut but only four categories; B05002 has the regional detail but no age. No table has both, so both are shown rather than losing either.</td></tr>
                 <tr><td>Education</td><td>Residents 45 and over</td><td>Attainment is published with age breaks at 45 and 65 — there is no 55 line. 45+ is the closest available cut, and it drops most of the younger non-Oakmont fringe.</td></tr>
-                <tr><td>Income, sources of income, owners vs. renters, households</td><td>Households in the two tracts</td><td>No income table is crossed with age at any useful cut, and the ACS is not published below the tract. These figures cover more than Oakmont; see below.</td></tr>
-                <tr><td>Home value</td><td>Owner-occupied homes only</td><td>Only owners are asked what their home is worth. Renters report no value and vacant units aren't counted, so this median describes roughly three-quarters of Oakmont's homes.</td></tr>
+                <tr><td>Income, sources of income, owners vs. renters, households</td><td>Households in the two tracts</td><td>No income table is crossed with age at any useful cut, and the survey is never published as small as a block. These figures cover more than Oakmont; see below.</td></tr>
+                <tr><td>Home value, and rent</td><td>Owner-occupied homes for value; rented homes for rent</td><td>Only owners are asked what their home is worth, so the value figure covers the <span data-figure="ownerShare">74%</span> of occupied homes that are owner-occupied. The rent figure beside it covers rented homes — a different set of homes in the same section.</td></tr>
+                <tr><td>Work and hardship</td><td>People in the two tracts</td><td>Unemployment counts people in the labour force, not households; the poverty rate counts people the Census can assess. Both are person-level, and both cover the wider tract area.</td></tr>
               </tbody>
             </table>
           </div>
 
           <h3>Why the income figures cover more than Oakmont</h3>
-          <p>Income, education, home value and household size are ACS survey estimates, and the ACS stops at the tract. Oakmont's two tracts reach past the community to take in roughly <strong>955</strong> non-Oakmont residents — the rural Highway 12 corridor, Los Alamos Road, Bennett Valley and the Bennett Ridge hillsides. Those households are younger and differently housed, so tract-based shares read slightly lower than an Oakmont-only count would. There is no way to correct this: block-level ACS data does not exist.</p>
+          <p>Income, education, home value and household size come from the survey, which is never published as small as a block. Oakmont's two tracts reach past the community to take in an estimated <strong><span data-figure="fringePop">1,000</span></strong> non-Oakmont residents — the rural Highway 12 corridor, Los Alamos Road, Bennett Valley and the Bennett Ridge hillsides. Those households are younger and differently housed, so tract-based shares read slightly lower than an Oakmont-only count would. There is no way to correct this: the survey is not published for individual blocks, and the block groups it does reach cut across Oakmont’s edge rather than following it.</p>
 
           <h3>Household or family?</h3>
           <p>A <strong>household</strong> is everyone living in one home, including a person living alone. A <strong>family</strong> is a householder plus relatives. The family median runs highest; the household median sits below it because it also counts Oakmont's many one-person homes. Neither is wrong — they answer different questions.</p>
 
-          <h3>What the Census counts as income</h3>
+          <h3>What counts as income, in short</h3>
           <p>The Census measures <em>money income</em>: cash a household receives, counted before taxes. It <em>does</em> include Social Security, SSI, pensions and regular retirement-account withdrawals (IRA, Roth IRA, 401(k)), VA payments, and interest and dividends — whether or not any of it is taxable. It does <em>not</em> include proceeds from selling a home, withdrawals from savings, money borrowed against a home (reverse mortgage, HELOC), inheritances, life insurance payouts, or one-time gifts.</p>
           <p class="method-aside">That gap matters in a retirement community: a household living comfortably on savings and home equity can still report a modest income here.</p>
 
           <h3>Why amounts sometimes read "not published" or "not disclosed"</h3>
           <p>The sources-of-income table shows an average per receiving household, because <strong>the Census publishes no median by income source at any geography</strong> — only totals, from which an average can be derived. Averages are pulled upward by a few large values, so read them as a rough centre rather than a typical household.</p>
-          <p>Where no amount appears, the reason differs and the wording says which: <strong>not published</strong> means the Census collects no dollar figure for that source anywhere (SNAP benefits, for example); <strong>not disclosed</strong> means the figure exists but too few households reported it to publish without identifying them; and a dash means no household here reports that source at all.</p>
+          <p>Where no amount appears, the reason differs and the wording says which: <strong>not published</strong> means the Census collects no dollar figure for that source anywhere (SNAP benefits, for example); <strong>not disclosed</strong> means the figure exists but too few households reported it to publish without identifying them; and a dash means the survey found no household reporting that source — which is not quite the same as none existing, since the survey reaches only a sample.</p>
 
           <h3>A note on marital status</h3>
           <p>In 2020 the federal ACS did not consistently record same-sex married couples as married, which understates marriage among Oakmont's same-sex couples.</p>
@@ -240,13 +247,13 @@
           <h2>The fine print</h2>
 
           <h3>Why not just get ACS data for the <span data-figure="blocks">75</span> blocks?</h3>
-          <p>This is the most common question, and the answer is that <strong>block-level ACS demographics don't exist.</strong> Because the ACS is a sample, publishing its estimates for a tiny area would be both statistically unreliable and a privacy risk, so the Census Bureau only releases its detailed tables for areas of roughly 1,200 people or more. Income, education, and home value for a single block are never published, at any margin of error. Approaches that appear to show block-level ACS demographics are really filling the gap with non-Census sources such as member surveys or commercial address data; those aren't comparable to Census figures, so this site doesn't use them. Excluding blocks to trace a boundary is legitimate only for the Decennial count, which is exactly where we apply it.</p>
+          <p>This is the most common question, and the answer is that <strong>block-level ACS demographics don't exist.</strong> Because the survey reaches only a sample of households, publishing results for a very small area would be both unreliable and a privacy risk. The Bureau therefore stops at the block group, and publishes only a subset of its tables even at that level. Income, education, and home value for a single block are never published, at any margin of error. Approaches that appear to show block-level ACS demographics are really filling the gap with non-Census sources such as member surveys or commercial address data; those aren't comparable to Census figures, so this site doesn't use them. Excluding blocks to trace a boundary is legitimate only for the Decennial count, which is exactly where we apply it.</p>
 
-          <h3>Differential privacy</h3>
-          <p>The 2020 Decennial Census adds a small amount of statistical noise to block-level counts to protect individuals (the Bureau's "differential privacy" system). For a single block this can nudge a number by a few people; summed across all <span data-figure="blocks">75</span> Oakmont blocks it largely averages out, which is why the exact-boundary totals are dependable even though any one block isn't guaranteed to the person.</p>
+          <h3 id="privacy">Differential privacy</h3>
+          <p>The 2020 Decennial Census adds a small amount of statistical noise to block-level counts to protect individuals (the Bureau's "differential privacy" system). For a single block this can nudge a number by a few people; summed across all <span data-figure="blocks">75</span> Oakmont blocks the effect is much smaller than on any single block, which is why the boundary totals are dependable at community scale even though no individual block is guaranteed to the person. Treat a single block's count as approximate.</p>
 
           <h3>Margins of error</h3>
-          <p>Every ACS figure is an estimate with a published margin of error. We show the point estimates for readability, so read them as "about," not "exactly." The five-year 2020 ACS also overlaps in time with the 2016–2020 and 2020–2024 windows, which is why the 2024 comparison page calls its year-over-year changes "directional, not precise."</p>
+          <p>Every ACS figure is an estimate with a published margin of error. We show the point estimates for readability, so read them as "about," not "exactly." Five-year surveys that share years are not independent samples, which is why <a class="method-link" href="./changes.html">What’s Changed</a> compares 2015–2019 against 2020–2024 — two surveys with no year in common.</p>
 
           <h3>What the Census counts as income</h3>
           <p>The income figures on this site measure what the Census Bureau calls <strong>money income</strong>: cash a household actually receives over twelve months, counted <em>before</em> taxes. It is not a measure of taxable income, and the definition draws no line between taxable and non-taxable money.</p>

@@ -34,6 +34,14 @@ export const DOLLAR_SNAPSHOT_FIELDS = [
   'medianHouseholdIncome', 'perCapitaIncome', 'medianHomeValue', 'medianGrossRent',
 ];
 
+// Fields that are already percentages. A relative change on a percentage misleads badly: poverty
+// moving 3.2% -> 4.7% is +1.5 percentage points, but as a relative change it reads "+47%", which
+// sounds like a catastrophe and is the kind of number that gets quoted. Rates report points.
+export const RATE_SNAPSHOT_FIELDS = ['ownerOccupiedPct', 'unemploymentRate', 'povertyRate'];
+
+// Neither a count nor a dollar nor a rate — a relative percentage of an age means nothing.
+export const LEVEL_SNAPSHOT_FIELDS = ['medianAge'];
+
 // Medians cannot be summed across tracts; a population-weighted average approximates them.
 export const MEDIAN_VARS = new Set([
   'B19013_001E', // Median Household Income

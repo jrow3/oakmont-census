@@ -8,7 +8,8 @@ const DATASETS = {
     sectionKey: 'acs2020',
     featured: ['B01001', 'B01002', 'B19001', 'B19019', 'B25003', 'B25034', 'B15003', 'B02001'],
     caveat: 'A survey of a sample of households, not a count of everyone. It covers two census tracts, '
-      + 'which reach a little past Oakmont, and every figure carries a margin of error.',
+      + 'which reach a little past Oakmont. Every figure here is the Bureau’s estimate; the margin of '
+      + 'error it publishes alongside is not shown, so read these as “about”, not “exactly”.',
   },
   acs2024: {
     sectionKey: 'acs2024',
@@ -20,7 +21,9 @@ const DATASETS = {
     sectionKey: 'oakmont2020',
     featured: ['P12', 'P3', 'P4', 'H4'],
     caveat: 'A 100% head-count, exact to Oakmont’s boundary. It only records what the census form asks: '
-      + 'age, sex, race, and whether a home is owned or rented. Nothing about money or education.',
+      + 'age, sex, race, and whether a home is owned or rented — nothing about money or education. '
+      + 'The Bureau adds a little statistical noise to block-level counts to protect individuals, so a '
+      + 'single block can be off by a few people even though the Oakmont totals are dependable.',
   },
 };
 
@@ -57,8 +60,10 @@ export async function initExplorePage() {
       explorerFile: section.explorerFile,
       featured: choice.featured,
       year: section.year,
+      // Checked inside, after the mirror fetch and before anything is painted. Checking out here
+      // would be too late: the losing render has already drawn over the winner.
+      isCurrent: () => mine === token,
     });
-    if (mine !== token) return; // a newer selection won
   }
 
   for (const b of buttons) b.addEventListener('click', () => show(b.dataset.set));

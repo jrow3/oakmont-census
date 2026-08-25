@@ -4,7 +4,7 @@
 
 import { fmt, escapeHtml } from './format.js';
 
-export async function renderExplorer(root, { explorerFile, featured = [], year = '' }) {
+export async function renderExplorer(root, { explorerFile, featured = [], year = '', isCurrent = () => true }) {
   root.innerHTML = `<p class="explorer-loading">Loading full dataset…</p>`;
   let data;
   try {
@@ -12,9 +12,13 @@ export async function renderExplorer(root, { explorerFile, featured = [], year =
     if (!res.ok) throw new Error(String(res.status));
     data = await res.json();
   } catch (err) {
+    if (!isCurrent()) return;
     root.innerHTML = `<p class="explorer-loading">Could not load the full dataset (${escapeHtml(String(err.message))}).</p>`;
     return;
   }
+
+  // The reader switched datasets while this mirror was in flight; the newer render owns the DOM.
+  if (!isCurrent()) return;
 
   const tables = data.tables || {};
   const ids = Object.keys(tables);

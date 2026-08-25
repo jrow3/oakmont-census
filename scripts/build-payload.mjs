@@ -1,7 +1,10 @@
 // Shape a flat { varCode: value } map into the data.json payload the page consumes.
 // Shared by fetch-census.mjs (real API values) and sample-data.mjs (placeholder values).
 
-import { GROUPS, COMPARE_INFLATION_FACTOR, DOLLAR_SNAPSHOT_FIELDS } from './census-variables.mjs';
+import {
+  GROUPS, COMPARE_INFLATION_FACTOR,
+  DOLLAR_SNAPSHOT_FIELDS, RATE_SNAPSHOT_FIELDS, LEVEL_SNAPSHOT_FIELDS,
+} from './census-variables.mjs';
 import { DEC_GROUPS, AGE_55_PLUS, AGE_65_PLUS, AGE_85_PLUS } from './decennial-variables.mjs';
 import { medianAgeFromP12 } from './median-age.mjs';
 
@@ -115,6 +118,8 @@ export function assembleData(sections, { sample = false, oakmont2020 = null, rep
       baselineKey: 'acs2019',
       inflationFactor: COMPARE_INFLATION_FACTOR,
       dollarFields: DOLLAR_SNAPSHOT_FIELDS,
+      rateFields: RATE_SNAPSHOT_FIELDS,
+      levelFields: LEVEL_SNAPSHOT_FIELDS,
       source: 'https://www.census.gov/programs-surveys/acs/guidance/comparing-acs-data/2024.html',
     };
   }

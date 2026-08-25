@@ -16,6 +16,21 @@ test('resolveFigures returns nulls when the block section is missing', () => {
   assert.equal(figures.blocks, null);
 });
 
+test('the non-Oakmont fringe is derived, not written into the page', () => {
+  // It shipped as a hardcoded "955" that stayed put through a block-list revision.
+  const figures = resolveFigures({
+    oakmont2020: { snapshot: { totalPopulation: 4946 } },
+    acs2020: { snapshot: { totalPopulation: 5949, ownerOccupiedPct: 73.9 } },
+  });
+  assert.equal(figures.fringePop, 1003);
+  assert.equal(figures.ownerShare, 73.9);
+});
+
+test('the fringe is null rather than a number when either side is missing', () => {
+  assert.equal(resolveFigures({ oakmont2020: { snapshot: { totalPopulation: 4946 } } }).fringePop, null);
+  assert.equal(resolveFigures({ acs2020: { snapshot: { totalPopulation: 5949 } } }).fringePop, null);
+});
+
 test('resolveFigures flattens the enclave section for the page spans', () => {
   const figures = resolveFigures({
     oakmont2020: { snapshot: { totalPopulation: 4946, pct55Plus: 92, blockCount: 75 } },

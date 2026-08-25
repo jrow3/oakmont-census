@@ -33,6 +33,8 @@ export async function initPage({ section: sectionKey, compareTo = null }) {
     baselineDollarYear: baseline.year,
     inflationFactor: terms.inflationFactor,
     dollarFields: terms.dollarFields,
+    rateFields: terms.rateFields || [],
+    levelFields: terms.levelFields || [],
   } : null;
   renderSnapshot(section, meta, { compare, compareMeta });
 }

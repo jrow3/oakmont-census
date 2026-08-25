@@ -56,15 +56,15 @@
         spreadsheet. The search box covers all of them.</p>
 
       <div class="dataset-switch" role="group" aria-label="Which dataset to explore">
-        <button class="dataset-btn is-on" data-set="acs2020">
+        <button class="dataset-btn is-on" data-set="acs2020" aria-pressed="true">
           <span class="dataset-name">The 2016–2020 survey</span>
           <span class="dataset-note">Income, education, housing. Covers a bit more ground than Oakmont.</span>
         </button>
-        <button class="dataset-btn" data-set="blocks2020">
+        <button class="dataset-btn" data-set="blocks2020" aria-pressed="false">
           <span class="dataset-name">The 2020 head-count</span>
           <span class="dataset-note">Age, sex, race, who owns and rents. Exact to Oakmont's boundary.</span>
         </button>
-        <button class="dataset-btn" data-set="acs2024">
+        <button class="dataset-btn" data-set="acs2024" aria-pressed="false">
           <span class="dataset-name">The 2020–2024 survey</span>
           <span class="dataset-note">The same survey questions, asked more recently.</span>
         </button>
@@ -87,8 +87,11 @@
   <script type="module">
     import { initExplorePage } from './js/explore-page.js';
     initExplorePage().catch((err) => {
-      document.getElementById('explorer').innerHTML =
-        `<p class="explorer-loading">Could not load the data: ${err.message}</p>`;
+      const note = document.createElement('p');
+      note.className = 'explorer-loading';
+      note.textContent = `Could not load the data: ${err.message}`;
+      const root = document.getElementById('explorer');
+      root.replaceChildren(note);
     });
   </script>
 </body>

@@ -38,22 +38,48 @@ function chartCard(kicker, title, chartSvg, captionHtml, legendHtml = '') {
   </div>`;
 }
 
-// Dollar figures are compared in constant dollars; everything else compares as-is. Percentages
-// are rounded to whole numbers — these are two surveys of a few thousand people, and a tenth of
-// a point is precision the data doesn't carry.
-function deltaBadge(key, current, prior, opts) {
+// How a figure changed depends on what kind of figure it is.
+//   dollars — compared in constant dollars, reported as a real percentage change
+//   rates   — reported in percentage POINTS. A rate moving 3.2% to 4.7% is +1.5 points; calling
+//             that "+47%" is technically a relative change and reads as a catastrophe.
+//   levels  — median age and the like, reported in its own units. "+15%" of an age is meaningless.
+//   counts  — a relative percentage is the right answer.
+// Percentages round to whole numbers: two surveys of a few thousand people don't carry a tenth
+// of a point.
+export function deltaBadge(key, current, prior, opts) {
   const isDollar = opts.dollarFields.includes(key);
-  const base = isDollar ? toCurrentDollars(prior, opts.inflationFactor) : prior;
-  const d = formatDelta(current, base);
-  if (!d) return '';
-  const whole = Math.round(d.pctChange);
-  if (d.dir === 'flat' || whole === 0) return '';
-  const arrow = d.dir === 'up' ? '▲' : '▼';
-  const sign = whole > 0 ? '+' : '';
-  const sentiment = deltaSentiment(key, d.dir);
+  const isRate = (opts.rateFields || []).includes(key);
+  const isLevel = (opts.levelFields || []).includes(key);
+  if (current == null || prior == null) return '';
+
+  let text;
+  let dir;
+  if (isRate) {
+    const points = Math.round((current - prior) * 10) / 10;
+    dir = points > 0 ? 'up' : points < 0 ? 'down' : 'flat';
+    text = `${points > 0 ? '+' : ''}${points} points`;
+  } else if (isLevel) {
+    const diff = Math.round((current - prior) * 10) / 10;
+    dir = diff > 0 ? 'up' : diff < 0 ? 'down' : 'flat';
+    text = `${diff > 0 ? '+' : ''}${diff}`;
+  } else {
+    const base = isDollar ? toCurrentDollars(prior, opts.inflationFactor) : prior;
+    const d = formatDelta(current, base);
+    if (!d) return '';
+    const whole = Math.round(d.pctChange);
+    dir = whole === 0 ? 'flat' : d.dir;
+    text = `${whole > 0 ? '+' : ''}${whole}%${isDollar ? ' in real terms' : ''}`;
+  }
+
+  // Say "unchanged" rather than nothing. A blank space where every neighbouring tile has a figure
+  // reads as missing data, not as stability.
+  if (dir === 'flat') {
+    return `<div class="kpi-delta">Unchanged since ${opts.baselineLabel}</div>`;
+  }
+  const arrow = dir === 'up' ? '▲' : '▼';
+  const sentiment = deltaSentiment(key, dir);
   const tone = sentiment ? ` kpi-delta-${sentiment}` : '';
-  const real = isDollar ? ' in real terms' : '';
-  return `<div class="kpi-delta${tone}">${arrow} ${sign}${whole}%${real} since ${opts.baselineLabel}</div>`;
+  return `<div class="kpi-delta${tone}">${arrow} ${text} since ${opts.baselineLabel}</div>`;
 }
 
 export function renderSnapshot(section, meta, opts = {}) {
@@ -104,7 +130,9 @@ export function renderSnapshot(section, meta, opts = {}) {
     kpiTile('Median home value', currency(s.medianHomeValue), 'Owner-occupied', cd('medianHomeValue')),
     kpiTile('Median gross rent', currency(s.medianGrossRent), 'Per month', cd('medianGrossRent')),
     kpiTile('Owner-occupied', pct(s.ownerOccupiedPct), 'Of occupied homes', cd('ownerOccupiedPct')),
-    kpiTile('Total housing units', fmt(s.totalHousingUnits), 'All units', cd('totalHousingUnits')),
+    // No caveat needed on the count itself, but the change deserves one: a survey showing several
+    // hundred fewer homes across five years is sampling, not demolition.
+    kpiTile('Total housing units', fmt(s.totalHousingUnits), 'All units, survey estimate', cd('totalHousingUnits')),
     kpiTile('Unemployment', pct(s.unemploymentRate), 'Civilian labor force', cd('unemploymentRate')),
     kpiTile('Poverty rate', pct(s.povertyRate), 'Below poverty line', cd('povertyRate')),
     kpiTile('Median age', s.medianAge != null ? String(s.medianAge) : '—', 'Years', cd('medianAge')),
@@ -117,12 +145,16 @@ export function renderSnapshot(section, meta, opts = {}) {
     label: b.label,
     value: sum(g.age, [...b.m, ...b.f].map(ageCode)),
   }));
-  const age65plus = ageItems.filter((d) => ['65-74', '75-84', '85+'].includes(d.label)).reduce((a, d) => a + d.value, 0);
+  // Oakmont is a 55+ community, so 55 is the line that means something here. This figure covers
+  // the two tracts, which reach past Oakmont — the Community Report's 55+ share is higher because
+  // it counts Oakmont's blocks exactly. Saying so stops the two pages looking like they disagree.
+  const age55plus = ageItems.filter((d) => ['55-64', '65-74', '75-84', '85+'].includes(d.label)).reduce((a, d) => a + d.value, 0);
   const ageChart = chartCard(
     'Residents by age',
     'A community that skews older',
     horizontalBars({ items: ageItems, ariaLabel: 'Population by age bucket' }),
-    `<strong>${pct((age65plus / pop) * 100)}</strong> of residents are 65 or older, a hallmark of Oakmont's retirement community.`
+    `<strong>${pct((age55plus / pop) * 100)}</strong> of people in these two tracts are 55 or older. ` +
+    `Drawn to Oakmont's own boundary the share is higher still — see the Community Report.`
   );
 
   const incomeItems = INCOME_CODES.map((c, i) => ({ label: INCOME_LABELS[i], value: val(g.income, c) }));
@@ -178,10 +210,10 @@ export function renderSnapshot(section, meta, opts = {}) {
 
   const callout = (value, label) => `<div class="callout"><div class="callout-value">${value}</div><div class="callout-label">${label}</div></div>`;
   document.getElementById('callouts').innerHTML = [
-    callout(pct((bachelorsPlus / eduTotal) * 100), "Hold a bachelor's degree or higher"),
-    callout(pct((age65plus / pop) * 100), 'Residents are age 65 or older'),
+    callout(pct((bachelorsPlus / eduTotal) * 100), "Of residents 25 and over, hold a bachelor's degree or higher"),
+    callout(pct((age55plus / pop) * 100), 'Of people in these tracts are 55 or older'),
     callout(pct((hispanic / raceTotal) * 100), 'Identify as Hispanic or Latino'),
-    callout(fmt(households), 'Total households'),
+    callout(fmt(households), 'Households in these two tracts'),
   ].join('');
 
   // ── Method note ──
