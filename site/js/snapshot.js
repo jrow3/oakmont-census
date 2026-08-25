@@ -46,6 +46,10 @@ function chartCard(kicker, title, chartSvg, captionHtml, legendHtml = '') {
 //   counts  — a relative percentage is the right answer.
 // Percentages round to whole numbers: two surveys of a few thousand people don't carry a tenth
 // of a point.
+// A level compares in its own units. "+9" alone left the reader to infer from the tile's sub-label
+// that the unit was years.
+const LEVEL_UNITS = { medianAge: 'year' };
+
 export function deltaBadge(key, current, prior, opts) {
   const isDollar = opts.dollarFields.includes(key);
   const isRate = (opts.rateFields || []).includes(key);
@@ -61,7 +65,9 @@ export function deltaBadge(key, current, prior, opts) {
   } else if (isLevel) {
     const diff = Math.round((current - prior) * 10) / 10;
     dir = diff > 0 ? 'up' : diff < 0 ? 'down' : 'flat';
-    text = `${diff > 0 ? '+' : ''}${diff}`;
+    const unit = LEVEL_UNITS[key];
+    const suffix = !unit ? '' : ` ${unit}${Math.abs(diff) === 1 ? '' : 's'}`;
+    text = `${diff > 0 ? '+' : ''}${diff}${suffix}`;
   } else {
     const base = isDollar ? toCurrentDollars(prior, opts.inflationFactor) : prior;
     const d = formatDelta(current, base);
@@ -126,14 +132,14 @@ export function renderSnapshot(section, meta, opts = {}) {
   document.getElementById('kpis').innerHTML = [
     kpiTile('Population', fmt(s.totalPopulation), yr, cd('totalPopulation')),
     kpiTile('Median household income', currency(s.medianHouseholdIncome), 'Per year', cd('medianHouseholdIncome')),
-    kpiTile('Per-capita income', currency(s.perCapitaIncome), 'Per year', cd('perCapitaIncome')),
-    kpiTile('Median home value', currency(s.medianHomeValue), 'Owner-occupied', cd('medianHomeValue')),
+    kpiTile('Income per person', currency(s.perCapitaIncome), 'Per year', cd('perCapitaIncome')),
+    kpiTile('Median home value', currency(s.medianHomeValue), 'Owner-occupied homes only', cd('medianHomeValue')),
     kpiTile('Median gross rent', currency(s.medianGrossRent), 'Per month', cd('medianGrossRent')),
     kpiTile('Owner-occupied', pct(s.ownerOccupiedPct), 'Of occupied homes', cd('ownerOccupiedPct')),
     // No caveat needed on the count itself, but the change deserves one: a survey showing several
     // hundred fewer homes across five years is sampling, not demolition.
     kpiTile('Total housing units', fmt(s.totalHousingUnits), 'All units, survey estimate', cd('totalHousingUnits')),
-    kpiTile('Unemployment', pct(s.unemploymentRate), 'Civilian labor force', cd('unemploymentRate')),
+    kpiTile('Unemployment', pct(s.unemploymentRate), 'Of those working or looking', cd('unemploymentRate')),
     kpiTile('Poverty rate', pct(s.povertyRate), 'Below poverty line', cd('povertyRate')),
     kpiTile('Median age', s.medianAge != null ? String(s.medianAge) : '—', 'Years', cd('medianAge')),
   ].join('');
@@ -162,7 +168,7 @@ export function renderSnapshot(section, meta, opts = {}) {
     'Households by income',
     'Household income',
     horizontalBars({ items: incomeItems, ariaLabel: 'Households by income bracket', format: fmt }),
-    `The median household earns <strong>${currency(s.medianHouseholdIncome)}</strong> a year.`
+    `The median household in these two tracts takes in <strong>${currency(s.medianHouseholdIncome)}</strong> a year, from all sources.`
   );
 
   const owner = val(g.housing, 'B25003_002E');
@@ -181,7 +187,7 @@ export function renderSnapshot(section, meta, opts = {}) {
       ],
       ariaLabel: 'Owner vs renter occupied homes',
     }),
-    `<strong>${pct(s.ownerOccupiedPct)}</strong> of occupied homes are owned outright or with a mortgage.`,
+    `<strong>${pct(s.ownerOccupiedPct)}</strong> of occupied homes in these two tracts are owned outright or with a mortgage.`,
     tenureLegend
   );
 
@@ -194,7 +200,7 @@ export function renderSnapshot(section, meta, opts = {}) {
     'When homes were built',
     'Age of the housing stock',
     horizontalBars({ items: yearItems, ariaLabel: 'Housing units by year built' }),
-    `The largest share of homes was built <strong>${escapeHtml(topDecade?.label || '')}</strong>.`
+    `Across these two tracts, the largest share of homes was built <strong>${escapeHtml(topDecade?.label || '')}</strong>.`
   );
 
   const charts = document.getElementById('charts');
@@ -210,9 +216,9 @@ export function renderSnapshot(section, meta, opts = {}) {
 
   const callout = (value, label) => `<div class="callout"><div class="callout-value">${value}</div><div class="callout-label">${label}</div></div>`;
   document.getElementById('callouts').innerHTML = [
-    callout(pct((bachelorsPlus / eduTotal) * 100), "Of residents 25 and over, hold a bachelor's degree or higher"),
+    callout(pct((bachelorsPlus / eduTotal) * 100), "Of people 25 and over in these tracts hold a bachelor's degree or higher"),
     callout(pct((age55plus / pop) * 100), 'Of people in these tracts are 55 or older'),
-    callout(pct((hispanic / raceTotal) * 100), 'Identify as Hispanic or Latino'),
+    callout(pct((hispanic / raceTotal) * 100), 'Of people in these tracts identify as Hispanic or Latino'),
     callout(fmt(households), 'Households in these two tracts'),
   ].join('');
 

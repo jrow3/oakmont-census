@@ -34,7 +34,7 @@ export async function renderExplorer(root, { explorerFile, featured = [], year =
     ${tables.B19019 ? `<div class="featured-grid" id="income-grid"></div>` : ''}
     <div class="explorer-featured">
       <span class="featured-label">Featured</span>
-      ${featuredIds.map((id) => `<button class="chip" data-id="${id}">${escapeHtml(tables[id].concept || id)}</button>`).join('')}
+      ${featuredIds.map((id) => `<button class="chip" data-id="${id}"><span class="catalog-id">${id}</span> ${escapeHtml(tables[id].concept || id)}</button>`).join('')}
     </div>
     <div class="catalog-controls">
       <input type="search" id="cat-search" placeholder="Search all ${ids.length} tables by name or code…" aria-label="Search tables" />

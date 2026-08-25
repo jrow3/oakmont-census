@@ -45,8 +45,13 @@ test('a count reports a relative percentage, which is right for counts', () => {
 
 test('a level reports its own units — a percentage of an age is meaningless', () => {
   const badge = deltaBadge('medianAge', 74, 71, OPTS);
-  assert.match(badge, /\+3/);
+  assert.match(badge, /\+3 years/);
   assert.doesNotMatch(badge, /%/);
+});
+
+test('a one-year move is singular', () => {
+  assert.match(deltaBadge('medianAge', 72, 71, OPTS), /\+1 year since/);
+  assert.match(deltaBadge('medianAge', 70, 71, OPTS), /-1 year since/);
 });
 
 test('an unchanged figure says so rather than rendering blank', () => {

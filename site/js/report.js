@@ -27,7 +27,7 @@ function section(id, kicker, title, source, bodyHtml, basis) {
     <div class="report-head"><p class="chart-kicker">${kicker}</p><h2>${title}</h2>${basisTag(basis)}</div>
     ${bodyHtml}
     <details class="report-details report-source-detail">
-      <summary>Where this figure comes from</summary>
+      <summary>Source &amp; Census tables</summary>
       <p class="report-source">${source}</p>
     </details>
   </section>`;
@@ -43,6 +43,10 @@ export async function renderReport() {
   if (!r) throw new Error('No report data in data.json');
   if (data.meta?.sample) document.getElementById('sample-banner').hidden = false;
   if (data.meta?.generatedAt) document.getElementById('footer-generated').textContent = `Data generated ${data.meta.generatedAt.slice(0, 10)}.`;
+  // Was a hardcoded block/tract string that no build step could correct — the same way the
+  // methodology page's "955 non-Oakmont residents" outlived the block list it described.
+  const geoEl = document.getElementById('report-geo');
+  if (geoEl && r.geography) geoEl.textContent = `${r.geography.counts} · ${r.geography.estimates}`;
 
   // Survey-only figures the Decennial doesn't measure — rent, work, when homes were built.
   // They used to live on a separate page that showed the same community with different numbers.
@@ -79,24 +83,27 @@ export async function renderReport() {
 function summarySection(r) {
   const s = r.summary;
   const tiles = [
-    kpi('Population', num(s.population), 'Residents', 'Decennial · exact blocks'),
-    kpi('Median age', s.medianAge != null ? String(s.medianAge) : '—', 'Years', 'Decennial · exact blocks'),
-    kpi('Age 55+', percent(s.pct55Plus), 'Of residents', 'Decennial · exact blocks'),
-    kpi('Avg. household size', s.averageHouseholdSize != null ? String(s.averageHouseholdSize) : '—', 'People per home', 'ACS · tracts'),
-    kpi('Owner-occupied', percent(s.ownerOccupiedPct), 'Of occupied homes', 'Decennial · exact blocks'),
-    kpi('Median household income', money(s.medianHouseholdIncome), 'Per year', 'ACS · tracts'),
-    kpi('Per-capita income', money(s.perCapitaIncome), 'Per year', 'ACS · tracts'),
+    kpi('Population', num(s.population), 'Residents', '2020 head-count · Oakmont exactly'),
+    kpi('Median age', s.medianAge != null ? String(s.medianAge) : '—', 'Years', '2020 head-count · Oakmont exactly'),
+    kpi('Age 55+', percent(s.pct55Plus), 'Of residents', '2020 head-count · Oakmont exactly'),
+    kpi('Avg. household size', s.averageHouseholdSize != null ? String(s.averageHouseholdSize) : '—', 'People per home', '2016–2020 survey · wider area'),
+    kpi('Owner-occupied', percent(s.ownerOccupiedPct), 'Of occupied homes', '2020 head-count · Oakmont exactly'),
+    kpi('Median household income', money(s.medianHouseholdIncome), 'Per year', '2016–2020 survey · wider area'),
+    kpi('Income per person', money(s.perCapitaIncome), 'Per year', '2016–2020 survey · wider area'),
   ].join('');
   return section('summary', 'Who are we?', 'A 55+ community, in numbers',
     'Counts from the 2020 Decennial Census (exact Oakmont blocks); dollar figures from the 2020 ACS (tracts).',
-    `<div class="kpi-grid">${tiles}</div>
-     <p class="report-note">Oakmont is an active-adult 55+ community: ${percent(s.pct55Plus)} of residents counted here are 55 or older.
-       The tiles marked <em>Decennial · exact blocks</em> count Oakmont itself. Those marked <em>ACS · tracts</em>
-       come from a survey covering a wider area, because the survey isn't published small enough to match
-       Oakmont's edge.</p>`,
+    `${lead(`Oakmont is an active-adult 55+ community of ${num(s.population)} residents; ${percent(s.pct55Plus)} of them are 55 or older.`)}
+     <div class="kpi-grid">${tiles}</div>
+     <p class="report-note">Two different sources sit side by side here, and the line under each tile says
+       which. A <strong>head-count</strong> asked every household in 2020 and can be totalled for Oakmont's
+       exact boundary. A <strong>survey</strong> asked a sample of households over five years, and is only
+       published for a wider area reaching a little past Oakmont, so those figures cover more people than
+       live here. Neither substitutes for the other: the head-count never asks about money or education,
+       and the survey is never published block by block.</p>`,
     // Mixed by design: four tiles are Oakmont exactly, three are the wider survey area. The tiles
     // carry their own source line, so the tag names the mix rather than claiming one of them.
-    { label: 'Oakmont exactly for counts, the two tracts for dollars', anchor: 'bases' });
+    { label: 'Oakmont exactly, plus the wider survey area', anchor: 'bases' });
 }
 
 // What "Oakmont" means in this report, shown rather than described. The map answers the question
@@ -142,10 +149,10 @@ function housingAgeSection(acs) {
     .filter((d) => d.label);
   if (!items.length) return '';
   const top = [...items].sort((a, b) => (b.value || 0) - (a.value || 0))[0];
-  return section('housing-age', 'The housing stock', 'When Oakmont was built',
+  return section('housing-age', 'The housing stock', 'When the homes here were built',
     'U.S. Census Bureau, 2016–2020 American Community Survey (tracts). Table B25034.',
     `${horizontalBars({ items, ariaLabel: 'Housing units by year built', format: fmt })}
-     <p class="chart-caption">Most of Oakmont went up <strong>${escapeHtml(top?.label || '')}</strong>.</p>`,
+     <p class="chart-caption">Most homes in the two tracts went up <strong>${escapeHtml(top?.label || '')}</strong>, which is when Oakmont itself was built out.</p>`,
     { label: 'all homes in the two tracts', anchor: 'bases' });
 }
 
@@ -189,11 +196,11 @@ function incomeSection(r) {
   const items = i.distribution.map((d) => ({ label: d.label, value: d.count }));
   const households = i.distribution.reduce((sum, d) => sum + (d.count || 0), 0);
   return section('income', 'Income', 'Household and family income',
-    'U.S. Census Bureau, 2020 ACS 5-Year (tracts).',
+    'U.S. Census Bureau, 2020 ACS 5-Year (tracts). Median household income B19013; per-capita B19301; family and non-family medians B19113 and B19202; brackets B19001.',
     `${lead('Half of households take in more than the median figure below, and half less.')}
      <div class="stat-row">
        <div class="stat"><div class="stat-value">${money(i.median)}</div><div class="stat-label">Median household income</div></div>
-       <div class="stat"><div class="stat-value">${money(i.perCapita)}</div><div class="stat-label">Per-capita income</div></div>
+       <div class="stat"><div class="stat-value">${money(i.perCapita)}</div><div class="stat-label">Income per person</div></div>
        <div class="stat"><div class="stat-value">${money(i.familyMedian)}</div><div class="stat-label">Median family income</div></div>
        <div class="stat"><div class="stat-value">${money(i.nonfamilyMedian)}</div><div class="stat-label">Median non-family income</div></div>
      </div>
@@ -241,7 +248,8 @@ function tenureIncomeSection(r) {
        <div class="stat"><div class="stat-value">${money(t.renterMedian)}</div><div class="stat-label">Renter median income · ${num(t.renterHouseholds)} homes in the two tracts</div></div>
      </div>
      <div class="legend-row"><span class="legend-item"><span class="legend-swatch" style="background:var(--terracotta)"></span>Owner-occupied</span><span class="legend-item"><span class="legend-swatch" style="background:var(--teal)"></span>Renter-occupied</span></div>
-     ${groupedBars({ items, ariaLabel: 'Household income by tenure' })}`,
+     ${groupedBars({ items, ariaLabel: 'Household income by tenure' })}
+     <p class="chart-caption">An empty bracket means the survey found too few households there to report, not that none exist. "Renter" here includes the apartments at Oakmont Gardens.</p>`,
     { label: 'households in the two tracts', anchor: 'bases' });
 }
 
@@ -255,14 +263,14 @@ function homeValueSection(r, enclaves, acs) {
   // state the split when it actually resolves to a sensible positive remainder.
   const rentalSplit = otherRentals == null || otherRentals <= 0 ? '' :
     ` Of those rentals, ${num(gardens)} are at Oakmont Gardens and ${num(otherRentals)} are ordinary homes let out by their owners.`;
-  return section('home-value', 'Home value', 'Where owner-estimated values land',
+  return section('home-value', 'Home value', 'What homes are worth',
     'U.S. Census Bureau, 2020 ACS 5-Year (tracts). Owner-reported values (table B25075/B25077).',
     `<div class="stat-row">
-       <div class="stat"><div class="stat-value">${money(r.homeValue.median)}</div><div class="stat-label">Median value, owner-estimated</div></div>
+       <div class="stat"><div class="stat-value">${money(r.homeValue.median)}</div><div class="stat-label">Median value, as owners estimate it</div></div>
        <div class="stat"><div class="stat-value">${money(acs?.snapshot?.medianGrossRent)}</div><div class="stat-label">Median rent, per month</div></div>
      </div>
      ${horizontalBars({ items, ariaLabel: 'Owner-occupied homes by value', format: fmt })}
-     <p class="chart-caption">Covers the ${num(r.incomeByTenure.ownerHouseholds)} <strong>owner-occupied</strong> homes the survey covers across the two tracts — renters report no value and vacant units aren't counted. Oakmont itself has ${num(h.totalUnits)} homes: ${num(h.ownerOccupied)} owner-occupied, ${num(h.renterOccupied)} rented and ${num(h.vacantUnits)} vacant.${rentalSplit}</p>`,
+     <p class="chart-caption">Covers the ${num(r.incomeByTenure.ownerHouseholds)} <strong>owner-occupied</strong> homes the survey reached across the two tracts — renters report no value and vacant units aren't counted. Oakmont itself has ${num(h.totalUnits)} homes: ${num(h.ownerOccupied)} owner-occupied, ${num(h.renterOccupied)} rented and ${num(h.vacantUnits)} vacant.${rentalSplit}</p>`,
     // The value chart is owner-occupied only; the rent figure beside it is renter-occupied by
     // definition, so the tag has to cover both rather than claim one.
     { label: 'owner-occupied homes for value, rented homes for rent', anchor: 'bases' });
