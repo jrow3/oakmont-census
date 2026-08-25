@@ -2,3 +2,7 @@ node_modules/
 .DS_Store
 Thumbs.db
 site/explorer/*.json
+
+# Build output of scripts/selector/build-selector.mjs. 600 KB, and reproducible byte-for-byte
+# from the inputs beside it, so the inputs are what's tracked.
+scripts/selector/oakmont-block-selector.html

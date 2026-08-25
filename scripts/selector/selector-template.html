@@ -1,0 +1,539 @@
+<title>Oakmont Block Selector</title>
+<style>
+  :root {
+    --ground: #faf6f0; --panel: #fffdfa; --ink: #2b2320; --ink-soft: #6b5d52; --ink-faint: #9a8b7d;
+    --line: #e4dbcf; --terracotta: #c26b4a; --terracotta-soft: rgba(194,107,74,.16);
+    --teal: #3a7d7b; --added: #4a7c3f; --removed: #a8503c;
+    --water: #cfe0e0; --waterway: #a8c6c6; --golf: #d9e4c4; --road: #ccc2b4; --road-major: #ad9f8d;
+    --block-line: #b7a693; --dot: #8a7967;
+    --shadow: 0 6px 24px rgba(43,35,32,.14); --focus: #2f6f6d;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #17130f; --panel: #211b16; --ink: #efe7db; --ink-soft: #b3a595; --ink-faint: #7d7063;
+      --line: #362d25; --terracotta: #e08a63; --terracotta-soft: rgba(224,138,99,.24);
+      --teal: #6fb6b2; --added: #8cc07a; --removed: #e08a7a;
+      --water: #24363a; --waterway: #365155; --golf: #2c3a24; --road: #4a4034; --road-major: #6c5f4d;
+      --block-line: #6a5c4c; --dot: #a2907c;
+      --shadow: 0 6px 24px rgba(0,0,0,.5); --focus: #7fd0cd;
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #faf6f0; --panel: #fffdfa; --ink: #2b2320; --ink-soft: #6b5d52; --ink-faint: #9a8b7d;
+    --line: #e4dbcf; --terracotta: #c26b4a; --terracotta-soft: rgba(194,107,74,.16);
+    --teal: #3a7d7b; --added: #4a7c3f; --removed: #a8503c;
+    --water: #cfe0e0; --waterway: #a8c6c6; --golf: #d9e4c4; --road: #ccc2b4; --road-major: #ad9f8d;
+    --block-line: #b7a693; --dot: #8a7967;
+    --shadow: 0 6px 24px rgba(43,35,32,.14); --focus: #2f6f6d;
+  }
+  :root[data-theme="dark"] {
+    --ground: #17130f; --panel: #211b16; --ink: #efe7db; --ink-soft: #b3a595; --ink-faint: #7d7063;
+    --line: #362d25; --terracotta: #e08a63; --terracotta-soft: rgba(224,138,99,.24);
+    --teal: #6fb6b2; --added: #8cc07a; --removed: #e08a7a;
+    --water: #24363a; --waterway: #365155; --golf: #2c3a24; --road: #4a4034; --road-major: #6c5f4d;
+    --block-line: #6a5c4c; --dot: #a2907c;
+    --shadow: 0 6px 24px rgba(0,0,0,.5); --focus: #7fd0cd;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--ground); color: var(--ink); overflow: hidden;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 14px;
+  }
+  #app { position: fixed; inset: 0; }
+
+  #map { position: absolute; inset: 0; width: 100%; height: 100%; background: var(--ground); touch-action: none; cursor: grab; }
+  #map.panning { cursor: grabbing; }
+  #map path { vector-effect: non-scaling-stroke; }
+
+  .ctx-water { fill: var(--water); stroke: none; }
+  .ctx-golf { fill: var(--golf); stroke: none; opacity: .85; }
+  .ctx-waterway { fill: none; stroke: var(--waterway); stroke-width: 1.2; }
+  .ctx-road { fill: none; stroke: var(--road); stroke-width: 1; stroke-linecap: round; }
+  .ctx-road.major { stroke: var(--road-major); stroke-width: 2.4; }
+  .road-label { fill: var(--ink-soft); font-weight: 600; paint-order: stroke; stroke: var(--ground); stroke-linejoin: round; pointer-events: none; text-anchor: middle; }
+  /* One dot per building, so the settlement pattern reads even where block lines don't. */
+  #dots { fill: var(--dot); opacity: .5; pointer-events: none; }
+
+  .block { fill: none; pointer-events: all; stroke: var(--block-line); stroke-width: 1; cursor: pointer; transition: fill .12s ease; }
+  .block:hover { fill: var(--terracotta-soft); }
+  .block.on { fill: var(--terracotta); fill-opacity: .5; stroke: var(--terracotta); stroke-width: 1.6; }
+  .block.on:hover { fill-opacity: .66; }
+  .block.added { fill: var(--added); fill-opacity: .5; stroke: var(--added); stroke-width: 2; }
+  .block.removed { fill: none; stroke: var(--removed); stroke-width: 2; stroke-dasharray: 4 3; }
+  .block.hit { stroke: var(--focus); stroke-width: 3; }
+  .block:focus-visible { outline: none; stroke: var(--focus); stroke-width: 3; }
+
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 16px 16px 14px; }
+  #panel { position: absolute; top: 16px; left: 16px; width: 320px; max-width: calc(100vw - 32px); max-height: calc(100vh - 32px); overflow-y: auto; }
+  .title { font-family: Georgia, "Iowan Old Style", "Times New Roman", serif; font-size: 19px; font-weight: 600; margin: 0; letter-spacing: -.01em; }
+  .title em { color: var(--terracotta); font-style: italic; }
+  .subtitle { margin: 5px 0 13px; font-size: 12.5px; line-height: 1.5; color: var(--ink-soft); }
+
+  .tally { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
+  .stat { background: var(--ground); border: 1px solid var(--line); border-radius: 10px; padding: 9px 8px; text-align: center; }
+  .stat-value { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .stat-value.accent { color: var(--terracotta); }
+  .stat-label { font-size: 9.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); margin-top: 3px; }
+
+  .bench { font-size: 11.5px; color: var(--ink-soft); line-height: 1.5; margin: 0 0 12px; padding: 8px 10px; background: var(--ground); border-radius: 8px; border: 1px solid var(--line); }
+  .bench b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  .diff { display: flex; gap: 12px; align-items: center; font-size: 12px; margin-bottom: 11px; min-height: 20px; }
+  .diff-chip { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .diff-chip.add { color: var(--added); }
+  .diff-chip.rem { color: var(--removed); }
+  .diff-none { color: var(--ink-faint); font-style: italic; }
+
+  .search-wrap { margin-bottom: 11px; }
+  #search { width: 100%; font: inherit; font-size: 12.5px; color: var(--ink); background: var(--ground); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+  #search:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+  #search-hits { font-size: 11.5px; color: var(--ink-soft); margin-top: 5px; min-height: 16px; line-height: 1.4; }
+
+  .btn-row { display: flex; gap: 7px; margin-bottom: 11px; }
+  button { font: inherit; font-size: 12.5px; font-weight: 600; color: var(--ink); background: var(--ground); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; cursor: pointer; flex: 1; transition: border-color .12s, background .12s; }
+  button:hover { border-color: var(--terracotta); }
+  button:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+  button.primary { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  button.primary:hover { filter: brightness(1.06); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 13px; margin: 2px 0 12px; font-size: 11px; color: var(--ink-soft); }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .sw { width: 13px; height: 13px; border-radius: 3px; border: 1px solid var(--line); display: inline-block; }
+  .sw.on { background: var(--terracotta); border-color: var(--terracotta); opacity: .5; }
+  .sw.add { background: var(--added); border-color: var(--added); opacity: .5; }
+  .sw.rem { background: transparent; border: 2px dashed var(--removed); }
+  .sw.off { background: transparent; border-color: var(--block-line); }
+
+  .export-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+  #copied { color: var(--teal); font-weight: 700; opacity: 0; transition: opacity .2s; text-transform: none; letter-spacing: 0; }
+  #copied.show { opacity: 1; }
+  #export { width: 100%; height: 58px; resize: vertical; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 10.5px; color: var(--ink); background: var(--ground); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+  #export:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+  .hint { font-size: 11px; color: var(--ink-soft); margin: 10px 0 0; line-height: 1.5; }
+
+  #detail { position: absolute; left: 16px; bottom: 16px; width: 320px; max-width: calc(100vw - 32px); display: none; }
+  #detail.show { display: block; }
+  .d-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 2px; }
+  .d-id { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; font-weight: 600; }
+  .d-state { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+  .d-state.on { color: var(--terracotta); }
+  .d-state.off { color: var(--ink-faint); }
+  .d-meta { font-size: 11.5px; color: var(--ink-soft); font-variant-numeric: tabular-nums; margin-bottom: 9px; }
+  .d-streets { display: flex; flex-direction: column; gap: 3px; }
+  .d-street { display: grid; grid-template-columns: 1fr auto; gap: 8px; font-size: 12px; align-items: baseline; }
+  .d-street-n { color: var(--ink-faint); font-variant-numeric: tabular-nums; font-size: 11px; }
+  .d-empty { font-size: 12px; color: var(--ink-faint); font-style: italic; margin: 0; }
+
+  #zoom { position: absolute; right: 16px; bottom: 16px; display: flex; flex-direction: column; gap: 6px; }
+  #zoom button { width: 40px; height: 40px; flex: none; font-size: 17px; background: var(--panel); box-shadow: var(--shadow); }
+
+  #tip { position: absolute; pointer-events: none; z-index: 5; background: var(--ink); color: var(--ground); font-size: 11.5px; padding: 6px 9px; border-radius: 7px; white-space: nowrap; transform: translate(-50%, calc(-100% - 10px)); opacity: 0; transition: opacity .1s; font-variant-numeric: tabular-nums; }
+  #tip.show { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  @media (max-width: 700px) {
+    #panel { width: calc(100vw - 32px); max-height: 52vh; }
+    #detail { display: none !important; }
+  }
+</style>
+
+<div id="app">
+  <svg id="map" role="application" aria-label="Map of every 2020 census block in Oakmont's two tracts. Click a block to add or remove it from the Oakmont list."></svg>
+  <div id="tip" role="status" aria-live="polite"></div>
+
+  <div id="panel" class="card">
+    <h1 class="title">Oakmont <em>block selector</em></h1>
+    <p class="subtitle">Every 2020 census block in tracts 1516.01 and 1516.02 is shown, with a dot for each building. The blocks currently counted as Oakmont are already filled in — click any block to add or remove it, then send the list back.</p>
+
+    <div class="tally">
+      <div class="stat"><div class="stat-value accent" id="t-count">0</div><div class="stat-label">Blocks</div></div>
+      <div class="stat"><div class="stat-value" id="t-pop">0</div><div class="stat-label">People</div></div>
+      <div class="stat"><div class="stat-value" id="t-hu">0</div><div class="stat-label">Homes</div></div>
+    </div>
+
+    <p class="bench">For reference, the Oakmont Village Association counts about <b>3,211</b> homes — roughly 3,044 single-family plus 167 rentals at Oakmont Gardens. Your selection: <b id="b-hu">0</b>.</p>
+
+    <div class="diff" id="diff"></div>
+
+    <div class="search-wrap">
+      <input type="search" id="search" placeholder="Find a street — try Wild Oak" aria-label="Find blocks by street name" />
+      <div id="search-hits"></div>
+    </div>
+
+    <div class="btn-row">
+      <button id="b-zoom-oakmont" type="button">Zoom to Oakmont</button>
+      <button id="b-fit" type="button">Show both tracts</button>
+    </div>
+    <div class="btn-row">
+      <button id="b-reset" type="button">Start over</button>
+      <button id="b-clear" type="button">Clear all</button>
+    </div>
+
+    <div class="legend">
+      <span><i class="sw on"></i> Counted as Oakmont</span>
+      <span><i class="sw add"></i> You added</span>
+      <span><i class="sw rem"></i> You removed</span>
+      <span><i class="sw off"></i> Not counted</span>
+    </div>
+
+    <div class="export-label"><span>Your list</span><span id="copied">Copied</span></div>
+    <textarea id="export" readonly aria-label="Selected block GEOIDs as JSON"></textarea>
+    <div class="btn-row" style="margin-top: 8px;">
+      <button id="b-copy" class="primary" type="button">Copy list</button>
+      <button id="b-download" type="button">Download</button>
+    </div>
+    <p class="hint">Drag to pan, scroll to zoom. Hover a block to see which streets are in it.</p>
+  </div>
+
+  <div id="detail" class="card" aria-live="polite"></div>
+
+  <div id="zoom">
+    <button id="z-in" type="button" aria-label="Zoom in">+</button>
+    <button id="z-out" type="button" aria-label="Zoom out">&minus;</button>
+  </div>
+</div>
+
+<script type="module">
+  const blocks = JSON.parse(document.getElementById('blocks-data').textContent);
+  const context = JSON.parse(document.getElementById('context-data').textContent);
+  const buildings = JSON.parse(document.getElementById('dots-data').textContent);
+  const BASELINE = JSON.parse(document.getElementById('baseline-data').textContent);
+  const svg = document.getElementById('map');
+  const NS = 'http://www.w3.org/2000/svg';
+
+  // Small DOM helpers. Street names come from a public dataset but are still text, so they go in
+  // through textContent rather than being pasted into markup.
+  const el = (tag, cls, text) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  };
+  const empty = (n) => { while (n.firstChild) n.removeChild(n.firstChild); };
+
+  let minLon = Infinity, maxLon = -Infinity, minLat = Infinity, maxLat = -Infinity;
+  const scan = (ring) => { for (const [lon, lat] of ring) {
+    if (lon < minLon) minLon = lon; if (lon > maxLon) maxLon = lon;
+    if (lat < minLat) minLat = lat; if (lat > maxLat) maxLat = lat;
+  } };
+  const eachRing = (g, fn) => {
+    if (g.type === 'Polygon') g.coordinates.forEach(fn);
+    else if (g.type === 'MultiPolygon') g.coordinates.forEach((p) => p.forEach(fn));
+  };
+  for (const f of blocks.features) eachRing(f.geometry, scan);
+  const cosLat = Math.cos(((minLat + maxLat) / 2) * Math.PI / 180);
+  const px = (lon) => (lon - minLon) * cosLat;
+  const py = (lat) => (maxLat - lat);
+  const W = (maxLon - minLon) * cosLat, H = (maxLat - minLat);
+  const PAD = 0.004;
+  svg.setAttribute('viewBox', `${-PAD} ${-PAD} ${W + 2 * PAD} ${H + 2 * PAD}`);
+
+  const ringPath = (ring, close) => {
+    let d = '';
+    ring.forEach(([lon, lat], i) => { d += (i ? 'L' : 'M') + px(lon).toFixed(5) + ' ' + py(lat).toFixed(5) + ' '; });
+    return d + (close ? 'Z' : '');
+  };
+  const geomPath = (g) => {
+    let d = '';
+    if (g.type === 'Polygon') g.coordinates.forEach((r) => { d += ringPath(r, true); });
+    else if (g.type === 'MultiPolygon') g.coordinates.forEach((p) => p.forEach((r) => { d += ringPath(r, true); }));
+    return d;
+  };
+
+  const viewport = document.createElementNS(NS, 'g');
+  svg.appendChild(viewport);
+
+  const gCtx = document.createElementNS(NS, 'g');
+  viewport.appendChild(gCtx);
+  const HILITE = ['sonoma', 'melita', 'pythian', 'oakmont', 'stone bridge', 'white oak', 'valley of the moon', 'highway 12', 'los alamos'];
+  const labelled = new Set();
+  const roadLabels = [];
+  const order = { water: 0, golf: 1, waterway: 2, road: 3 };
+  for (const c of [...context].sort((a, b) => (order[a.k] ?? 9) - (order[b.k] ?? 9))) {
+    const major = c.k === 'road' && c.name && HILITE.some((h) => c.name.toLowerCase().includes(h));
+    const p = document.createElementNS(NS, 'path');
+    p.setAttribute('d', ringPath(c.line, c.k === 'water' || c.k === 'golf'));
+    p.setAttribute('class', c.k === 'road' ? ('ctx-road' + (major ? ' major' : '')) : 'ctx-' + c.k);
+    gCtx.appendChild(p);
+    if (major && c.name && !labelled.has(c.name) && c.line.length > 3) {
+      labelled.add(c.name);
+      const mid = c.line[Math.floor(c.line.length / 2)];
+      const t = document.createElementNS(NS, 'text');
+      t.setAttribute('x', px(mid[0]).toFixed(5)); t.setAttribute('y', py(mid[1]).toFixed(5));
+      t.setAttribute('class', 'road-label');
+      t.textContent = c.name;
+      gCtx.appendChild(t);
+      roadLabels.push(t);
+    }
+  }
+  // Labels live inside the scaled viewport, so their type would grow with the zoom and collide.
+  // Counter-scale them on every view change to hold a constant size on screen.
+  function sizeLabels() {
+    const size = (H * 0.013) / k;
+    const stroke = (H * 0.004) / k;
+    for (const t of roadLabels) {
+      t.setAttribute('font-size', size.toFixed(6));
+      t.setAttribute('stroke-width', stroke.toFixed(6));
+    }
+  }
+
+  // Buildings, as one path of tiny circles — 4,000-odd separate elements would cost more than
+  // this is worth, and they never need to be addressed individually.
+  const r = H * 0.00055;
+  let dotD = '';
+  for (const [lon, lat] of buildings) {
+    const x = px(lon), y = py(lat);
+    dotD += `M${(x - r).toFixed(5)} ${y.toFixed(5)}a${r.toFixed(5)} ${r.toFixed(5)} 0 1 0 ${(r * 2).toFixed(5)} 0a${r.toFixed(5)} ${r.toFixed(5)} 0 1 0 ${(-r * 2).toFixed(5)} 0`;
+  }
+  const gDots = document.createElementNS(NS, 'path');
+  gDots.setAttribute('id', 'dots');
+  gDots.setAttribute('d', dotD);
+  viewport.appendChild(gDots);
+
+  const gBlk = document.createElementNS(NS, 'g');
+  viewport.appendChild(gBlk);
+  const base = new Set(BASELINE);
+  const selected = new Set(BASELINE);
+  const byId = new Map();
+  const info = new Map();
+  for (const f of blocks.features) {
+    const pr = f.properties;
+    const path = document.createElementNS(NS, 'path');
+    path.setAttribute('d', geomPath(f.geometry));
+    path.setAttribute('class', 'block');
+    path.setAttribute('tabindex', '0');
+    path.setAttribute('role', 'checkbox');
+    path.dataset.geoid = pr.GEOID;
+    gBlk.appendChild(path);
+    byId.set(pr.GEOID, path);
+    info.set(pr.GEOID, { pop: +pr.POP100 || 0, hu: +pr.HU100 || 0, st: pr.ST || [], na: pr.NA || 0 });
+  }
+
+  const nf = (n) => n.toLocaleString();
+
+  function paint(id) {
+    const node = byId.get(id);
+    const on = selected.has(id), was = base.has(id);
+    node.classList.toggle('on', on && was);
+    node.classList.toggle('added', on && !was);
+    node.classList.toggle('removed', !on && was);
+    node.setAttribute('aria-checked', String(on));
+    const i = info.get(id);
+    const top = i.st.length ? i.st[0][0] : 'no addresses';
+    node.setAttribute('aria-label',
+      `Block ending ${id.slice(-4)}, ${top}, ${i.pop} people. ${on ? 'Counted as Oakmont' : 'Not counted'}.`);
+  }
+
+  function update() {
+    let pop = 0, hu = 0;
+    for (const id of selected) { const i = info.get(id); pop += i.pop; hu += i.hu; }
+    document.getElementById('t-count').textContent = nf(selected.size);
+    document.getElementById('t-pop').textContent = nf(pop);
+    document.getElementById('t-hu').textContent = nf(hu);
+    document.getElementById('b-hu').textContent = nf(hu) + ' homes';
+
+    const added = [...selected].filter((id) => !base.has(id));
+    const removed = [...base].filter((id) => !selected.has(id));
+    const diff = document.getElementById('diff');
+    empty(diff);
+    if (added.length) diff.appendChild(el('span', 'diff-chip add', `+${added.length} added`));
+    if (removed.length) diff.appendChild(el('span', 'diff-chip rem', `${removed.length} removed`));
+    if (!added.length && !removed.length) diff.appendChild(el('span', 'diff-none', 'Unchanged from the current list'));
+
+    const ids = [...selected].sort();
+    document.getElementById('export').value = ids.length
+      ? JSON.stringify({ geoids: ids, count: ids.length, population: pop, housingUnits: hu, added, removed })
+      : '';
+  }
+
+  const detail = document.getElementById('detail');
+  function showDetail(id) {
+    const i = info.get(id);
+    const on = selected.has(id);
+    empty(detail);
+
+    const head = el('div', 'd-head');
+    head.appendChild(el('span', 'd-id', '…' + id.slice(-4)));
+    head.appendChild(el('span', 'd-state ' + (on ? 'on' : 'off'), on ? 'Counted as Oakmont' : 'Not counted'));
+    detail.appendChild(head);
+
+    const meta = `${nf(i.pop)} people · ${nf(i.hu)} homes` + (i.na ? ` · ${nf(i.na)} addresses` : '');
+    detail.appendChild(el('div', 'd-meta', meta));
+
+    if (i.st.length) {
+      const list = el('div', 'd-streets');
+      for (const [name, n] of i.st) {
+        const row = el('div', 'd-street');
+        row.appendChild(el('span', null, name));
+        row.appendChild(el('span', 'd-street-n', String(n)));
+        list.appendChild(row);
+      }
+      detail.appendChild(list);
+    } else {
+      detail.appendChild(el('p', 'd-empty', 'No addresses here — open space, golf course or water.'));
+    }
+    detail.classList.add('show');
+  }
+
+  function toggle(id) {
+    if (selected.has(id)) selected.delete(id); else selected.add(id);
+    paint(id);
+    update();
+    showDetail(id);
+  }
+
+  gBlk.addEventListener('click', (e) => { const b = e.target.closest('.block'); if (b) toggle(b.dataset.geoid); });
+  gBlk.addEventListener('keydown', (e) => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('block')) { e.preventDefault(); toggle(e.target.dataset.geoid); }
+  });
+  gBlk.addEventListener('focusin', (e) => { if (e.target.dataset && e.target.dataset.geoid) showDetail(e.target.dataset.geoid); });
+
+  const tip = document.getElementById('tip');
+  gBlk.addEventListener('mousemove', (e) => {
+    const b = e.target.closest('.block');
+    if (!b) { tip.classList.remove('show'); return; }
+    const i = info.get(b.dataset.geoid);
+    const top = i.st.length ? i.st[0][0] : 'open space';
+    tip.textContent = `…${b.dataset.geoid.slice(-4)} · ${top} · ${nf(i.pop)} people`;
+    tip.style.left = e.clientX + 'px';
+    tip.style.top = e.clientY + 'px';
+    tip.classList.add('show');
+    showDetail(b.dataset.geoid);
+  });
+  gBlk.addEventListener('mouseleave', () => tip.classList.remove('show'));
+
+  const searchEl = document.getElementById('search');
+  const hitsEl = document.getElementById('search-hits');
+  let hits = [];
+  searchEl.addEventListener('input', () => {
+    const q = searchEl.value.trim().toLowerCase();
+    for (const node of hits) node.classList.remove('hit');
+    hits = [];
+    if (q.length < 2) { hitsEl.textContent = ''; return; }
+    let homes = 0, n = 0;
+    for (const [id, i] of info) {
+      if (!i.st.some(([name]) => name.toLowerCase().includes(q))) continue;
+      const node = byId.get(id);
+      node.classList.add('hit');
+      hits.push(node);
+      n++; homes += i.hu;
+    }
+    hitsEl.textContent = n
+      ? (n === 1
+        ? `1 block contains that street, ${nf(homes)} homes in total — though it holds other streets too.`
+        : `${n} blocks contain that street, ${nf(homes)} homes in total — though they hold other streets too.`)
+      : 'No street by that name in these two tracts.';
+  });
+
+  let k = 1, tx = 0, ty = 0;
+  const apply = () => {
+    viewport.setAttribute('transform', `translate(${tx} ${ty}) scale(${k})`);
+    sizeLabels();
+  };
+  function toSvg(cx, cy) {
+    const rect = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
+    const s = Math.min(rect.width / vb.width, rect.height / vb.height);
+    return {
+      x: vb.x + (cx - rect.left - (rect.width - vb.width * s) / 2) / s,
+      y: vb.y + (cy - rect.top - (rect.height - vb.height * s) / 2) / s,
+    };
+  }
+  function zoomAt(cx, cy, factor) {
+    const p = toSvg(cx, cy);
+    const nk = Math.max(1, Math.min(60, k * factor));
+    tx = p.x - (p.x - tx) * (nk / k); ty = p.y - (p.y - ty) * (nk / k); k = nk; apply();
+  }
+  svg.addEventListener('wheel', (e) => { e.preventDefault(); zoomAt(e.clientX, e.clientY, e.deltaY < 0 ? 1.15 : 1 / 1.15); }, { passive: false });
+  let panning = false, moved = false, pid, sx = 0, sy = 0, lx = 0, ly = 0;
+  svg.addEventListener('pointerdown', (e) => { panning = false; moved = false; pid = e.pointerId; sx = lx = e.clientX; sy = ly = e.clientY; });
+  svg.addEventListener('pointermove', (e) => {
+    if (pid === undefined || e.buttons === 0) return;
+    if (!panning) {
+      if (Math.abs(e.clientX - sx) + Math.abs(e.clientY - sy) < 3) return;
+      panning = true; moved = true; svg.classList.add('panning');
+      try { svg.setPointerCapture(pid); } catch (_) { /* capture is best-effort */ }
+    }
+    const rect = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
+    const s = Math.min(rect.width / vb.width, rect.height / vb.height);
+    tx += (e.clientX - lx) / s; ty += (e.clientY - ly) / s; lx = e.clientX; ly = e.clientY;
+    apply();
+  });
+  svg.addEventListener('pointerup', (e) => {
+    if (panning) { svg.classList.remove('panning'); try { svg.releasePointerCapture(e.pointerId); } catch (_) { /* already released */ } }
+    panning = false; pid = undefined;
+  });
+  svg.addEventListener('click', (e) => { if (moved) { e.stopPropagation(); moved = false; } }, true);
+
+  document.getElementById('z-in').addEventListener('click', () => { const rect = svg.getBoundingClientRect(); zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, 1.4); });
+  document.getElementById('z-out').addEventListener('click', () => { const rect = svg.getBoundingClientRect(); zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, 1 / 1.4); });
+  document.getElementById('b-fit').addEventListener('click', () => { k = 1; tx = 0; ty = 0; apply(); });
+
+  // The two tracts run far out into rural Sonoma; Oakmont is a small part of them. Open on the
+  // part being edited rather than on empty hillside.
+  const bounds = new Map();
+  for (const f of blocks.features) {
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    eachRing(f.geometry, (ring) => {
+      for (const [lon, lat] of ring) {
+        const x = px(lon), y = py(lat);
+        if (x < x0) x0 = x; if (x > x1) x1 = x;
+        if (y < y0) y0 = y; if (y > y1) y1 = y;
+      }
+    });
+    bounds.set(f.properties.GEOID, [x0, y0, x1, y1]);
+  }
+  function zoomTo(ids) {
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const id of ids) {
+      const b = bounds.get(id);
+      if (!b) continue;
+      if (b[0] < x0) x0 = b[0]; if (b[1] < y0) y0 = b[1];
+      if (b[2] > x1) x1 = b[2]; if (b[3] > y1) y1 = b[3];
+    }
+    if (!Number.isFinite(x0)) return;
+    const vb = svg.viewBox.baseVal;
+    const selW = Math.max(x1 - x0, 1e-6), selH = Math.max(y1 - y0, 1e-6);
+    k = Math.max(1, Math.min(60, Math.min(vb.width / selW, vb.height / selH) * 0.86));
+    tx = vb.x + vb.width / 2 - k * (x0 + x1) / 2;
+    ty = vb.y + vb.height / 2 - k * (y0 + y1) / 2;
+    apply();
+  }
+  document.getElementById('b-zoom-oakmont').addEventListener('click', () => zoomTo(base));
+
+  document.getElementById('b-reset').addEventListener('click', () => {
+    selected.clear();
+    for (const id of base) selected.add(id);
+    for (const id of byId.keys()) paint(id);
+    update();
+  });
+  document.getElementById('b-clear').addEventListener('click', () => {
+    selected.clear();
+    for (const id of byId.keys()) paint(id);
+    update();
+  });
+
+  const flash = () => { const c = document.getElementById('copied'); c.classList.add('show'); setTimeout(() => c.classList.remove('show'), 1400); };
+  document.getElementById('b-copy').addEventListener('click', async () => {
+    const ta = document.getElementById('export');
+    if (!ta.value) return;
+    try { await navigator.clipboard.writeText(ta.value); flash(); }
+    catch (_) { ta.focus(); ta.select(); try { document.execCommand('copy'); flash(); } catch (__) { /* nothing more to try */ } }
+  });
+  document.getElementById('b-download').addEventListener('click', () => {
+    const ta = document.getElementById('export');
+    const blob = new Blob([ta.value || '{"geoids":[]}'], { type: 'application/json' });
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'oakmont-blocks.json' });
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+  });
+
+  for (const id of byId.keys()) paint(id);
+  update();
+  zoomTo(base);
+</script>
+
+<script id="blocks-data" type="application/json">DATA_BLOCKS</script>
+<script id="context-data" type="application/json">DATA_CONTEXT</script>
+<script id="dots-data" type="application/json">DATA_DOTS</script>
+<script id="baseline-data" type="application/json">DATA_BASELINE</script>
