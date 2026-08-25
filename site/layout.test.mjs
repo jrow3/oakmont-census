@@ -54,6 +54,31 @@ test('regions inside main do not declare the page shell a second time', () => {
   }
 });
 
+// The declarations inside the first @media block matching `label`, so a failure prints the block
+// rather than the whole stylesheet.
+function mediaBlock(label) {
+  const i = CSS.indexOf(`@media (${label})`);
+  assert.notEqual(i, -1, `no @media (${label}) block`);
+  return CSS.slice(i, CSS.indexOf('\n}', i));
+}
+
+test('the narrow-screen gutter moves the variable, not one element', () => {
+  // The mobile rule used to narrow main alone, which left the masthead and the footer at 24px and
+  // pulled the frame apart again below 560px.
+  const block = mediaBlock('max-width: 560px');
+  assert.match(block, /:root \{ --gutter: \d+px; \}/,
+    'the 560px breakpoint must override --gutter so the whole frame follows');
+  assert.doesNotMatch(block, /padding-left:/,
+    'nothing may narrow one region\'s side padding on its own — move --gutter instead');
+});
+
+test('the methodology column can shrink below its content', () => {
+  // `1fr` floors at min-content, so one unshrinkable child pushed the column to 392px on a 375px
+  // screen and the page scrolled sideways.
+  assert.match(mediaBlock('max-width: 800px'), /\.method-layout \{ grid-template-columns: minmax\(0, 1fr\)/,
+    'the stacked methodology layout needs minmax(0, 1fr), not 1fr');
+});
+
 test('the rule under the masthead spans the text, not the column plus its gutters', () => {
   assert.match(rule('.masthead::after'), /width:\s*calc\(min\(var\(--col\), 100%\) - 2 \* var\(--gutter\)\)/);
 });

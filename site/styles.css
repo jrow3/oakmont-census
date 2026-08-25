@@ -331,7 +331,7 @@ td.na { color: var(--line-strong); font-style: italic; }
   .kpi-value { font-size: 1.55rem; }
   .kpi-label { min-height: 2.4em; }
   .chart-grid { grid-template-columns: 1fr; }
-  main, .explorer-section { padding-left: 16px; padding-right: 16px; }
+  :root { --gutter: 16px; }
 }
 
 /* Delta tone is about meaning, not direction: rising poverty and rising income both point up, and
@@ -535,7 +535,7 @@ table.income-grid .ig-total { font-weight: 600; background: var(--wash, #faf6f0)
 .var-code { font: 600 .82rem var(--font-mono); color: var(--terracotta-dk); background: var(--paper-tint); border-radius: 5px; padding: .05rem .35rem; }
 
 @media (max-width: 800px) {
-  .method-layout { grid-template-columns: 1fr; gap: 1.25rem; }
+  .method-layout { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
   .method-jump { position: static; flex-direction: row; flex-wrap: wrap; gap: .4rem; }
   .method-jump a { border-left: none; border-bottom: 2px solid var(--line); border-radius: 6px 6px 0 0; padding: .35rem .5rem; }
   .method-jump a.active { border-left-color: transparent; border-bottom-color: var(--terracotta); }
