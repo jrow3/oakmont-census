@@ -10,9 +10,29 @@ export const GEO = {
   popVar: 'B01001_001E',        // total population, used to weight medians
 };
 
-// ACS 5-year vintages to fetch. 2016–2020 is the baseline; 2020–2024 is the current view.
-// The two windows share 2020, so change between them is directional (see method notes).
+// ACS 5-year vintages that get the full treatment: a curated snapshot AND a full table mirror
+// for the explorer. 2016–2020 pairs with the 2020 Decennial for the Community Report; 2020–2024
+// is the current view.
 export const ACS_YEARS = ['2020', '2024'];
+
+// Baseline for measuring change. The Census pairs 2015–2019 with 2020–2024 precisely because the
+// two windows share no years — 2016–2020 and 2020–2024 both contain 2020, and the Bureau's
+// guidance is "do not compare overlapping datasets". Curated fetch only; no mirror, since the
+// explorer doesn't surface this vintage.
+export const COMPARE_YEAR = '2019';
+
+// Multiply 2015–2019 dollar figures by this to state them in 2024 dollars. Published by the
+// Census Bureau for exactly this pair of datasets:
+// https://www.census.gov/programs-surveys/acs/guidance/comparing-acs-data/2024.html
+// "dollar value estimates from the 2015-2019 file should be multiplied by 1.23070782 to convert
+// 2019 dollars to 2024 dollars."
+export const COMPARE_INFLATION_FACTOR = 1.23070782;
+
+// ACS 5-year dollar figures are expressed in the final year's dollars, so comparing vintages
+// without adjusting mixes price levels. These are the snapshot fields that carry dollars.
+export const DOLLAR_SNAPSHOT_FIELDS = [
+  'medianHouseholdIncome', 'perCapitaIncome', 'medianHomeValue', 'medianGrossRent',
+];
 
 // Medians cannot be summed across tracts; a population-weighted average approximates them.
 export const MEDIAN_VARS = new Set([

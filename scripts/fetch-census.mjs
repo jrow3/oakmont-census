@@ -8,7 +8,7 @@
 import { writeFile, mkdir, readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { GEO, MEDIAN_VARS, GROUPS, ACS_YEARS } from './census-variables.mjs';
+import { GEO, MEDIAN_VARS, GROUPS, ACS_YEARS, COMPARE_YEAR } from './census-variables.mjs';
 import { buildAcsSection, assembleData, buildBlockSection } from './build-payload.mjs';
 import { fetchBlockValues } from './fetch-blocks.mjs';
 import { loadBlockGeoids } from './decennial-variables.mjs';
@@ -100,7 +100,9 @@ async function fetchAllValues(year) {
 
 async function main() {
   const sections = {};
-  for (const year of ACS_YEARS) {
+  // COMPARE_YEAR gets a curated snapshot but no mirror — it exists only as the change page's
+  // baseline, so pulling ~1,200 tables for it would cost minutes of CI for nothing.
+  for (const year of [...ACS_YEARS, COMPARE_YEAR]) {
     console.log(`Fetching ACS ${year} 5-year for tracts ${GEO.tracts.join(', ')} ${API_KEY ? '(with key)' : '(no key)'}`);
     const values = await fetchAllValues(year);
     sections[year] = buildAcsSection(year, values);

@@ -1,7 +1,7 @@
 // Renders the public-facing snapshot: KPI tiles, four charts with plain-English captions,
 // and a row of callouts. Reads the baked data.json payload.
 
-import { fmt, currency, pct, escapeHtml, formatDelta } from './format.js';
+import { fmt, currency, pct, escapeHtml, formatDelta, toCurrentDollars, deltaSentiment } from './format.js';
 import { horizontalBars, stackedBar, wireTooltips } from './charts.js';
 
 const val = (group, code) => (group?.variables?.[code]?.value ?? null);
@@ -38,22 +38,65 @@ function chartCard(kicker, title, chartSvg, captionHtml, legendHtml = '') {
   </div>`;
 }
 
-function deltaBadge(current, prior) {
-  const d = formatDelta(current, prior);
-  if (!d || d.dir === 'flat' || d.pctChange === 0) return '';
+// Dollar figures are compared in constant dollars; everything else compares as-is. Percentages
+// are rounded to whole numbers — these are two surveys of a few thousand people, and a tenth of
+// a point is precision the data doesn't carry.
+function deltaBadge(key, current, prior, opts) {
+  const isDollar = opts.dollarFields.includes(key);
+  const base = isDollar ? toCurrentDollars(prior, opts.inflationFactor) : prior;
+  const d = formatDelta(current, base);
+  if (!d) return '';
+  const whole = Math.round(d.pctChange);
+  if (d.dir === 'flat' || whole === 0) return '';
   const arrow = d.dir === 'up' ? '▲' : '▼';
-  const sign = d.pctChange > 0 ? '+' : '';
-  return `<div class="kpi-delta kpi-delta-${d.dir}">${arrow} ${sign}${d.pctChange}% vs prior</div>`;
+  const sign = whole > 0 ? '+' : '';
+  const sentiment = deltaSentiment(key, d.dir);
+  const tone = sentiment ? ` kpi-delta-${sentiment}` : '';
+  const real = isDollar ? ' in real terms' : '';
+  return `<div class="kpi-delta${tone}">${arrow} ${sign}${whole}%${real} since ${opts.baselineLabel}</div>`;
 }
 
 export function renderSnapshot(section, meta, opts = {}) {
   const s = section.snapshot;
   const g = section.groups;
-  const compare = opts.compare || null; // prior-year snapshot, or null
+  const compare = opts.compare || null; // baseline snapshot, or null
+  const cmp = opts.compareMeta || null;  // { baselineLabel, inflationFactor, dollarFields }
+
+  // ── How the comparison works ──
+  // Shown before the numbers, not footnoted after them: a reader who sees "+19%" without knowing
+  // it is inflation-adjusted has been misled, and the correction has to arrive first.
+  const basisEl = document.getElementById('change-basis');
+  if (basisEl && compare && cmp) {
+    const then = compare.medianHouseholdIncome;
+    const adjusted = toCurrentDollars(then, cmp.inflationFactor);
+    const now = s.medianHouseholdIncome;
+    const real = adjusted ? Math.round(((now - adjusted) / adjusted) * 100) : null;
+    basisEl.innerHTML = `<div class="change-basis">
+      <p class="chart-kicker">How this comparison works</p>
+      <p>These are two Census surveys that <strong>share no years</strong> — ${escapeHtml(cmp.baselineLabel)} and
+         ${escapeHtml(cmp.currentLabel)}. Each reports money in the dollars of its own final year, so every dollar
+         figure below is restated in ${section.year} dollars before comparing. Otherwise the comparison would
+         mostly measure inflation.</p>
+      <div class="basis-math">
+        <div><span class="basis-label">${escapeHtml(cmp.baselineLabel)} median household income</span>
+             <span class="basis-value">${currency(then)}</span>
+             <span class="basis-note">in ${cmp.baselineDollarYear} dollars</span></div>
+        <div><span class="basis-label">the same money, restated</span>
+             <span class="basis-value">${currency(adjusted)}</span>
+             <span class="basis-note">in ${section.year} dollars (×${cmp.inflationFactor})</span></div>
+        <div><span class="basis-label">${escapeHtml(cmp.currentLabel)} median household income</span>
+             <span class="basis-value">${currency(now)}</span>
+             <span class="basis-note">in ${section.year} dollars</span></div>
+        <div class="basis-result"><span class="basis-label">Real change</span>
+             <span class="basis-value">${real == null ? '—' : (real > 0 ? '+' : '') + real + '%'}</span>
+             <span class="basis-note">after inflation</span></div>
+      </div>
+    </div>`;
+  }
 
   // ── KPI tiles ──
-  const yr = `${section.year} ACS 5-Year`;
-  const cd = (key) => (compare ? deltaBadge(s[key], compare[key]) : '');
+  const yr = `${Number(section.year) - 4}–${section.year} survey`;
+  const cd = (key) => (compare && cmp ? deltaBadge(key, s[key], compare[key], cmp) : '');
   document.getElementById('kpis').innerHTML = [
     kpiTile('Population', fmt(s.totalPopulation), yr, cd('totalPopulation')),
     kpiTile('Median household income', currency(s.medianHouseholdIncome), 'Per year', cd('medianHouseholdIncome')),
@@ -142,12 +185,15 @@ export function renderSnapshot(section, meta, opts = {}) {
   ].join('');
 
   // ── Method note ──
-  const overlapNote = compare
-    ? ` The 2016–2020 and 2020–2024 ACS 5-year periods overlap in 2020, so year-over-year change shown here is directional, not a precise measurement.`
+  const overlapNote = compare && cmp
+    ? ` Change is measured against the ${escapeHtml(cmp.baselineLabel)} survey, which shares no years with this one — ` +
+      `the Census advises against comparing surveys that overlap. Dollar figures are stated in ${section.year} dollars ` +
+      `so the comparison isn't measuring inflation.`
     : '';
   document.getElementById('method-note').innerHTML =
-    `<strong>About this data.</strong> Oakmont Village is an unincorporated community with no Census place code. ` +
-    `These figures aggregate Census Tracts 1516.01 and 1516.02 in Sonoma County (${section.year} ACS 5-Year), ` +
-    `whose combined population (~${fmt(s.totalPopulation)}) closely tracks Oakmont's footprint. Counts are summed ` +
-    `across the two tracts; medians are population-weighted approximations.${overlapNote} Source: ${escapeHtml(section.source)}.`;
+    `<strong>About this data.</strong> Oakmont has no boundary of its own in Census records — it sits inside ` +
+    `the City of Santa Rosa — so these figures cover Census Tracts 1516.01 and 1516.02 in Sonoma County ` +
+    `(${section.year} ACS 5-Year), an area whose population (~${fmt(s.totalPopulation)}) runs a little wider than ` +
+    `Oakmont itself. Counts are summed across the two tracts; medians are population-weighted ` +
+    `approximations.${overlapNote} Source: ${escapeHtml(section.source)}.`;
 }

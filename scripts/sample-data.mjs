@@ -88,6 +88,18 @@ const values2020 = Object.fromEntries(
   Object.entries(values).map(([k, v]) => [k, typeof v === 'number' ? Math.round(v * 0.94) : v])
 );
 
+// The 2020 snapshot and the Community Report read the SAME ACS codes from different sample
+// sources, so without this they disagree on figures that agree in production — which makes local
+// preview misleading and has already sent a review chasing a bug that doesn't exist.
+// SHARED_2020 is the single sample value for every code both paths render.
+const SHARED_2020 = {
+  B19013_001E: 78534,   // median household income
+  B19301_001E: 66078,   // per-capita income
+  B25077_001E: 707911,  // median home value
+  B19001_001E: 3370,    // households (snapshot callout + report income universe)
+};
+Object.assign(values2020, SHARED_2020);
+
 const decValues = { P12_001N: 4946, P3_001N: 4946, P3_002N: 4744,
   P4_001N: 4946, P4_002N: 4763, P4_003N: 183, H1_001N: 3427, H3_002N: 3110, H3_003N: 317,
   H4_002N: 1530, H4_003N: 1380, H4_004N: 200 };
@@ -177,8 +189,19 @@ function sampleMirror(vals, groups, meta) {
 const enclaves = JSON.parse(await readFile(ENCLAVES_PATH, 'utf8'));
 const enclaves2020 = buildEnclaveSection(enclaves, oakmont2020.snapshot);
 
+// 2015-2019 baseline for the change page. Counts ~8% below 2020; dollar figures set so that
+// after the real inflation factor is applied the preview shows a modest positive real change,
+// rather than the wild swing an unadjusted comparison would invent.
+const values2019 = Object.fromEntries(
+  Object.entries(values2020).map(([k, v]) => [k, typeof v === 'number' ? Math.round(v * 0.92) : v])
+);
+
 const data = assembleData(
-  { '2020': buildAcsSection('2020', values2020), '2024': buildAcsSection('2024', values2024) },
+  {
+    '2019': buildAcsSection('2019', values2019),
+    '2020': buildAcsSection('2020', values2020),
+    '2024': buildAcsSection('2024', values2024),
+  },
   { sample: true, oakmont2020, report2020, enclaves2020 }
 );
 

@@ -141,7 +141,10 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
   font-family: var(--font-display); font-weight: 600;
   font-size: 1.28rem; letter-spacing: -0.01em; color: var(--ink);
 }
-.chart-card .chart-kicker {
+/* Section eyebrow. Used inside chart cards and as the kicker on every report and methodology
+   section head, so it must not be scoped to .chart-card — it was, and those headings rendered as
+   unstyled body text. */
+.chart-kicker {
   font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em;
   text-transform: uppercase; color: var(--terracotta-dk); margin-bottom: 4px;
 }
@@ -317,13 +320,34 @@ td.na { color: var(--line-strong); font-style: italic; }
   main, .explorer-section { padding-left: 16px; padding-right: 16px; }
 }
 
-.kpi-delta { margin-top: .35rem; font-size: .8rem; font-weight: 600; }
-.kpi-delta-up { color: var(--teal); }
-.kpi-delta-down { color: var(--terracotta); }
+/* Delta tone is about meaning, not direction: rising poverty and rising income both point up, and
+   colouring them alike reads as endorsement. Figures with no obvious good direction stay neutral. */
+.kpi-delta { margin-top: .35rem; font-size: .8rem; font-weight: 600; color: var(--ink-2); }
+.kpi-delta-good { color: var(--teal); }
+.kpi-delta-bad { color: var(--terracotta); }
+
+/* How the comparison works — sits above the numbers on the change page. */
+.change-basis { background: var(--paper-tint); border-radius: 10px; padding: 1.1rem 1.3rem; margin-bottom: 22px; }
+.change-basis p { margin: 0 0 .6rem; font-size: .95rem; line-height: 1.55; color: var(--ink-2); max-width: 70ch; }
+.change-basis p strong { color: var(--ink); }
+.basis-math { display: flex; flex-direction: column; gap: .3rem; }
+.basis-math > div { display: grid; grid-template-columns: minmax(0, 1fr) 7rem minmax(0, 1fr); gap: .75rem; align-items: baseline; }
+.basis-label { font-size: .88rem; color: var(--ink-2); }
+.basis-value { font: 600 1.05rem var(--font-display); color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
+.basis-note { font-size: .8rem; color: var(--ink-3); }
+.basis-result { border-top: 1px solid var(--line-strong); margin-top: .35rem; padding-top: .5rem; }
+.basis-result .basis-value { color: var(--terracotta); font-size: 1.2rem; }
+@media (max-width: 560px) {
+  .basis-math > div { grid-template-columns: 1fr auto; }
+  .basis-note { grid-column: 1 / -1; }
+}
 
 .year-nav { display: flex; flex-wrap: wrap; gap: .6rem 1rem; margin-top: 1rem; }
 .year-link { font: 600 .9rem/1 'Public Sans', sans-serif; color: var(--ink-2); text-decoration: none; padding-bottom: 2px; border-bottom: 2px solid transparent; }
-.year-link.active { color: var(--terracotta); border-bottom-color: var(--terracotta); }
+.year-link:hover { color: var(--ink); border-bottom-color: var(--line-strong); }
+/* Keyboard users could not see which tab they were on: there was no focus style at all. */
+.year-link:focus-visible { outline: 2px solid var(--terracotta); outline-offset: 3px; border-radius: 2px; }
+.year-link.active, .year-link[aria-current="page"] { color: var(--terracotta); border-bottom-color: var(--terracotta); }
 
 .block-panel { max-width: 1080px; margin: 0 auto; padding: 3rem 1.5rem 1rem; border-top: 1px solid var(--line); }
 .block-panel-head { margin-bottom: 1.5rem; }
@@ -376,9 +400,8 @@ table.income-grid .ig-total { font-weight: 600; background: var(--wash, #faf6f0)
 .method-link { font-weight: 600; color: var(--teal); }
 .report-details > summary { cursor: pointer; font: 500 .9rem 'Public Sans', sans-serif; color: var(--teal); padding: .35rem 0; }
 .report-details[open] > summary { margin-bottom: .5rem; }
-.stat-row { display: flex; flex-wrap: wrap; gap: 1.5rem; }
-.stat-value { font: 600 1.5rem 'Fraunces', serif; color: var(--terracotta); }
-.stat-label { font: 400 .85rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); }
+/* .stat-row / .stat-strip / .stat-value / .stat-label are defined once, further down with the
+   other stat rules. They used to be declared here too, and the later block silently won. */
 .total-row td { font-weight: 700; border-top: 2px solid var(--line, #e5ddd3); }
 .src-head, .src-row { display: grid; grid-template-columns: 12rem 1fr 4rem 6rem; align-items: center; gap: .75rem; }
 .src-head { font: 600 .72rem 'Public Sans', sans-serif; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-soft, #6b625a); }
@@ -414,7 +437,9 @@ table.income-grid .ig-total { font-weight: 600; background: var(--wash, #faf6f0)
 .tier-plain .method-lead { font-size: 1.18rem; }
 .method-aside { color: var(--ink-2); border-left: 3px solid var(--line-strong); padding-left: .9rem; font-size: .92rem; }
 
-.stat-strip { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: .5rem; }
+/* One stat container under two names — .stat-strip on the methodology page, .stat-row on the
+   report. Same component; kept as an alias rather than renaming markup on both pages. */
+.stat-strip, .stat-row { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: .5rem; }
 .stat { flex: 1; min-width: 150px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.1rem; box-shadow: var(--shadow-sm); }
 .stat-value { display: block; font: 600 1.9rem var(--font-display); color: var(--terracotta); line-height: 1.1; }
 .stat-label { font: 500 .8rem 'Public Sans', sans-serif; color: var(--ink-2); }

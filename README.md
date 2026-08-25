@@ -1,6 +1,6 @@
 # Oakmont Village Community Snapshot
 
-An interactive census portrait of **Oakmont Village**, an unincorporated 55+ community in Sonoma
+An interactive census portrait of **Oakmont Village**, a 55+ community in Santa Rosa, Sonoma
 County, California, built from the U.S. Census Bureau's American Community Survey and the 2020
 Decennial Census. A 2020 portrait leads; a companion page shows what changed by the 2024 ACS.
 

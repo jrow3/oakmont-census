@@ -21,3 +21,28 @@ export function formatDelta(current, prior) {
   const dir = diff > 0 ? 'up' : diff < 0 ? 'down' : 'flat';
   return { diff, pctChange: Number(((diff / Math.abs(prior)) * 100).toFixed(1)), dir };
 }
+
+// ACS 5-year dollar figures are expressed in the final year's dollars, so a 2015-2019 figure is
+// in 2019 dollars and a 2020-2024 figure is in 2024 dollars. Comparing them directly measures
+// inflation as much as it measures Oakmont. `factor` is the Census-published multiplier.
+export function toCurrentDollars(value, factor) {
+  if (value == null || Number.isNaN(Number(value))) return null;
+  return Math.round(Number(value) * factor);
+}
+
+// Whether an increase in this figure is good, bad, or neither. Direction alone is not meaning:
+// rising poverty and rising incomes both point up, and colouring them the same reads as
+// endorsement. `null` means don't colour it at all.
+const SENTIMENT = {
+  povertyRate: 'badWhenUp',
+  unemploymentRate: 'badWhenUp',
+  medianHouseholdIncome: 'goodWhenUp',
+  perCapitaIncome: 'goodWhenUp',
+};
+
+export function deltaSentiment(key, dir) {
+  const rule = SENTIMENT[key];
+  if (!rule || dir === 'flat') return null;
+  const up = dir === 'up';
+  return rule === 'goodWhenUp' ? (up ? 'good' : 'bad') : (up ? 'bad' : 'good');
+}
