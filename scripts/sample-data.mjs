@@ -2,12 +2,14 @@
 // offline, with no Census API key. Shapes match fetch-census.mjs exactly. These are NOT real
 // figures - run `node scripts/fetch-census.mjs` (with CENSUS_API_KEY) for the genuine data.
 
-import { writeFile, mkdir } from 'node:fs/promises';
+import { writeFile, mkdir, readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { MEDIAN_VARS, GROUPS } from './census-variables.mjs';
 
-const OUT_PATH = join(dirname(fileURLToPath(import.meta.url)), '..', 'site', 'data.json');
+const here = dirname(fileURLToPath(import.meta.url));
+const OUT_PATH = join(here, '..', 'site', 'data.json');
+const ENCLAVES_PATH = join(here, 'enclaves.json');
 
 const GROUP_TOTALS = {
   age: 5839, income: 3210, race: 5839, education: 5180,
@@ -75,8 +77,9 @@ for (const g of Object.values(GROUPS)) {
 }
 
 import { buildAcsSection, assembleData, buildBlockSection } from './build-payload.mjs';
-import { DEC_GROUPS, AGE_65_PLUS } from './decennial-variables.mjs';
+import { DEC_GROUPS, AGE_65_PLUS, loadBlockGeoids } from './decennial-variables.mjs';
 import { buildReportSection } from './report-payload.mjs';
+import { buildEnclaveSection } from './enclave-impact.mjs';
 
 // `values` (built above) is the 2024 sample. Make a 2020 sample ~6% smaller on counts and
 // medians so the 2024 page shows non-zero deltas in offline preview.
@@ -85,14 +88,15 @@ const values2020 = Object.fromEntries(
   Object.entries(values).map(([k, v]) => [k, typeof v === 'number' ? Math.round(v * 0.94) : v])
 );
 
-const decValues = { P12_001N: 4994, P3_001N: 4994, P3_002N: 4790,
-  P4_001N: 4994, P4_002N: 4810, P4_003N: 184, H1_001N: 3451, H3_002N: 3130, H3_003N: 321,
-  H4_002N: 1540, H4_003N: 1390, H4_004N: 200 };
+const decValues = { P12_001N: 4946, P3_001N: 4946, P3_002N: 4744,
+  P4_001N: 4946, P4_002N: 4763, P4_003N: 183, H1_001N: 3427, H3_002N: 3110, H3_003N: 317,
+  H4_002N: 1530, H4_003N: 1380, H4_004N: 200 };
 for (const c of AGE_65_PLUS) decValues[c] = 300;             // heavy 65+ presence
 for (const g of Object.values(DEC_GROUPS)) for (const c of Object.keys(g.variables)) {
   if (decValues[c] == null) decValues[c] = 40;               // fill remaining bands
 }
-const oakmont2020 = buildBlockSection(decValues);
+const blockCount = (await loadBlockGeoids()).size;
+const oakmont2020 = buildBlockSection(decValues, { blockCount });
 
 function tbl(obj) {
   const tables = {};
@@ -118,12 +122,34 @@ const sampleReportTables = tbl({
   B19055_001E: 3370, B19055_002E: 2706, B19065_001E: 2706 * 23479,
   B19059_001E: 3370, B19059_002E: 1918, B19069_001E: 1918 * 43466,
   B19051_001E: 3370, B19051_002E: 1240, B19061_001E: 1240 * 106287,
-  B19053_001E: 3370, B19053_002E: 300,
+  B19053_001E: 3370, B19053_002E: 427, B19063_001E: 427 * 41200,
+  B19054_001E: 3370, B19054_002E: 1820, B19064_001E: 1820 * 28400,
   B19056_001E: 3370, B19056_002E: 74, B19066_001E: 74 * 8073,
+  // Public assistance is suppressed by the Bureau at this size, and no household reports SNAP.
+  // Between them these exercise all three "no amount" states in the sources table.
   B19057_001E: 3370, B19057_002E: 20, B19067_001E: null,
-  B22001_001E: 3370, B22001_002E: 30,
+  B22001_001E: 3370, B22001_002E: 0,
   B12001_001E: 5829, B12001_003E: 200, B12001_004E: 1650, B12001_009E: 120, B12001_010E: 300,
   B12001_012E: 260, B12001_013E: 1500, B12001_018E: 620, B12001_019E: 350,
+  // B12002 55+ leaves: never married, spouse-present, separated, other, widowed, divorced (M then F)
+  B12002_013E: 30, B12002_014E: 30, B12002_015E: 40, B12002_016E: 25, B12002_017E: 10,
+  B12002_029E: 190, B12002_030E: 210, B12002_031E: 330, B12002_032E: 200, B12002_033E: 70,
+  B12002_045E: 4, B12002_046E: 4, B12002_047E: 5, B12002_048E: 3, B12002_049E: 1,
+  B12002_060E: 6, B12002_061E: 6, B12002_062E: 7, B12002_063E: 4, B12002_064E: 2,
+  B12002_075E: 20, B12002_076E: 26, B12002_077E: 60, B12002_078E: 70, B12002_079E: 45,
+  B12002_090E: 45, B12002_091E: 50, B12002_092E: 75, B12002_093E: 45, B12002_094E: 15,
+  B12002_108E: 35, B12002_109E: 35, B12002_110E: 45, B12002_106E: 28, B12002_107E: 12,
+  B12002_122E: 185, B12002_123E: 205, B12002_124E: 320, B12002_125E: 180, B12002_126E: 60,
+  B12002_138E: 5, B12002_139E: 5, B12002_140E: 6, B12002_141E: 4, B12002_142E: 2,
+  B12002_153E: 7, B12002_154E: 7, B12002_155E: 8, B12002_156E: 5, B12002_157E: 2,
+  B12002_168E: 55, B12002_169E: 70, B12002_170E: 190, B12002_171E: 230, B12002_172E: 150,
+  B12002_183E: 60, B12002_184E: 70, B12002_185E: 105, B12002_186E: 60, B12002_187E: 20,
+  // B06001 55+ bands: total, born in state, another state, born abroad to US parents, foreign born
+  B06001_008E: 260, B06001_009E: 110, B06001_010E: 165, B06001_011E: 1450, B06001_012E: 2600,
+  B06001_020E: 120, B06001_021E: 50, B06001_022E: 75, B06001_023E: 640, B06001_024E: 1140,
+  B06001_032E: 105, B06001_033E: 45, B06001_034E: 67, B06001_035E: 590, B06001_036E: 1060,
+  B06001_044E: 5, B06001_045E: 2, B06001_046E: 3, B06001_047E: 30, B06001_048E: 55,
+  B06001_056E: 30, B06001_057E: 13, B06001_058E: 20, B06001_059E: 190, B06001_060E: 345,
   B05002_001E: 5949, B05002_003E: 2692, B05002_005E: 791, B05002_006E: 911, B05002_007E: 357, B05002_008E: 456, B05002_013E: 713,
 });
 const report2020 = buildReportSection(sampleReportTables, oakmont2020);
@@ -146,9 +172,14 @@ function sampleMirror(vals, groups, meta) {
   return { meta, tables };
 }
 
+// The enclave counts are frozen county-GIS measurements, not Census values, so the real file is
+// used even in sample mode — only the block snapshot it is measured against is synthetic.
+const enclaves = JSON.parse(await readFile(ENCLAVES_PATH, 'utf8'));
+const enclaves2020 = buildEnclaveSection(enclaves, oakmont2020.snapshot);
+
 const data = assembleData(
   { '2020': buildAcsSection('2020', values2020), '2024': buildAcsSection('2024', values2024) },
-  { sample: true, oakmont2020, report2020 }
+  { sample: true, oakmont2020, report2020, enclaves2020 }
 );
 
 const explorerDir = join(dirname(OUT_PATH), 'explorer');

@@ -1,24 +1,28 @@
 // Fetch ACS 2020 and 2024 5-year data for Oakmont Village (Sonoma County tracts 1516.01 + 1516.02),
 // aggregate across the two tracts, and write site/data.json.
 //
-// Runs in GitHub Actions with CENSUS_API_KEY as a secret. The key is optional: the Census API
-// works without one (rate-limited), so local runs need no key. The key never reaches the browser.
+// Runs in GitHub Actions with CENSUS_API_KEY as a secret; the key never reaches the browser.
+// CENSUS_API_KEY is required — as of 2026 the Census API returns a "Missing Key" HTML page for
+// keyless ACS and DHC requests alike. Use scripts/sample-data.mjs for keyless local preview.
 
-import { writeFile, mkdir } from 'node:fs/promises';
+import { writeFile, mkdir, readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { GEO, MEDIAN_VARS, GROUPS, ACS_YEARS } from './census-variables.mjs';
 import { buildAcsSection, assembleData, buildBlockSection } from './build-payload.mjs';
 import { fetchBlockValues } from './fetch-blocks.mjs';
+import { loadBlockGeoids } from './decennial-variables.mjs';
 import { fetchAcsMirror } from './fetch-acs-mirror.mjs';
 import { fetchBlockMirror } from './fetch-blocks.mjs';
 import { buildReportSection } from './report-payload.mjs';
+import { buildEnclaveSection } from './enclave-impact.mjs';
 
 const API_KEY = (process.env.CENSUS_API_KEY || '').trim();
 const CHUNK_SIZE = 44; // Census API caps ~50 variables/request; leaves room for NAME + popVar.
 
 const OUT_PATH = join(dirname(fileURLToPath(import.meta.url)), '..', 'site', 'data.json');
 const EXPLORER_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'site', 'explorer');
+const ENCLAVES_PATH = join(dirname(fileURLToPath(import.meta.url)), 'enclaves.json');
 
 function chunk(arr, size) {
   const out = [];
@@ -104,9 +108,10 @@ async function main() {
   }
 
   console.log('Fetching 2020 DHC for the Oakmont blocks');
+  const blockGeoids = await loadBlockGeoids();
   const blockValues = await fetchBlockValues();
-  const oakmont2020 = buildBlockSection(blockValues);
-  console.log(`  Oakmont blocks: population ${oakmont2020.snapshot.totalPopulation}, ${oakmont2020.snapshot.pct55Plus}% age 55+`);
+  const oakmont2020 = buildBlockSection(blockValues, { blockCount: blockGeoids.size });
+  console.log(`  Oakmont blocks: ${blockGeoids.size} blocks, population ${oakmont2020.snapshot.totalPopulation}, ${oakmont2020.snapshot.pct55Plus}% age 55+`);
 
   await mkdir(EXPLORER_DIR, { recursive: true });
   const mirrors = {};
@@ -120,7 +125,13 @@ async function main() {
   const report2020 = buildReportSection(mirrors['2020'].tables, oakmont2020);
   console.log(`  Report: median HH income $${report2020.summary.medianHouseholdIncome}, avg household size ${report2020.summary.averageHouseholdSize}`);
 
-  const data = assembleData(sections, { oakmont2020, report2020 });
+  const enclaves = JSON.parse(await readFile(ENCLAVES_PATH, 'utf8'));
+  const enclaves2020 = buildEnclaveSection(enclaves, oakmont2020.snapshot);
+  for (const a of enclaves2020.areas) {
+    console.log(`  ${a.label}: ~${a.units} units (${a.pctOfUnits}% of Oakmont), ${a.population.low}-${a.population.high} people`);
+  }
+
+  const data = assembleData(sections, { oakmont2020, report2020, enclaves2020 });
   await mkdir(dirname(OUT_PATH), { recursive: true });
   await writeFile(OUT_PATH, JSON.stringify(data, null, 2) + '\n', 'utf8');
   console.log(`Wrote ${OUT_PATH}`);

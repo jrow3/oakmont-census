@@ -85,7 +85,7 @@ async function blockPops(geoids) {
   return pops;
 }
 
-// Full 2020 DHC mirror summed over the 76 blocks. Only tables the Census publishes at block
+// Full 2020 DHC mirror summed over the selected blocks. Only tables the Census publishes at block
 // geography are kept; finer tables error on the block query and are skipped.
 export async function fetchBlockMirror() {
   const geoids = await loadBlockGeoids();
@@ -107,7 +107,7 @@ export async function fetchBlockMirror() {
   });
   console.log(`  Blocks: ${Object.keys(tables).length} DHC tables kept, ${skipped} skipped (not block-level)`);
   return {
-    meta: { dataset: DEC_GEO.dataset, geography: '76 Oakmont blocks', generatedAt: new Date().toISOString() },
+    meta: { dataset: DEC_GEO.dataset, geography: `${geoids.size} Oakmont blocks`, generatedAt: new Date().toISOString() },
     tables,
   };
 }

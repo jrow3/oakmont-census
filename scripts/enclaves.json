@@ -1,0 +1,52 @@
+{
+  "description": "Sub-areas of Oakmont that people ask about. Neither can be excluded from the Census figures: census blocks do not nest inside either boundary and nothing is published below the block. These counts let the site state how large each area is instead.",
+  "source": "Sonoma County GIS BASEPublic/Addresses_Public (address points) + TIGERweb 2020 Census Blocks (POP100/HU100)",
+  "accessed": "2026-08-25",
+  "calibration": {
+    "note": "County address points vs. Census housing units across the footprint; close agreement is what makes the share arithmetic sound.",
+    "addressPointsInFootprint": 3524,
+    "censusHousingUnits": 3427,
+    "ratio": 1.028
+  },
+  "multiUnitProperties": [
+    {
+      "address": "301 White Oak Dr",
+      "records": 169
+    },
+    {
+      "address": "6637 Oakmont Dr",
+      "records": 6
+    },
+    {
+      "address": "6580 Oakmont Dr",
+      "records": 6
+    },
+    {
+      "address": "7622 Hwy 12",
+      "records": 6
+    }
+  ],
+  "areas": [
+    {
+      "key": "wild-oak",
+      "label": "Wild Oak",
+      "note": "Wild Oak Dr and Wild Oak Ct.",
+      "blockGeoid": "060971516023021",
+      "addresses": 41,
+      "blockAddresses": 263,
+      "blockPopulation": 382,
+      "blockHousingUnits": 261
+    },
+    {
+      "key": "oakmont-gardens",
+      "label": "Oakmont Gardens",
+      "note": "All unit addresses at 301 White Oak Dr.",
+      "allRental": true,
+      "blockGeoid": "060971516012010",
+      "addresses": 169,
+      "blockAddresses": 281,
+      "blockPopulation": 295,
+      "blockHousingUnits": 270
+    }
+  ]
+}

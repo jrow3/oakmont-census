@@ -40,7 +40,9 @@ test('buildBlockSection derives 55+/85+/tenure from summed DHC values', () => {
     H1_001N: 3500, H3_002N: 3200, H3_003N: 300,
     H4_002N: 1500, H4_003N: 1400, H4_004N: 300,
   };
-  const s = buildBlockSection(v);
+  const s = buildBlockSection(v, { blockCount: 75 });
+  assert.equal(s.snapshot.blockCount, 75);          // travels with the data, never hardcoded in prose
+  assert.equal(s.geography, '75 selected census blocks, Oakmont, Sonoma County, CA');
   assert.equal(s.snapshot.totalPopulation, 5000);
   assert.equal(s.snapshot.age85Plus, 120);          // P12_025N + P12_049N = 50 + 70
   assert.equal(s.snapshot.age55Plus, 400);          // 30+30 (55-59) + 100+50+120+70 (80-84 & 85+)

@@ -370,6 +370,12 @@ table.income-grid .ig-total { font-weight: 600; background: var(--wash, #faf6f0)
 .report-source { margin: 0; font: 400 .8rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); }
 .report-note { font: 400 .95rem/1.5 'Public Sans', sans-serif; color: var(--ink, #2b2621); }
 .kpi-src { margin-top: .35rem; font: 500 .68rem 'Public Sans', sans-serif; letter-spacing: .04em; text-transform: uppercase; color: var(--teal); }
+.report-subhead { margin: .75rem 0 0; font: 600 1rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); }
+.report-basis { margin: .25rem 0 0; font: 400 .78rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); }
+.report-basis strong { font-weight: 600; color: var(--ink, #2b2621); }
+.method-link { font-weight: 600; color: var(--teal); }
+.report-details > summary { cursor: pointer; font: 500 .9rem 'Public Sans', sans-serif; color: var(--teal); padding: .35rem 0; }
+.report-details[open] > summary { margin-bottom: .5rem; }
 .stat-row { display: flex; flex-wrap: wrap; gap: 1.5rem; }
 .stat-value { font: 600 1.5rem 'Fraunces', serif; color: var(--terracotta); }
 .stat-label { font: 400 .85rem 'Public Sans', sans-serif; color: var(--ink-soft, #6b625a); }

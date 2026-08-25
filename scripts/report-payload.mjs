@@ -7,23 +7,41 @@ export const pctOf = (num, den) => (den ? Number(((num / den) * 100).toFixed(1))
 const meanOf = (agg, cnt) => (agg != null && cnt ? Math.round(agg / cnt) : null);
 const sum = (tables, codes) => codes.reduce((a, c) => a + (av(tables, c) || 0), 0);
 
+// `agg: null` means the Census publishes no aggregate-dollar table for that source at any
+// geography — distinct from an aggregate that exists but comes back suppressed. The two used to
+// render identically as "not disclosed", which claimed data was being withheld when it simply
+// isn't collected. `amountStatus` below keeps them apart.
 const INCOME_SOURCES = [
   { label: 'Social Security', cnt: 'B19055_002E', uni: 'B19055_001E', agg: 'B19065_001E' },
   { label: 'Retirement / pension', cnt: 'B19059_002E', uni: 'B19059_001E', agg: 'B19069_001E' },
   { label: 'Earnings (work)', cnt: 'B19051_002E', uni: 'B19051_001E', agg: 'B19061_001E' },
-  { label: 'Self-employment', cnt: 'B19053_002E', uni: 'B19053_001E', agg: null },
+  { label: 'Self-employment', cnt: 'B19053_002E', uni: 'B19053_001E', agg: 'B19063_001E' },
+  { label: 'Interest, dividends or rental income', cnt: 'B19054_002E', uni: 'B19054_001E', agg: 'B19064_001E' },
   { label: 'Supplemental Security Income (SSI)', cnt: 'B19056_002E', uni: 'B19056_001E', agg: 'B19066_001E' },
   { label: 'Cash public assistance', cnt: 'B19057_002E', uni: 'B19057_001E', agg: 'B19067_001E' },
   { label: 'SNAP / food stamps', cnt: 'B22001_002E', uni: 'B22001_001E', agg: null },
 ];
 
 export function deriveIncomeSources(tables) {
-  return INCOME_SOURCES.map((s) => ({
-    label: s.label,
-    withCount: av(tables, s.cnt),
-    pctHouseholds: pctOf(av(tables, s.cnt), av(tables, s.uni)),
-    meanAmount: s.agg ? meanOf(av(tables, s.agg), av(tables, s.cnt)) : null,
-  }));
+  return INCOME_SOURCES.map((s) => {
+    const withCount = av(tables, s.cnt);
+    const meanAmount = s.agg ? meanOf(av(tables, s.agg), withCount) : null;
+    let amountStatus = 'reported';
+    if (meanAmount == null) {
+      // Order matters: no households means there is genuinely nothing to report, which is more
+      // informative than noting the table's absence.
+      if (!withCount) amountStatus = 'noHouseholds';
+      else if (!s.agg) amountStatus = 'notPublished';   // no aggregate table exists at any geography
+      else amountStatus = 'notDisclosed';               // table exists, Bureau suppressed the value
+    }
+    return {
+      label: s.label,
+      withCount,
+      pctHouseholds: pctOf(withCount, av(tables, s.uni)),
+      meanAmount,
+      amountStatus,
+    };
+  });
 }
 
 const HH_SIZES = [
@@ -175,8 +193,68 @@ export function deriveMarital(tables) {
   return { total, pctMarried: pctOf(nowMarried, total), pctWidowed: pctOf(widowed, total), pctDivorced: pctOf(divorced, total), pctNever: pctOf(never, total) };
 }
 
+// B12002 (sex by marital status by age) carries age only on its leaves, in 14 bands each:
+// 15-17, 18-19, 20-24, 25-29, 30-34, 35-39, 40-44, 45-49, 50-54, 55-59, 60-64, 65-74, 75-84, 85+.
+// So 55+ is offsets +10..+14 from a leaf's parent code.
+//
+// "Now married" is three leaves (spouse present, separated, other) whose PARENT — _018 male,
+// _111 female — carries no age at all. Summing the parent alongside its leaves double-counts
+// married, which is the bug the B12001 path was already written to avoid.
+const AGE_55_OFFSETS = [10, 11, 12, 13, 14];
+const b12002At = (parent) => AGE_55_OFFSETS.map((o) => `B12002_${String(parent + o).padStart(3, '0')}E`);
+const MARITAL_55_LEAVES = {
+  nowMarried: [19, 35, 50, 112, 128, 143], // spouse present + separated + other, male then female
+  widowed: [65, 158],
+  divorced: [80, 173],
+  never: [3, 96],
+};
+
+export function deriveMarital55Plus(tables) {
+  const bucket = (parents) => parents.reduce((a, p) => a + sum(tables, b12002At(p)), 0);
+  const nowMarried = bucket(MARITAL_55_LEAVES.nowMarried);
+  const widowed = bucket(MARITAL_55_LEAVES.widowed);
+  const divorced = bucket(MARITAL_55_LEAVES.divorced);
+  const never = bucket(MARITAL_55_LEAVES.never);
+  const total = nowMarried + widowed + divorced + never;
+  if (!total) return null;
+  return {
+    basis: 'Residents 55 and over',
+    total,
+    pctMarried: pctOf(nowMarried, total),
+    pctWidowed: pctOf(widowed, total),
+    pctDivorced: pctOf(divorced, total),
+    pctNever: pctOf(never, total),
+  };
+}
+
+// B06001 (place of birth by age) has 11 age bands per category: Under 5, 5-17, 18-24, 25-34,
+// 35-44, 45-54, 55-59, 60-61, 62-64, 65-74, 75+. 55+ is offsets +7..+11. Categories sit 12 apart.
+const B06001_55_OFFSETS = [7, 8, 9, 10, 11];
+const b06001At = (parent) => B06001_55_OFFSETS.map((o) => `B06001_${String(parent + o).padStart(3, '0')}E`);
+const BIRTH_55_CATEGORIES = [
+  { label: 'Born in California', parent: 13 },
+  { label: 'Born in another state', parent: 25 },
+  { label: 'Born abroad to U.S. parents', parent: 37 },
+  { label: 'Foreign-born', parent: 49 },
+];
+
+export function derivePlaceOfBirth55Plus(tables) {
+  const total = sum(tables, b06001At(1));
+  if (!total) return null;
+  return {
+    basis: 'Residents 55 and over',
+    total,
+    categories: BIRTH_55_CATEGORIES.map((c) => {
+      const count = sum(tables, b06001At(c.parent));
+      return { label: c.label, count, pct: pctOf(count, total) };
+    }),
+  };
+}
+
 // B05002 breaks "born in another state" into Census regions (_005-_008) — the surrogate for
-// "where did you move from" both prior reports used.
+// "where did you move from" both prior reports used. It has no age dimension, and no ACS table
+// carries both region and age, so the regional detail stays all-ages and sits alongside the
+// 55+ summary above rather than being replaced by it.
 const BIRTH_REGIONS = [
   { label: 'California', code: 'B05002_003E' },
   { label: 'Northeast', code: 'B05002_005E' },
@@ -209,19 +287,37 @@ function deriveSummary(tables, block, householdSize, ageSex) {
   };
 }
 
+// Oakmont's own housing counts, from the Decennial block view. Kept distinct from the ACS
+// household counts used by the income tables: the ACS numbers are tract-level and include the
+// non-Oakmont fringe, so they must never be described as Oakmont's housing stock.
+function deriveHousing(block) {
+  const s = block?.snapshot;
+  if (!s) return null;
+  return {
+    basis: 'Decennial, exact blocks',
+    totalUnits: s.totalHousingUnits ?? null,
+    occupiedUnits: s.occupiedUnits ?? null,
+    vacantUnits: s.vacantUnits ?? null,
+    ownerOccupied: s.ownerOccupied ?? null,
+    renterOccupied: s.renterOccupied ?? null,
+    ownerOccupiedPct: s.ownerOccupiedPct ?? null,
+  };
+}
+
 export function buildReportSection(acsTables, blockSection) {
   const householdSize = deriveHouseholdSize(acsTables);
   const ageSex = deriveAgeSex(blockSection);
   return {
     vintage: '2020 ACS 5-Year (2016–2020) + 2020 Decennial Census',
     geography: {
-      counts: '76 selected Oakmont census blocks (2020 Decennial)',
+      counts: `${blockSection?.blockCount ?? 'Selected'} selected Oakmont census blocks (2020 Decennial)`,
       estimates: 'Census Tracts 1516.01 + 1516.02 (2020 ACS 5-Year)',
       note: 'Counts are exact to Oakmont; ACS estimates are tract-level and include the non-Oakmont fringe within the two tracts.',
     },
     summary: deriveSummary(acsTables, blockSection, householdSize, ageSex),
     ageSex,
     householdSize,
+    housing: deriveHousing(blockSection),
     income: deriveIncome(acsTables),
     incomeSources: deriveIncomeSources(acsTables),
     incomeByTenure: deriveIncomeByTenure(acsTables),
@@ -229,6 +325,8 @@ export function buildReportSection(acsTables, blockSection) {
     education: deriveEducation(acsTables),
     race: deriveRace(blockSection),
     marital: deriveMarital(acsTables),
+    marital55Plus: deriveMarital55Plus(acsTables),
     placeOfBirth: derivePlaceOfBirth(acsTables),
+    placeOfBirth55Plus: derivePlaceOfBirth55Plus(acsTables),
   };
 }

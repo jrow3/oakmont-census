@@ -55,7 +55,7 @@ export function renderBlockSnapshot(section) {
   wireTooltips(charts);
 
   document.getElementById('block-method-note').innerHTML =
-    `<strong>Exact boundary.</strong> These figures are the 2020 Decennial Census (100% count) summed over 76 ` +
+    `<strong>Exact boundary.</strong> These figures are the 2020 Decennial Census (100% count) summed over ${fmt(s.blockCount)} ` +
     `census blocks hand-selected to match Oakmont's community boundary — tighter than the two-tract approximation above. ` +
     `Decennial data is counts only (no income, education, or home values); small block-level differential-privacy noise averages out across the blocks.`;
 }

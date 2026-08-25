@@ -1,4 +1,4 @@
-// One-time: fetch 2020 Census block polygons for the 76 frozen Oakmont GEOIDs from TIGERweb
+// One-time: fetch 2020 Census block polygons for the frozen Oakmont GEOIDs from TIGERweb
 // and write site/blocks.geojson. The block list is frozen, so this output is committed and the
 // site never calls TIGERweb at runtime. Re-run only if oakmont-blocks.json changes.
 

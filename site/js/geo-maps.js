@@ -1,5 +1,5 @@
 // Two side-by-side maps for the methodology page: the ACS tract geography (2 tracts) next to the
-// Decennial block geography (76 blocks), drawn at the SAME scale so the block boundary reads as a
+// Decennial block geography (the selected blocks), drawn at the SAME scale so the block boundary reads as a
 // tighter subset of the tracts. Leaflet is loaded globally (CDN) by methodology.html.
 
 const TRACT_STYLE = { color: '#0b7a6e', weight: 2.5, fillColor: '#0e9384', fillOpacity: 0.18 };
@@ -39,7 +39,7 @@ export async function renderGeoMaps() {
   L.geoJSON(blocks, { style: BLOCK_STYLE }).addTo(blockMap);
 
   // Same scale: put BOTH maps at the same center and zoom (the tract extent contains the blocks),
-  // so the 76 blocks read as a tighter cluster inside the same frame. Zoom is the level that fits
+  // so the blocks read as a tighter cluster inside the same frame. Zoom is the level that fits
   // the whole tract extent, backed off a hair so the tracts never spill off the edges.
   const bounds = tractLayer.getBounds();
   const center = bounds.getCenter();

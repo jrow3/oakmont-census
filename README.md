@@ -77,7 +77,7 @@ scripts/
   fetch-block-geometry.mjs one-time: TIGERweb block polygons -> site/blocks.geojson
   build-payload.mjs      shared: shape {code: value} maps into the data.json sections
   sample-data.mjs        placeholder data + placeholder mirrors for keyless preview
-  oakmont-blocks.json    the 76 census blocks that make up Oakmont proper
+  oakmont-blocks.json    the census blocks that make up Oakmont proper
 site/
   index.html             2020 portrait + Oakmont-proper block panel (+ block map)
   changes.html           2024 update (year-over-year deltas)
@@ -86,7 +86,7 @@ site/
                          block-map, income-grid modules
   data.json              baked snapshot data (committed, refreshed by CI)
   explorer/*.json        full table mirrors (gitignored, CI-built; sample writes placeholders)
-  blocks.geojson         geometry for the 76 Oakmont blocks (committed)
+  blocks.geojson         geometry for the Oakmont blocks (committed)
   CNAME                  census.jrow3.com
 ```
 
@@ -119,7 +119,7 @@ are skipped).
 Oakmont Village has no Census place code. The ACS pages aggregate **Census Tracts 1516.01 and
 1516.02** (Sonoma County), whose combined population closely tracks Oakmont's footprint; counts are
 summed across the two tracts and medians are population-weighted approximations. The **Oakmont
-proper** panel instead sums the 2020 Decennial Census over 76 hand-selected blocks matching the
+proper** panel instead sums the 2020 Decennial Census over the hand-selected blocks matching the
 community's actual boundary — geographically exact, but counts only (no income, education, or home
 values). The 2016–2020 and 2020–2024 ACS 5-year periods overlap in 2020, so year-over-year change is
 directional, not precise.
@@ -130,7 +130,7 @@ Sources: U.S. Census Bureau, American Community Survey 5-Year Estimates (2016–
 ## Community Report (2020)
 
 `site/report.html` is a reliable recreation of the LRPC demographic report, modeled on Jim Ouimette's
-trusted 2010 report and built from **Census Bureau data only** (no AARP survey, no commercial data). It
+trusted 2010 report and built from **Census Bureau data only**. It
 uses a hybrid geography: exact-block **2020 Decennial** counts (age, sex, race, owner/renter, population)
 and tract **2020 ACS 5-Year** estimates (income, income sources, education, home value, tenure, marital
 status, place of birth). `scripts/report-payload.mjs` derives the compact `report2020` block baked into

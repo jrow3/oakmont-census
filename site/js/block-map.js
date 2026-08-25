@@ -1,4 +1,4 @@
-// Draw the 76 selected Oakmont blocks over a free Carto light basemap with Leaflet.
+// Draw the selected Oakmont blocks over a free Carto light basemap with Leaflet.
 // Leaflet is loaded globally (CDN) by index.html; this module reads window.L. Geometry is the
 // committed site/blocks.geojson — no runtime call to TIGERweb.
 

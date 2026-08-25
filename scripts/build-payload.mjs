@@ -2,7 +2,7 @@
 // Shared by fetch-census.mjs (real API values) and sample-data.mjs (placeholder values).
 
 import { GROUPS } from './census-variables.mjs';
-import { DEC_GROUPS, AGE_55_PLUS, AGE_85_PLUS } from './decennial-variables.mjs';
+import { DEC_GROUPS, AGE_55_PLUS, AGE_65_PLUS, AGE_85_PLUS } from './decennial-variables.mjs';
 import { medianAgeFromP12 } from './median-age.mjs';
 
 export function buildGroups(values) {
@@ -46,7 +46,7 @@ export function buildAcsSection(year, values) {
   };
 }
 
-export function buildBlockSection(values) {
+export function buildBlockSection(values, { blockCount = null } = {}) {
   const v = (k) => (values[k] ?? null);
   const sum = (codes) => codes.reduce((a, c) => a + (values[c] || 0), 0);
   const pct = (num, den) => (den && num != null ? Number(((num / den) * 100).toFixed(1)) : null);
@@ -66,16 +66,23 @@ export function buildBlockSection(values) {
     }
   }
 
+  // The block list is editable, so the count travels with the data rather than being written
+  // into prose. Anything that says "N blocks" reads it from here.
+  const blocks = blockCount ?? null;
   return {
     vintage: '2020 Decennial (DHC)',
-    geography: '76 selected census blocks, Oakmont, Sonoma County, CA',
+    geography: `${blocks ?? 'selected'} selected census blocks, Oakmont, Sonoma County, CA`,
+    blockCount: blocks,
     year: '2020-blocks',
     explorerFile: 'explorer/blocks2020.json',
     snapshot: {
+      blockCount: blocks,
       totalPopulation: totalPop,
       age55Plus: sum(AGE_55_PLUS),
+      age65Plus: sum(AGE_65_PLUS),
       age85Plus: sum(AGE_85_PLUS),
       pct55Plus: pct(sum(AGE_55_PLUS), totalPop),
+      pct65Plus: pct(sum(AGE_65_PLUS), totalPop),
       medianAge,
       totalHousingUnits: v('H1_001N'),
       occupiedUnits: v('H3_002N'),
@@ -90,7 +97,7 @@ export function buildBlockSection(values) {
   };
 }
 
-export function assembleData(sections, { sample = false, oakmont2020 = null, report2020 = null } = {}) {
+export function assembleData(sections, { sample = false, oakmont2020 = null, report2020 = null, enclaves2020 = null } = {}) {
   const data = {
     meta: {
       geography: 'Census Tracts 1516.01 + 1516.02, Sonoma County, CA',
@@ -102,5 +109,6 @@ export function assembleData(sections, { sample = false, oakmont2020 = null, rep
   };
   if (oakmont2020) data.oakmont2020 = oakmont2020;
   if (report2020) data.report2020 = report2020;
+  if (enclaves2020) data.enclaves2020 = enclaves2020;
   return data;
 }

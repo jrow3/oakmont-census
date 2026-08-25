@@ -1,7 +1,7 @@
 {
   "meta": {
     "geography": "Census Tracts 1516.01 + 1516.02, Sonoma County, CA",
-    "generatedAt": "2026-08-13T21:07:03.205Z",
+    "generatedAt": "2026-08-25T00:20:43.479Z",
     "sample": true
   },
   "acs2020": {
@@ -1738,19 +1738,23 @@
   },
   "oakmont2020": {
     "vintage": "2020 Decennial (DHC)",
-    "geography": "76 selected census blocks, Oakmont, Sonoma County, CA",
+    "geography": "75 selected census blocks, Oakmont, Sonoma County, CA",
+    "blockCount": 75,
     "year": "2020-blocks",
     "explorerFile": "explorer/blocks2020.json",
     "snapshot": {
-      "totalPopulation": 4994,
+      "blockCount": 75,
+      "totalPopulation": 4946,
       "age55Plus": 3840,
+      "age65Plus": 3600,
       "age85Plus": 600,
-      "pct55Plus": 76.9,
+      "pct55Plus": 77.6,
+      "pct65Plus": 72.8,
       "medianAge": 69.6,
-      "totalHousingUnits": 3451,
-      "occupiedUnits": 3130,
-      "vacantUnits": 321,
-      "ownerOccupied": 2930,
+      "totalHousingUnits": 3427,
+      "occupiedUnits": 3110,
+      "vacantUnits": 317,
+      "ownerOccupied": 2910,
       "renterOccupied": 200,
       "ownerOccupiedPct": 93.6,
       "whiteAlonePct": 95.9,
@@ -1763,7 +1767,7 @@
         "variables": {
           "P12_001N": {
             "label": "Total Population",
-            "value": 4994
+            "value": 4946
           },
           "P12_002N": {
             "label": "Male - Total",
@@ -1965,11 +1969,11 @@
         "variables": {
           "P3_001N": {
             "label": "Total Population",
-            "value": 4994
+            "value": 4946
           },
           "P3_002N": {
             "label": "White alone",
-            "value": 4790
+            "value": 4744
           },
           "P3_003N": {
             "label": "Black or African American alone",
@@ -2003,15 +2007,15 @@
         "variables": {
           "P4_001N": {
             "label": "Total Population",
-            "value": 4994
+            "value": 4946
           },
           "P4_002N": {
             "label": "Not Hispanic or Latino",
-            "value": 4810
+            "value": 4763
           },
           "P4_003N": {
             "label": "Hispanic or Latino",
-            "value": 184
+            "value": 183
           }
         }
       },
@@ -2021,23 +2025,23 @@
         "variables": {
           "H1_001N": {
             "label": "Total Housing Units",
-            "value": 3451
+            "value": 3427
           },
           "H3_002N": {
             "label": "Occupied",
-            "value": 3130
+            "value": 3110
           },
           "H3_003N": {
             "label": "Vacant",
-            "value": 321
+            "value": 317
           },
           "H4_002N": {
             "label": "Owner-occupied, with a mortgage or loan",
-            "value": 1540
+            "value": 1530
           },
           "H4_003N": {
             "label": "Owner-occupied, free and clear",
-            "value": 1390
+            "value": 1380
           },
           "H4_004N": {
             "label": "Renter-occupied",
@@ -2050,12 +2054,12 @@
   "report2020": {
     "vintage": "2020 ACS 5-Year (2016–2020) + 2020 Decennial Census",
     "geography": {
-      "counts": "76 selected Oakmont census blocks (2020 Decennial)",
+      "counts": "75 selected Oakmont census blocks (2020 Decennial)",
       "estimates": "Census Tracts 1516.01 + 1516.02 (2020 ACS 5-Year)",
       "note": "Counts are exact to Oakmont; ACS estimates are tract-level and include the non-Oakmont fringe within the two tracts."
     },
     "summary": {
-      "population": 4994,
+      "population": 4946,
       "medianAge": 69.6,
       "pct55Plus": 77.4,
       "ownerOccupiedPct": 93.6,
@@ -2154,6 +2158,15 @@
         }
       ]
     },
+    "housing": {
+      "basis": "Decennial, exact blocks",
+      "totalUnits": 3427,
+      "occupiedUnits": 3110,
+      "vacantUnits": 317,
+      "ownerOccupied": 2910,
+      "renterOccupied": 200,
+      "ownerOccupiedPct": 93.6
+    },
     "income": {
       "median": 78534,
       "perCapita": 66078,
@@ -2217,43 +2230,57 @@
         "label": "Social Security",
         "withCount": 2706,
         "pctHouseholds": 80.3,
-        "meanAmount": 23479
+        "meanAmount": 23479,
+        "amountStatus": "reported"
       },
       {
         "label": "Retirement / pension",
         "withCount": 1918,
         "pctHouseholds": 56.9,
-        "meanAmount": 43466
+        "meanAmount": 43466,
+        "amountStatus": "reported"
       },
       {
         "label": "Earnings (work)",
         "withCount": 1240,
         "pctHouseholds": 36.8,
-        "meanAmount": 106287
+        "meanAmount": 106287,
+        "amountStatus": "reported"
       },
       {
         "label": "Self-employment",
-        "withCount": 300,
-        "pctHouseholds": 8.9,
-        "meanAmount": null
+        "withCount": 427,
+        "pctHouseholds": 12.7,
+        "meanAmount": 41200,
+        "amountStatus": "reported"
+      },
+      {
+        "label": "Interest, dividends or rental income",
+        "withCount": 1820,
+        "pctHouseholds": 54,
+        "meanAmount": 28400,
+        "amountStatus": "reported"
       },
       {
         "label": "Supplemental Security Income (SSI)",
         "withCount": 74,
         "pctHouseholds": 2.2,
-        "meanAmount": 8073
+        "meanAmount": 8073,
+        "amountStatus": "reported"
       },
       {
         "label": "Cash public assistance",
         "withCount": 20,
         "pctHouseholds": 0.6,
-        "meanAmount": null
+        "meanAmount": null,
+        "amountStatus": "notDisclosed"
       },
       {
         "label": "SNAP / food stamps",
-        "withCount": 30,
-        "pctHouseholds": 0.9,
-        "meanAmount": null
+        "withCount": 0,
+        "pctHouseholds": 0,
+        "meanAmount": null,
+        "amountStatus": "noHouseholds"
       }
     ],
     "incomeByTenure": {
@@ -2377,11 +2404,11 @@
       ]
     },
     "race": {
-      "total": 4994,
+      "total": 4946,
       "groups": [
         {
           "label": "White",
-          "count": 4790,
+          "count": 4744,
           "pct": 95.9
         },
         {
@@ -2424,6 +2451,14 @@
       "pctDivorced": 11.2,
       "pctNever": 7.9
     },
+    "marital55Plus": {
+      "basis": "Residents 55 and over",
+      "total": 3794,
+      "pctMarried": 53.8,
+      "pctWidowed": 24.1,
+      "pctDivorced": 14.4,
+      "pctNever": 7.6
+    },
     "placeOfBirth": {
       "total": 5949,
       "regions": [
@@ -2458,6 +2493,129 @@
           "pct": 12
         }
       ]
+    },
+    "placeOfBirth55Plus": {
+      "basis": "Residents 55 and over",
+      "total": 4585,
+      "categories": [
+        {
+          "label": "Born in California",
+          "count": 2025,
+          "pct": 44.2
+        },
+        {
+          "label": "Born in another state",
+          "count": 1867,
+          "pct": 40.7
+        },
+        {
+          "label": "Born abroad to U.S. parents",
+          "count": 95,
+          "pct": 2.1
+        },
+        {
+          "label": "Foreign-born",
+          "count": 598,
+          "pct": 13
+        }
+      ]
     }
+  },
+  "enclaves2020": {
+    "source": "Sonoma County GIS BASEPublic/Addresses_Public (address points) + TIGERweb 2020 Census Blocks (POP100/HU100)",
+    "accessed": "2026-08-25",
+    "calibration": {
+      "note": "County address points vs. Census housing units across the footprint; close agreement is what makes the share arithmetic sound.",
+      "addressPointsInFootprint": 3524,
+      "censusHousingUnits": 3427,
+      "ratio": 1.028
+    },
+    "multiUnitProperties": [
+      {
+        "address": "301 White Oak Dr",
+        "records": 169
+      },
+      {
+        "address": "6637 Oakmont Dr",
+        "records": 6
+      },
+      {
+        "address": "6580 Oakmont Dr",
+        "records": 6
+      },
+      {
+        "address": "7622 Hwy 12",
+        "records": 6
+      }
+    ],
+    "baseline": {
+      "population": 4946,
+      "housingUnits": 3427,
+      "occupiedUnits": 3110,
+      "ownerOccupied": 2910,
+      "renterOccupied": 200,
+      "pct55Plus": 77.6,
+      "pct65Plus": 72.8
+    },
+    "areas": [
+      {
+        "key": "wild-oak",
+        "label": "Wild Oak",
+        "note": "Wild Oak Dr and Wild Oak Ct.",
+        "blockGeoid": "060971516023021",
+        "addresses": 41,
+        "blockAddresses": 263,
+        "otherHomesInBlock": 222,
+        "shareOfBlockPct": 15.6,
+        "units": 41,
+        "pctOfUnits": 1.2,
+        "population": {
+          "proportional": 60,
+          "residual": 29,
+          "low": 29,
+          "high": 60
+        },
+        "pctOfPopulationLow": 0.6,
+        "pctOfPopulationHigh": 1.2,
+        "age": {
+          "baseline55Plus": 77.6,
+          "if55PlusRemoved": 77.4,
+          "ifUnder55Removed": 78.6,
+          "if65PlusRemoved": 72.5
+        },
+        "tenure": null
+      },
+      {
+        "key": "oakmont-gardens",
+        "label": "Oakmont Gardens",
+        "note": "All unit addresses at 301 White Oak Dr.",
+        "blockGeoid": "060971516012010",
+        "addresses": 169,
+        "blockAddresses": 281,
+        "otherHomesInBlock": 112,
+        "shareOfBlockPct": 60.1,
+        "units": 162,
+        "pctOfUnits": 4.7,
+        "population": {
+          "proportional": 177,
+          "residual": 117,
+          "low": 117,
+          "high": 177
+        },
+        "pctOfPopulationLow": 2.4,
+        "pctOfPopulationHigh": 3.6,
+        "age": {
+          "baseline55Plus": 77.6,
+          "if55PlusRemoved": 76.8,
+          "ifUnder55Removed": 80.5,
+          "if65PlusRemoved": 71.8
+        },
+        "tenure": {
+          "pctOfRenterUnits": 84.5,
+          "renterUnits": 200,
+          "ownerOccupiedPctWithout": 98.9
+        }
+      }
+    ]
   }
 }

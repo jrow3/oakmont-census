@@ -2,16 +2,48 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { resolveFigures, activeSectionFor } from './methodology.js';
 
-test('resolveFigures pulls population and 55+ share from the block snapshot', () => {
-  const figures = resolveFigures({ oakmont2020: { snapshot: { totalPopulation: 4994, pct55Plus: 92 } } });
-  assert.equal(figures.population, 4994);
+test('resolveFigures pulls population, 55+ share and block count from the block snapshot', () => {
+  const figures = resolveFigures({ oakmont2020: { snapshot: { totalPopulation: 4946, pct55Plus: 92, blockCount: 75 } } });
+  assert.equal(figures.population, 4946);
   assert.equal(figures.pct55, 92);
+  assert.equal(figures.blocks, 75);
 });
 
 test('resolveFigures returns nulls when the block section is missing', () => {
   const figures = resolveFigures({});
   assert.equal(figures.population, null);
   assert.equal(figures.pct55, null);
+  assert.equal(figures.blocks, null);
+});
+
+test('resolveFigures flattens the enclave section for the page spans', () => {
+  const figures = resolveFigures({
+    oakmont2020: { snapshot: { totalPopulation: 4946, pct55Plus: 92, blockCount: 75 } },
+    enclaves2020: {
+      baseline: { pct55Plus: 92, ownerOccupied: 2470, renterOccupied: 700 },
+      calibration: { addressPointsInFootprint: 3524, censusHousingUnits: 3427 },
+      areas: [
+        { key: 'wild-oak', addresses: 41, blockAddresses: 263, otherHomesInBlock: 222, units: 41,
+          pctOfUnits: 1.2, population: { low: 29, high: 60 }, age: { ifUnder55Removed: 93.1 }, tenure: null },
+        { key: 'oakmont-gardens', addresses: 169, blockAddresses: 281, otherHomesInBlock: 112, units: 162,
+          pctOfUnits: 4.7, population: { low: 120, high: 177 }, age: { ifUnder55Removed: 95 },
+          tenure: { pctOfRenterUnits: 24.1, renterUnits: 700, ownerOccupiedPctWithout: 82.3 } },
+      ],
+    },
+  });
+  assert.equal(figures.wildOakUnits, 41);
+  assert.equal(figures.wildOakOtherHomes, 222);
+  assert.equal(figures.wildOakPopRange, '29–60');
+  assert.equal(figures.gardensPctRentals, 24.1);
+  assert.equal(figures.gardensOwnerWithout, 82.3);
+  assert.equal(figures.baselineOwnerPct, 77.9);
+  assert.equal(figures.calibAddresses, 3524);
+});
+
+test('enclave figures are absent rather than wrong when the section is missing', () => {
+  const figures = resolveFigures({ oakmont2020: { snapshot: { totalPopulation: 4946 } } });
+  assert.equal(figures.wildOakUnits, undefined);
+  assert.equal(figures.gardensOwnerWithout, undefined);
 });
 
 const SECTIONS = [

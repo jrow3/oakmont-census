@@ -9,9 +9,16 @@ const percent = (n) => (n == null ? '—' : pct(n));
 const kpi = (label, value, sub, source) =>
   `<div class="kpi reveal"><div class="kpi-label">${label}</div><div class="kpi-value">${value}</div><div class="kpi-sub">${sub}</div><div class="kpi-src">${source}</div></div>`;
 
-function section(id, kicker, title, source, bodyHtml) {
+// Who a section counts. This stays on the report because dropping it would turn a scoped figure
+// into an apparently unscoped one — a home-value median covering only owner-occupied homes reads
+// as covering every home once the qualifier is gone. The reasoning behind each choice lives on the
+// methodology page, not here.
+const basisTag = (basis) => !basis ? '' :
+  `<p class="report-basis">Counts <strong>${escapeHtml(basis.label)}</strong> · <a href="./methodology.html#${basis.anchor || 'bases'}">why</a></p>`;
+
+function section(id, kicker, title, source, bodyHtml, basis) {
   return `<section class="report-section reveal" id="${id}">
-    <div class="report-head"><p class="chart-kicker">${kicker}</p><h2>${title}</h2><p class="report-source">${source}</p></div>
+    <div class="report-head"><p class="chart-kicker">${kicker}</p><h2>${title}</h2><p class="report-source">${source}</p>${basisTag(basis)}</div>
     ${bodyHtml}
   </section>`;
 }
@@ -33,7 +40,7 @@ export async function renderReport() {
     incomeSection(r),
     incomeSourcesSection(r),
     tenureIncomeSection(r),
-    homeValueSection(r),
+    homeValueSection(r, data.enclaves2020),
     educationSection(r),
     raceSection(r),
     maritalSection(r),
@@ -57,7 +64,8 @@ function summarySection(r) {
   return section('summary', 'Who are we?', 'A 55+ community, in numbers',
     'Counts from the 2020 Decennial Census (exact Oakmont blocks); dollar figures from the 2020 ACS (tracts).',
     `<div class="kpi-grid">${tiles}</div>
-     <p class="report-note">Oakmont is an active-adult 55+ community: ${percent(s.pct55Plus)} of residents counted here are 55 or older. (The census counts everyone living in the blocks, including younger spouses, family, and caregivers.) The age bands in this report begin at 55.</p>`);
+     <p class="report-note">Oakmont is an active-adult 55+ community: ${percent(s.pct55Plus)} of residents counted here are 55 or older.</p>`,
+    { label: 'everyone living in Oakmont', anchor: 'bases' });
 }
 
 function ageSexSection(r) {
@@ -80,7 +88,8 @@ function ageSexSection(r) {
          <tr class="total-row"><td>55 and over</td>${cells(totalM, totalF, totalM + totalF)}</tr>
          <tr class="total-row"><td>All residents</td>${cells(u.male + totalM, u.female + totalF, u.total + totalM + totalF)}</tr>
        </tbody></table></div>
-     <p class="chart-caption">Among residents 55 and over, women outnumber men about <strong>${ratio}:1</strong>, and the gap widens with age. The ${num(u.total)} residents under 55 (younger spouses, family, and caregivers) are listed in the top row; the chart above shows the 55+ community.</p>`);
+     <p class="chart-caption">Among residents 55 and over, women outnumber men about <strong>${ratio}:1</strong>, and the gap widens with age.</p>`,
+    { label: 'everyone living in Oakmont; bars show 55+', anchor: 'bases' });
 }
 
 function householdSection(r) {
@@ -88,13 +97,14 @@ function householdSection(r) {
   return section('households', 'Households', 'Most of us live alone or as a couple',
     'U.S. Census Bureau, 2020 ACS 5-Year (tracts). Household size from table B25009.',
     `${horizontalBars({ items, ariaLabel: 'Households by size', format: fmt })}
-     <p class="chart-caption">Oakmont averages <strong>${r.householdSize.average ?? '—'}</strong> people per household — one- and two-person homes dominate, consistent with a retirement community.</p>`);
+     <p class="chart-caption">Oakmont averages <strong>${r.householdSize.average ?? '—'}</strong> people per household — one- and two-person homes dominate, consistent with a retirement community.</p>`,
+    { label: 'households in the two tracts', anchor: 'bases' });
 }
 
 function incomeSection(r) {
   const i = r.income;
   const items = i.distribution.map((d) => ({ label: d.label, value: d.count }));
-  return section('income', 'Income', 'Solidly middle class',
+  return section('income', 'Income', 'Household and family income',
     'U.S. Census Bureau, 2020 ACS 5-Year (tracts).',
     `<div class="stat-row">
        <div class="stat"><div class="stat-value">${money(i.median)}</div><div class="stat-label">Median household income</div></div>
@@ -103,16 +113,24 @@ function incomeSection(r) {
        <div class="stat"><div class="stat-value">${money(i.nonfamilyMedian)}</div><div class="stat-label">Median non-family income</div></div>
      </div>
      ${horizontalBars({ items, ariaLabel: 'Households by income bracket', format: fmt })}
-     <p class="chart-caption">Family households (typically couples) earn well above people living alone — the same split the 2010 report found.</p>
-     <p class="report-note"><strong>Household vs. family:</strong> a <em>household</em> is everyone in a home, including a person living alone; a <em>family</em> is a householder plus relatives. The family median runs highest, and the household median sits below it because it also counts the many one-person homes.</p>
-     <p class="report-note"><strong>What counts as income here:</strong> the Census measures <em>money income</em> — cash a household receives, counted before taxes. It <em>does</em> include Social Security, SSI, pensions and regular retirement-account withdrawals (IRA, Roth IRA, 401(k)), VA payments, and interest and dividends — whether or not any of it is taxable. It does <em>not</em> include proceeds from selling a home, withdrawals from savings, money borrowed against a home (reverse mortgage, HELOC), inheritances, life insurance payouts, or one-time gifts. That gap matters in a retirement community: a household living comfortably on savings and home equity can still report a modest income here.</p>`);
+     <p class="chart-caption">Family households (typically couples) earn well above people living alone — the same split the 2010 report found.</p>`,
+    { label: 'households in the two tracts', anchor: 'bases' });
 }
+
+const AMOUNT_MISSING = {
+  notPublished: { text: 'not published', tip: 'the Census publishes no dollar amount for this source' },
+  notDisclosed: { text: 'not disclosed', tip: 'too few households to publish without identifying them' },
+  noHouseholds: { text: '—', tip: 'no households report this source' },
+};
 
 function incomeSourcesSection(r) {
   const rows = r.incomeSources.map((s) => {
-    const width = s.pctHouseholds != null ? Math.max(1, Math.round(s.pctHouseholds)) : 0;
-    const mean = s.meanAmount != null ? money(s.meanAmount) : '<span class="na">not disclosed</span>';
-    return `<div class="src-row" data-tip="${escapeHtml(`<b>${escapeHtml(s.label)}</b><br>${percent(s.pctHouseholds)} of households · mean ${s.meanAmount != null ? money(s.meanAmount) : 'suppressed'}`)}">
+    // A zero share draws nothing; only non-zero shares get the 1% minimum so they stay visible.
+    const width = s.pctHouseholds ? Math.max(1, Math.round(s.pctHouseholds)) : 0;
+    const missing = AMOUNT_MISSING[s.amountStatus] || AMOUNT_MISSING.notDisclosed;
+    const mean = s.meanAmount != null ? money(s.meanAmount) : `<span class="na">${missing.text}</span>`;
+    const amountTip = s.meanAmount != null ? money(s.meanAmount) : missing.tip;
+    return `<div class="src-row" data-tip="${escapeHtml(`<b>${escapeHtml(s.label)}</b><br>${percent(s.pctHouseholds)} of households · ${amountTip}`)}">
       <div class="src-label">${escapeHtml(s.label)}</div>
       <div class="src-bar"><i style="width:${width}%"></i></div>
       <div class="src-pct">${percent(s.pctHouseholds)}</div>
@@ -120,32 +138,42 @@ function incomeSourcesSection(r) {
     </div>`;
   }).join('');
   return section('sources', 'Sources of income', 'What households live on',
-    'U.S. Census Bureau, 2020 ACS 5-Year (tracts). Shares are % of households receiving each source; means are per receiving household.',
-    `<div class="src-head"><div class="src-label"></div><div class="src-bar"></div><div class="src-pct">Households</div><div class="src-mean">Mean amount</div></div>
-     <div class="src-list">${rows}</div>
-     <p class="chart-caption">These are real ACS figures — not the AARP member survey used in the 2020 draft. Because ACS income is tract-level, shares read a little lower than an Oakmont-only count would (the tracts include younger non-Oakmont households).</p>`);
+    'U.S. Census Bureau, 2020 ACS 5-Year (tracts). Shares are % of households receiving each source.',
+    `<div class="src-head"><div class="src-label"></div><div class="src-bar"></div><div class="src-pct">Households</div><div class="src-mean">Average amount</div></div>
+     <div class="src-list">${rows}</div>`,
+    { label: 'households in the two tracts', anchor: 'bases' });
 }
 
 function tenureIncomeSection(r) {
   const t = r.incomeByTenure;
   const items = t.distribution.map((d) => ({ label: d.label, a: d.owner, b: d.renter }));
-  return section('tenure-income', 'Owners vs. renters', 'Owners earn more',
+  return section('tenure-income', 'Owners vs. renters', 'Owners have more income',
     'U.S. Census Bureau, 2020 ACS 5-Year (tracts). Tables B25119 (medians) and B25118 (distribution).',
     `<div class="stat-row">
        <div class="stat"><div class="stat-value">${money(t.ownerMedian)}</div><div class="stat-label">Owner median income (${num(t.ownerHouseholds)} homes)</div></div>
        <div class="stat"><div class="stat-value">${money(t.renterMedian)}</div><div class="stat-label">Renter median income (${num(t.renterHouseholds)} homes)</div></div>
      </div>
      <div class="legend-row"><span class="legend-item"><span class="legend-swatch" style="background:var(--terracotta)"></span>Owner-occupied</span><span class="legend-item"><span class="legend-swatch" style="background:var(--teal)"></span>Renter-occupied</span></div>
-     ${groupedBars({ items, ariaLabel: 'Household income by tenure' })}`);
+     ${groupedBars({ items, ariaLabel: 'Household income by tenure' })}`,
+    { label: 'households in the two tracts', anchor: 'bases' });
 }
 
-function homeValueSection(r) {
+function homeValueSection(r, enclaves) {
   const items = r.homeValue.distribution.map((d) => ({ label: d.label, value: d.count }));
+  const h = r.housing || {};
+  // Rentals split into the one senior-living building and the ordinary homes owners let out.
+  const gardens = (enclaves?.areas || []).find((a) => a.tenure)?.addresses ?? null;
+  const otherRentals = h.renterOccupied != null && gardens != null ? h.renterOccupied - gardens : null;
+  // Census renter count minus a county address count — two independent measurements, so only
+  // state the split when it actually resolves to a sensible positive remainder.
+  const rentalSplit = otherRentals == null || otherRentals <= 0 ? '' :
+    ` Of those rentals, ${num(gardens)} are at Oakmont Gardens and ${num(otherRentals)} are ordinary homes let out by their owners.`;
   return section('home-value', 'Home value', 'Where owner-estimated values land',
     'U.S. Census Bureau, 2020 ACS 5-Year (tracts). Owner-reported values (table B25075/B25077).',
     `<p class="report-note">Median owner-estimated home value: <strong>${money(r.homeValue.median)}</strong>.</p>
      ${horizontalBars({ items, ariaLabel: 'Owner-occupied homes by value', format: fmt })}
-     <p class="chart-caption">A home value exists only for the ${num(r.incomeByTenure.ownerHouseholds)} <strong>owner-occupied</strong> homes shown here — renters report no value and vacant units aren't counted. Oakmont's full housing stock (roughly 3,000+ units, including the ${num(r.incomeByTenure.renterHouseholds)} rentals) is reflected in the tenure figures above.</p>`);
+     <p class="chart-caption">Covers the ${num(r.incomeByTenure.ownerHouseholds)} <strong>owner-occupied</strong> homes the ACS surveyed — renters report no value and vacant units aren't counted. Oakmont itself has ${num(h.totalUnits)} homes: ${num(h.ownerOccupied)} owner-occupied, ${num(h.renterOccupied)} rented and ${num(h.vacantUnits)} vacant.${rentalSplit}</p>`,
+    { label: 'owner-occupied homes only', anchor: 'bases' });
 }
 
 function educationSection(r) {
@@ -158,7 +186,8 @@ function educationSection(r) {
        <div class="stat"><div class="stat-value">${percent(e.pctGraduatePlus)}</div><div class="stat-label">Graduate or professional degree</div></div>
      </div>
      ${horizontalBars({ items, ariaLabel: 'Educational attainment', format: fmt })}
-     <p class="chart-caption">Figures cover the ${num(e.total45plus)} residents aged 45 and over — the closest Census age cut to Oakmont's 55+ population (attainment isn't published with a 55 line), which drops the younger non-Oakmont fringe.</p>`);
+     <p class="chart-caption">Covers the ${num(e.total45plus)} residents aged 45 and over.</p>`,
+    { label: 'residents 45 and over', anchor: 'bases' });
 }
 
 function raceSection(r) {
@@ -166,40 +195,56 @@ function raceSection(r) {
   return section('race', 'Race & ethnicity', 'Predominantly white',
     'U.S. Census Bureau, 2020 Decennial Census (exact Oakmont blocks). Race and Hispanic origin are separate questions.',
     `${horizontalBars({ items, ariaLabel: 'Residents by race', format: fmt })}
-     <p class="chart-caption"><strong>${percent(r.race.hispanicPct)}</strong> of residents identify as Hispanic or Latino (of any race). Presented as clean Census counts rather than an unreconcilable survey table.</p>`);
+     <p class="chart-caption"><strong>${percent(r.race.hispanicPct)}</strong> of residents identify as Hispanic or Latino (of any race).</p>`,
+    { label: 'everyone living in Oakmont', anchor: 'bases' });
 }
 
 function maritalSection(r) {
+  const m55 = r.marital55Plus;
   const m = r.marital;
-  const items = [
-    { label: 'Now married', value: m.pctMarried }, { label: 'Widowed', value: m.pctWidowed },
-    { label: 'Divorced', value: m.pctDivorced }, { label: 'Never married', value: m.pctNever },
-  ];
+  const bars = (b) => horizontalBars({
+    items: [
+      { label: 'Now married', value: b.pctMarried }, { label: 'Widowed', value: b.pctWidowed },
+      { label: 'Divorced', value: b.pctDivorced }, { label: 'Never married', value: b.pctNever },
+    ],
+    ariaLabel: 'Marital status', format: (n) => percent(n),
+  });
+  // The 55+ cut leads because it matches who actually lives here; the all-ages figures stay
+  // beneath it rather than being replaced, since they are what the tracts actually publish.
+  const allAges = `<details class="report-details"><summary>All residents 15 and over (${num(m.total)})</summary>
+     ${bars(m)}</details>`;
   return section('marital', 'Marital status', 'Married, widowed, or on their own',
-    'U.S. Census Bureau, 2020 ACS 5-Year (tracts). Population 15+ (table B12001).',
-    `${horizontalBars({ items, ariaLabel: 'Marital status', format: (n) => percent(n) })}
-     <p class="chart-caption">A note on precision: in 2020 the federal ACS did not consistently record same-sex married couples as married, which understates marriage among Oakmont's same-sex couples.</p>`);
+    `U.S. Census Bureau, 2020 ACS 5-Year (tracts). ${m55 ? 'Residents 55+ (table B12002); all-ages figures from B12001.' : 'Population 15+ (table B12001).'}`,
+    m55
+      ? `${bars(m55)}<p class="chart-caption">Among the ${num(m55.total)} residents aged 55 and over.</p>${allAges}`
+      : bars(m),
+    { label: m55 ? 'residents 55 and over' : 'residents 15 and over', anchor: 'bases' });
 }
 
 function placeOfBirthSection(r) {
   const items = r.placeOfBirth.regions.map((g) => ({ label: g.label, value: g.pct }));
-  return section('origin', 'Where residents come from', 'Mostly California and elsewhere in the U.S.',
-    'U.S. Census Bureau, 2020 ACS 5-Year (tracts). Place of birth (table B05002).',
-    `${horizontalBars({ items, ariaLabel: 'Place of birth', format: (n) => percent(n) })}
-     <p class="chart-caption">Place of birth is the Census surrogate for "where did you move from" — the region-of-origin detail in prior reports isn't published in a standard table.</p>`);
+  const p55 = r.placeOfBirth55Plus;
+  // No ACS table carries both birth region and age, so the 55+ cut leads with the four categories
+  // it does publish, and the region detail follows at all ages rather than being dropped.
+  const headline = !p55 ? '' : `<div class="stat-row">${p55.categories.map((c) =>
+    `<div class="stat"><div class="stat-value">${percent(c.pct)}</div><div class="stat-label">${escapeHtml(c.label)}</div></div>`).join('')}</div>
+     <p class="chart-caption">Among the ${num(p55.total)} residents aged 55 and over.</p>`;
+  return section('origin', 'Where residents were born', 'Mostly California and elsewhere in the U.S.',
+    `U.S. Census Bureau, 2020 ACS 5-Year (tracts). ${p55 ? 'Residents 55+ (table B06001); regional detail from B05002, all ages.' : 'Place of birth (table B05002).'}`,
+    `${headline}
+     <h3 class="report-subhead">Where in the country, all residents</h3>
+     ${horizontalBars({ items, ariaLabel: 'Place of birth', format: (n) => percent(n) })}`,
+    { label: p55 ? 'residents 55 and over, then all residents' : 'all residents', anchor: 'bases' });
 }
 
+// The report carries findings; the reasoning behind every table, geography and population basis
+// lives on the methodology page so it is written once and read in one place.
 function methodologySection(r) {
   return section('methodology', 'Methodology & sources', 'How this report was built',
-    'U.S. Census Bureau only.',
+    `U.S. Census Bureau only. Vintage: ${escapeHtml(r.vintage)}.`,
     `<div class="method-body">
-       <p>This report uses <strong>only U.S. Census Bureau data</strong> — no AARP survey, no commercial or address-level data.</p>
-       <ul>
-         <li><strong>Counts</strong> (population, age, sex, race, owner/renter) come from the <strong>2020 Decennial Census</strong>, summed over ${escapeHtml(r.geography.counts)} — exact to Oakmont's boundary.</li>
-         <li><strong>Estimates</strong> (income, income sources, education, home value, tenure, marital status, place of birth) come from the <strong>2020 ACS 5-Year</strong> for ${escapeHtml(r.geography.estimates)}. ${escapeHtml(r.geography.note)}</li>
-       </ul>
-       <p>ACS estimates carry sampling margins of error; small percentages (SSI, public assistance, SNAP) are approximate, and some aggregate amounts are suppressed by the Census Bureau for privacy and shown as "not disclosed."</p>
-       <p class="report-note">Vintage: ${escapeHtml(r.vintage)}.</p>
+       <p>Counts come from the <strong>2020 Decennial Census</strong> (${escapeHtml(r.geography.counts)}); estimates come from the <strong>2020 ACS 5-Year</strong> (${escapeHtml(r.geography.estimates)}).</p>
+       <p><a class="method-link" href="./methodology.html">Read the full methodology</a> — which dataset answers which question, who each figure counts, what the Census does and doesn't publish, and the limits of every number here.</p>
      </div>`);
 }
 
